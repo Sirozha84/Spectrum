@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -7,15 +8,24 @@ namespace Spectrum
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
-    public class Game1 : Game
+    public class Main : Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        Texture2D Dysplay;
+        Rectangle DysplaySorce = new Rectangle(0, 0, 640, 480); //Потом сделать регулировку видимости бордюра
+        Rectangle ScreenSize;
 
-        public Game1()
+        /*int FPS = 0;
+        DateTime lastTime;*/
+
+        public Main()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            graphics.PreferredBackBufferWidth = 1280;
+            graphics.PreferredBackBufferHeight = 800;
+            ScreenSize = new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
         }
 
         /// <summary>
@@ -26,8 +36,8 @@ namespace Spectrum
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
+            Dysplay = new Texture2D(GraphicsDevice, 640, 480, false, SurfaceFormat.Color);
+            Spectrum.Init();
             base.Initialize();
         }
 
@@ -62,7 +72,16 @@ namespace Spectrum
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            for (int i = 0; i < Spectrum.Strings; i++) //Пока константа, потом может быть сделаю разные модели
+                Screen.DrawString(i);
+
+            /*FPS++;
+            if (lastTime.Second != DateTime.Now.Second)
+            {
+                lastTime = DateTime.Now;
+                Window.Title = FPS.ToString("FPS: 0");
+                FPS = 0;
+            }*/
 
             base.Update(gameTime);
         }
@@ -73,10 +92,11 @@ namespace Spectrum
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            // TODO: Add your drawing code here
-
+            Dysplay.SetData(Screen.Pixels, 0, 640 * 480);
+            GraphicsDevice.Clear(Color.Black);
+            spriteBatch.Begin();
+            spriteBatch.Draw(Dysplay, ScreenSize, DysplaySorce, Color.White);
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }
