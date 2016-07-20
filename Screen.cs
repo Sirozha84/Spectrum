@@ -8,12 +8,12 @@ namespace Spectrum
 {
     static class Screen
     {
-        public static uint[] Pixels = new uint[640 * 480];
+        public static uint[] Pixels = new uint[640 * 512];
         static uint[] Palette = {
-            0xFF000000, 0xFF0000CB, 0xFFCB0000, 0xFFCB00CB,
-            0xFF00CB00, 0xFF00CBCB, 0xFFCBCB00, 0xFFCBCBCB,
-            0xFF000000, 0xFF0000FF, 0xFFFF0000, 0xFFFF00FF,
-            0xFF00FF00, 0xFF00FFFF, 0xFFFFFF00, 0xFFFFFFFF};
+            0xFF000000, 0xFFCB0000, 0xFF0000C0, 0xFFCB00C0,
+            0xFF00C000, 0xFFCBC000, 0xFF00C0C0, 0xFFC0C0C0,
+            0xFF000000, 0xFFFF0000, 0xFF0000FF, 0xFFFF00FF,
+            0xFF00FF00, 0xFFFFFF00, 0xFF00FFFF, 0xFFFFFFFF};
         static int[] AdressesOfStrings = {
             16384, 16640, 16896, 17152, 17408, 17664, 17920, 18176,
             16416, 16672, 16928, 17184, 17440, 17696, 17952, 18208,
@@ -41,20 +41,75 @@ namespace Spectrum
             20704, 20960, 21216, 21472, 21728, 21984, 22240, 22496};
 
         static Random rnd = new Random();
-        static int Border = 7;
-
+        static int Border = 0;
+        static bool flash;
+        static int flashtimer;
+        static int Byte;
+        static int Attr;
+        static int Ink;
+        static int Paper;
         /// <summary>
         /// Рисование текущей строки телевизора
         /// </summary>
         public static void DrawString(int String)
         {
-
+            //Сдвигаем номер первой строки телека до первой строки экрана для удобства
+            String = String - (Spectrum.Strings - 256) / 2;
             //Уходим, если строка не попадает в кадр
-            if (String < 0) return;
-            /*if (String >= 240) return;
-            uint k = Palette[rnd.Next(15)];
-            for (int i = 0; i < 640 * 2; i++)
-                Pixels[String * 640 * 2 + i] = k;*/
+            if (String < 0 | String > 255) return;
+            for (int i = 0; i < 320; i++)
+            {
+                if (String - 32 < 0 | String - 32 > 191 | i < 32 | i > 287)
+                    SetPixel(i, String, Border);
+                else
+                {
+                    if ((i - 32) % 8 == 0)
+                    {
+                        int str = String - 32;
+                        int tab = (i - 32) / 8;
+                        //Надо найти байт точек и байт атрибутов
+                        Byte = Spectrum.Memory[AdressesOfStrings[str] + tab];
+                        Attr = Spectrum.Memory[22528 + (str / 8) * 32 + tab];
+                        //Находим цвета по атрибутам
+                        Ink = Attr & 7;
+                        Paper = (Attr & 56) / 8;
+                        if ((Attr & 64) == 64) //Яркость
+                        {
+                            Ink += 8;
+                            Paper += 8;
+                        }
+                        if ((Attr & 128) == 128 && flash) //Флеш включен
+                        {
+                            int swap = Ink;
+                            Ink = Paper;
+                            Paper = swap;
+                        }
+                        if ((Byte & 128) == 128) SetPixel(i, String, Ink); else SetPixel(i, String, Paper);
+                        if ((Byte & 64) == 64) SetPixel(i + 1, String, Ink); else SetPixel(i + 1, String, Paper);
+                        if ((Byte & 32) == 32) SetPixel(i + 2, String, Ink); else SetPixel(i + 2, String, Paper);
+                        if ((Byte & 16) == 16) SetPixel(i + 3, String, Ink); else SetPixel(i + 3, String, Paper);
+                        if ((Byte & 8) == 8) SetPixel(i + 4, String, Ink); else SetPixel(i + 4, String, Paper);
+                        if ((Byte & 4) == 4) SetPixel(i + 5, String, Ink); else SetPixel(i + 5, String, Paper);
+                        if ((Byte & 2) == 2) SetPixel(i + 6, String, Ink); else SetPixel(i + 6, String, Paper);
+                        if ((Byte & 1) == 1) SetPixel(i + 7, String, Ink); else SetPixel(i + 7, String, Paper);
+                    }
+                }
+            }
+            flashtimer++;
+            if (flashtimer > 5000)
+            {
+                flashtimer = 0;
+                flash ^= true;
+            }
+        }
+
+        static void SetPixel(int x, int y, int c)
+        {
+            int a = y * 1280 + x * 2;
+            Pixels[a] = Palette[c];
+            Pixels[a + 1] = Palette[c];
+            Pixels[a + 640] = Palette[c];
+            Pixels[a + 641] = Palette[c];
         }
     }
 }

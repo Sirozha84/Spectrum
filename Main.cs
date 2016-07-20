@@ -13,7 +13,7 @@ namespace Spectrum
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Texture2D Dysplay;
-        Rectangle DysplaySorce = new Rectangle(0, 0, 640, 480); //Потом сделать регулировку видимости бордюра
+        Rectangle DysplaySorce = new Rectangle(0, 0, 640, 512); //Потом сделать регулировку видимости бордюра
         Rectangle ScreenSize;
 
         /*int FPS = 0;
@@ -23,8 +23,8 @@ namespace Spectrum
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 800;
+            graphics.PreferredBackBufferWidth = 960; //640;
+            graphics.PreferredBackBufferHeight = 768; //512;
             ScreenSize = new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
         }
 
@@ -36,7 +36,7 @@ namespace Spectrum
         /// </summary>
         protected override void Initialize()
         {
-            Dysplay = new Texture2D(GraphicsDevice, 640, 480, false, SurfaceFormat.Color);
+            Dysplay = new Texture2D(GraphicsDevice, 640, 512, false, SurfaceFormat.Color);
             Spectrum.Init();
             base.Initialize();
         }
@@ -72,7 +72,7 @@ namespace Spectrum
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            for (int i = 0; i < Spectrum.Strings; i++) //Пока константа, потом может быть сделаю разные модели
+            for (int i = 0; i < Spectrum.Strings; i++)
                 Screen.DrawString(i);
 
             /*FPS++;
