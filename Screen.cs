@@ -10,7 +10,7 @@ namespace Spectrum
     {
         public static uint[] Pixels = new uint[640 * 512];
         static uint[] Palette = {
-            0xFF000000, 0xFFCB0000, 0xFF0000C0, 0xFFCB00C0,
+            0xFF000000, 0xFFCB0000, 0xFF0000C0, 0xFFC000C0,
             0xFF00C000, 0xFFCBC000, 0xFF00C0C0, 0xFFC0C0C0,
             0xFF000000, 0xFFFF0000, 0xFF0000FF, 0xFFFF00FF,
             0xFF00FF00, 0xFFFFFF00, 0xFF00FFFF, 0xFFFFFFFF};
@@ -41,7 +41,7 @@ namespace Spectrum
             20704, 20960, 21216, 21472, 21728, 21984, 22240, 22496};
 
         static Random rnd = new Random();
-        static int Border = 0;
+        static int Border = 7;
         static bool flash;
         static int flashtimer;
         static int Byte;
@@ -84,6 +84,7 @@ namespace Spectrum
                             Ink = Paper;
                             Paper = swap;
                         }
+                        //Рисуем точки
                         if ((Byte & 128) == 128) SetPixel(i, String, Ink); else SetPixel(i, String, Paper);
                         if ((Byte & 64) == 64) SetPixel(i + 1, String, Ink); else SetPixel(i + 1, String, Paper);
                         if ((Byte & 32) == 32) SetPixel(i + 2, String, Ink); else SetPixel(i + 2, String, Paper);

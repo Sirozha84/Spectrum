@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace Spectrum
 {
@@ -14,6 +15,7 @@ namespace Spectrum
         [STAThread]
         static void Main()
         {
+            Application.EnableVisualStyles();
             using (var game = new Main())
                 game.Run();
         }

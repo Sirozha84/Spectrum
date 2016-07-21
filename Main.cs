@@ -15,6 +15,7 @@ namespace Spectrum
         Texture2D Dysplay;
         Rectangle DysplaySorce = new Rectangle(0, 0, 640, 512); //Потом сделать регулировку видимости бордюра
         Rectangle ScreenSize;
+        bool Monitor = false;
 
         /*int FPS = 0;
         DateTime lastTime;*/
@@ -26,6 +27,7 @@ namespace Spectrum
             graphics.PreferredBackBufferWidth = 960; //640;
             graphics.PreferredBackBufferHeight = 768; //512;
             ScreenSize = new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
+            IsMouseVisible = true;
         }
 
         /// <summary>
@@ -39,6 +41,12 @@ namespace Spectrum
             Dysplay = new Texture2D(GraphicsDevice, 640, 512, false, SurfaceFormat.Color);
             Spectrum.Init();
             base.Initialize();
+
+
+            Monitor form = new Monitor();
+            form.Show();
+            Monitor = true;
+
         }
 
         /// <summary>
@@ -69,8 +77,13 @@ namespace Spectrum
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape) & !Monitor)
+            {
+                Monitor form = new Monitor();
+                form.Show();
+                Monitor = true;
+            }
+
 
             for (int i = 0; i < Spectrum.Strings; i++)
                 Screen.DrawString(i);
