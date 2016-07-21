@@ -27,6 +27,7 @@ namespace Spectrum
             fSa = false; fZa = false; fYa = false; fHa = false;
             fXa = false; fPa = false; fNa = false; fCa = false;
             Prer = false;
+            Spectrum.Mode = Spectrum.Modes.Normal;
         }
 
         /// <summary>
@@ -73,14 +74,56 @@ namespace Spectrum
                     D = Spectrum.Memory[PC++];
                     E = Spectrum.Memory[PC++];
                     return 10;
+                case 25:                                                        //ADD HL, DE
+                    ADDHL(D, E);
+                    return 11;
+                case 32:                                                        //JR NZ, n
+                    if (!fZ) JR(); else PC++;
+                    return 12;
+                case 35:                                                        //INC HL
+                    INC(ref H, ref L);
+                    return 6;
+                case 40:                                                        //JR Z, n
+                    if (fZ) JR(); else PC++;
+                    return 12;
+                case 43:                                                        //DEC HL
+                    DEC(ref H, ref L);
+                    return 6;
+                case 48:                                                        //JR NC, n
+                    if (!fC) JR(); else PC++;
+                    return 12;
+                case 53:                                                        //DEC (HL)
+                    DEC(ref Spectrum.Memory[H * 256 + L]);
+                    return 11;
+                case 54:                                                        //LD (HL), n
+                    Spectrum.Memory[H * 256 + L] = Spectrum.Memory[PC++];
+                    return 10;
                 case 62:                                                        //LD A, n
                     A = Spectrum.Memory[PC++];
                     return 7;
                 case 71:                                                        //LD B, A
                     B = A;
                     return 4;
+                case 98:                                                        //LD H, D
+                    H = D;
+                    return 4;
+                case 99:                                                        //LD H, E
+                    H = E;
+                    return 4;
+                case 106:                                                       //LD L, D
+                    L = D;
+                    return 4;
+                case 107:                                                       //LD L, E
+                    L = E;
+                    return 4;
+                case 167:                                                       //AND A
+                    AND(A);
+                    return 4;
                 case 175:                                                       //XOR A
                     XOR(A);
+                    return 4;
+                case 188:                                                       //CP H
+                    CP(H);
                     return 4;
                 case 195:                                                       //JP nn
                     PC = (ushort)(Spectrum.Memory[PC] + Spectrum.Memory[PC + 1] * 256);
@@ -98,20 +141,99 @@ namespace Spectrum
                         case 71:                                                //LD I, A
                             I = A;
                             return 9;
+                        case 82:                                                //SBC HL, DE
+                            SBCHL(D, E);
+                            return 15;
                     }
                     break;
-                #endregion
+                    #endregion
             }
             PC = pc;
             return 1;
         }
-
+        //AND
+        static void AND(byte Reg)
+        {
+            A &= Reg;
+            fC = false; //Наверное.... надо будет проверить
+            //
+        }
+        //OR
+        static void OR(byte Reg)
+        {
+            A |= Reg;
+            fC = false; //Наверное.... надо будет проверить
+            //
+        }
+        //XOR
         static void XOR(byte Reg)
         {
             A ^= Reg;
             fC = false;
+            //
         }
+        //INC
+        static void INC(ref byte r1, ref byte r2)
+        {
+            r2++;
+            if (r2==0)
+                r1++;
+            //
+        }
+        //DEC
+        static void DEC(ref byte b)
+        {
+            b--;
+            fC = b == 255; //Наверное...
+            fZ = b == 0;   //Наверное...
+        }
+        static void DEC(ref byte r1, ref byte r2)
+        {
+            r2--;
+            if (r2 == 255)
+                r1--;
+            //
+        }
+        //ADD
+        static void ADDHL(byte r1, byte r2)
+        {
+            fH = L + r2 > 255;
+            L = (byte)(L + r2);
+            byte c = fH ? (byte)1 : (byte)0;
+            fC = H + r1 + c > 255;
+            H = (byte)(H + r1 + c);
+        }
+        //SUB
 
+        //ADC
+
+        //SBC
+        static void SBCHL(byte r1, byte r2)
+        {
+            byte c = fC ? (byte)1 : (byte)0;
+            fH = L - r2 - c < 0;
+            L = (byte)(L - r2 - c);
+            c = fH ? (byte)1 : (byte)0;
+            fC = H - r1 - c < 0;
+            H = (byte)(H - r1 - c);
+            fN = true;
+        }
+        //CP
+        static void CP(byte Reg)
+        {
+            fC = A < Reg;
+            fN = true;
+            fZ = A == Reg;
+            //
+        }
+        //JR
+        static void JR()
+        {
+            PC = (ushort)(PC + Spectrum.Memory[PC++] - 255);
+        }
+        //IN
+
+        //OUT
         static void OUT(byte Port, byte Reg)
         {
             //

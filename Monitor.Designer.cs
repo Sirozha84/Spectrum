@@ -70,6 +70,7 @@
             this.labelR = new System.Windows.Forms.Label();
             this.textBoxI = new System.Windows.Forms.TextBox();
             this.labelI = new System.Windows.Forms.Label();
+            this.buttonReset = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonPause
@@ -464,11 +465,23 @@
             this.labelI.TabIndex = 38;
             this.labelI.Text = "I";
             // 
+            // buttonReset
+            // 
+            this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonReset.Location = new System.Drawing.Point(475, 458);
+            this.buttonReset.Name = "buttonReset";
+            this.buttonReset.Size = new System.Drawing.Size(72, 47);
+            this.buttonReset.TabIndex = 42;
+            this.buttonReset.Text = "Reset";
+            this.buttonReset.UseVisualStyleBackColor = true;
+            this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+            // 
             // Monitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(559, 517);
+            this.Controls.Add(this.buttonReset);
             this.Controls.Add(this.textBoxR);
             this.Controls.Add(this.labelR);
             this.Controls.Add(this.textBoxI);
@@ -564,5 +577,6 @@
         private System.Windows.Forms.Label labelR;
         private System.Windows.Forms.TextBox textBoxI;
         private System.Windows.Forms.Label labelI;
+        private System.Windows.Forms.Button buttonReset;
     }
 }

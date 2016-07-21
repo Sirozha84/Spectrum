@@ -86,5 +86,10 @@ namespace Spectrum
             timerRefresh_Tick(null, null);
         }
 
+        private void buttonReset_Click(object sender, EventArgs e)
+        {
+            Z80.Reset();
+            timerRefresh_Tick(null, null);
+        }
     }
 }
