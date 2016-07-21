@@ -222,7 +222,7 @@ namespace Spectrum
                 case 208: C = "RET NC"; break;
                 case 209: C = "POP DE"; break;
                 case 210: C = "JP NC, " + Bytes(++adr, ++adr); break;
-                case 211: C = "OUT (" + Bytes(++adr) + ")"; break;
+                case 211: C = "OUT (" + Bytes(++adr) + "), A"; break;
                 case 212: C = "CALL NC, " + Bytes(++adr, ++adr); break;
                 case 213: C = "PUSH DE"; break;
                 case 214: C = "SUB " + Bytes(++adr); break;
