@@ -11,16 +11,15 @@ namespace Spectrum
         public static string GetCommand(ref int adr)
         {
             string C = "*****";
-            int Codes = 1;
             switch (Spectrum.Memory[adr])
             {
                 case 0: C = "NOP"; break;
-                case 1: C = "LD BC, " + asm16(++adr, ++adr); break;
+                case 1: C = "LD BC, " + Bytes(++adr, ++adr); break;
                 case 2: C = "LD (BC), A"; break;
                 case 3: C = "INC BC"; break;
                 case 4: C = "INC B"; break;
                 case 5: C = "DEC B"; break;
-
+                case 6: C = "LD B, " + Bytes(++adr); break;
                 case 7: C = "RLCA"; break;
                 case 8: C = "EX AF, AF"; break;
                 case 9: C = "ADD HL, BC"; break;
@@ -28,50 +27,56 @@ namespace Spectrum
                 case 11: C = "DEC BC"; break;
                 case 12: C = "INC C"; break;
                 case 13: C = "DEC C"; break;
-
+                case 14: C = "LD C, " + Bytes(++adr); break;
                 case 15: C = "RRCA"; break;
-
-                case 17: C = "LD DE, " + asm16(++adr, ++adr); break;
+                case 16: C = "DJNZ " + JR(++adr); break;
+                case 17: C = "LD DE, " + Bytes(++adr, ++adr); break;
                 case 18: C = "LD (DE), A"; break;
                 case 19: C = "INC DE"; break;
                 case 20: C = "INC D"; break;
                 case 21: C = "DEC D"; break;
-
+                case 22: C = "LD D, " + Bytes(++adr); break;
                 case 23: C = "RLA"; break;
-
+                case 24: C = "JR " + JR(++adr); break;
                 case 25: C = "ADD HL, DE"; break;
                 case 26: C = "LD A, (DE)"; break;
                 case 27: C = "DEC DE"; break;
                 case 28: C = "INC E"; break;
                 case 29: C = "DEC E"; break;
-
+                case 30: C = "LD E, " + Bytes(++adr); break;
                 case 31: C = "RRA"; break;
-
+                case 32: C = "JR NZ, " + JR(++adr); break;
+                case 33: C = "LD HL, " + Bytes(++adr, ++adr); break;
+                case 34: C = "LD (" + Bytes(++adr, ++adr) + "), HL"; break;
                 case 35: C = "INC HL"; break;
                 case 36: C = "INC H"; break;
                 case 37: C = "DEC H"; break;
-
+                case 38: C = "LD H, " + Bytes(++adr); break;
                 case 39: C = "DAA"; break;
-
-                case 42: C = "LD HL, (" + asm16(++adr, ++adr) + ")"; break;
+                case 40: C = "JR Z, " + JR(++adr); break;
+                case 41: C = "ADD HL, HL"; break;
+                case 42: C = "LD HL, (" + Bytes(++adr, ++adr) + ")"; break;
                 case 43: C = "DEC HL"; break;
                 case 44: C = "INC L"; break;
                 case 45: C = "DEC L"; break;
-
+                case 46: C = "LD L, " + Bytes(++adr); break;
                 case 47: C = "CPL"; break;
-
+                case 48: C = "JR NC, " + JR(++adr); break;
+                case 49: C = "LD SP, " + Bytes(++adr, ++adr); break;
+                case 50: C = "LD (" + Bytes(++adr, ++adr) + "), A"; break;
                 case 51: C = "INC SP"; break;
                 case 52: C = "INC (HL)"; break;
                 case 53: C = "DEC (HL)"; break;
-
+                case 54: C = "LD (HL), " + Bytes(++adr); break;
                 case 55: C = "SCF"; break;
-
+                case 56: C = "JR C, " + JR(++adr); break;
                 case 57: C = "ADD HL, SP"; break;
-
+                case 58: C = "LD A, (" + Bytes(++adr, ++adr) + ")"; break;
                 case 59: C = "DEC SP"; break;
                 case 60: C = "INC A"; break;
                 case 61: C = "DEC A"; break;
-
+                case 62: C = "LD A, " + Bytes(++adr); break;
+                case 63: C = "CCF"; break;
                 case 64: C = "LD B, B"; break;
                 case 65: C = "LD B, C"; break;
                 case 66: C = "LD B, D"; break;
@@ -202,56 +207,65 @@ namespace Spectrum
                 case 191: C = "CP A"; break;
                 case 192: C = "RET NZ"; break;
                 case 193: C = "POP BC"; break;
-                case 195: C = "JP " + asm16(++adr, ++adr); break;
+                case 194: C = "JP NZ, " + Bytes(++adr, ++adr); break;
+                case 195: C = "JP " + Bytes(++adr, ++adr); break;
                 case 197: C = "PUSH BC"; break;
-
+                case 198: C = "ADD A, " + Bytes(++adr); break;
                 case 199: C = "RST 0"; break;
                 case 200: C = "RET Z"; break;
                 case 201: C = "RET"; break;
-
-
+                case 202: C = "JP Z, " + Bytes(++adr, ++adr); break;
+                case 204: C = "CALL Z, " + Bytes(++adr, ++adr); break;
+                case 205: C = "CALL " + Bytes(++adr, ++adr); break;
+                case 206: C = "ADC A, " + Bytes(++adr); break;
                 case 207: C = "RST 8"; break;
                 case 208: C = "RET NC"; break;
                 case 209: C = "POP DE"; break;
-
+                case 210: C = "JP NC, " + Bytes(++adr, ++adr); break;
+                case 211: C = "OUT (" + Bytes(++adr) + ")"; break;
+                case 212: C = "CALL NC, " + Bytes(++adr, ++adr); break;
                 case 213: C = "PUSH DE"; break;
-
+                case 214: C = "SUB " + Bytes(++adr); break;
                 case 215: C = "RST 10"; break;
                 case 216: C = "RET C"; break;
                 case 217: C = "EXX"; break;
-
-
+                case 218: C = "JP C, " + Bytes(++adr, ++adr); break;
+                case 219: C = "IN A, (" + Bytes(++adr) + ")"; break;
+                case 220: C = "CALL C, " + Bytes(++adr, ++adr); break;
+                case 222: C = "SBC C, " + Bytes(++adr); break;
                 case 223: C = "RST 18"; break;
                 case 224: C = "RET PO"; break;
                 case 225: C = "POP HL"; break;
-
+                case 226: C = "JP PO, " + Bytes(++adr, ++adr); break;
+                case 227: C = "EX (SP), HL"; break;
+                case 228: C = "CALL PO, " + Bytes(++adr, ++adr); break;
                 case 229: C = "PUSH HL"; break;
-
+                case 230: C = "AND " + Bytes(++adr); break;
                 case 231: C = "RST 20"; break;
                 case 232: C = "RET PE"; break;
                 case 233: C = "JP (HL)"; break;
-
+                case 234: C = "JP PE, " + Bytes(++adr, ++adr); break;
                 case 235: C = "EX DE, HL"; break;
-
-
+                case 236: C = "CALL PE, " + Bytes(++adr, ++adr); break;
+                case 238: C = "XOR " + Bytes(++adr); break;
                 case 239: C = "RST 28"; break;
                 case 240: C = "RET P"; break;
                 case 241: C = "POP AF"; break;
-
+                case 242: C = "JP P, " + Bytes(++adr, ++adr); break;
                 case 243: C = "DI"; break;
-
+                case 244: C = "CALL P, " + Bytes(++adr, ++adr); break;
                 case 245: C = "PUSH AF"; break;
-
+                case 246: C = "OR " + Bytes(++adr); break;
                 case 247: C = "RST 30"; break;
                 case 248: C = "RET M"; break;
                 case 249: C = "LD SP, HL"; break;
-
+                case 250: C = "JP M, " + Bytes(++adr, ++adr); break;
                 case 251: C = "EI"; break;
-
+                case 252: C = "CALL M, " + Bytes(++adr, ++adr); break;
+                case 254: C = "CP A, " + Bytes(++adr, ++adr); break;
                 case 255: C = "RST 7"; break;
                 #region case 203 (CB)
                 case 203:
-                    Codes = 2;
                     switch (Spectrum.Memory[++adr])
                     {
                         case 0: C = "RLC B"; break;
@@ -507,13 +521,12 @@ namespace Spectrum
                     #endregion
                 #region case 237 (ED)
                 case 237: //После ED
-                    Codes = 2;
                     switch (Spectrum.Memory[++adr])
                     {
                         case 64: C = "IN B, (C)"; break;
                         case 65: C = "OUT (C), B"; break;
                         case 66: C = "SBC HL, BC"; break;
-
+                        case 67: C = "LD (" + Bytes(++adr, ++adr) + "), BC"; break;
                         case 68: C = "NEG"; break;
                         case 69: C = "RETN"; break;
                         case 70: C = "IM 0"; break;
@@ -521,38 +534,38 @@ namespace Spectrum
                         case 72: C = "IN C, (C)"; break;
                         case 73: C = "OUT (C), C"; break;
                         case 74: C = "ADC HL, BC"; break;
-
+                        case 75: C = "LD BC, (" + Bytes(++adr, ++adr) + ")"; break;
                         case 77: C = "RETI"; break;
                         case 79: C = "LD R, A"; break;
                         case 80: C = "IN D, (C)"; break;
                         case 81: C = "OUT (C), D"; break;
                         case 82: C = "SBC HL, DE"; break;
-
+                        case 83: C = "LD (" + Bytes(++adr, ++adr) + "), DE"; break;
                         case 86: C = "IM 1"; break;
                         case 87: C = "LD A, I"; break;
                         case 88: C = "IN E, (C)"; break;
                         case 89: C = "OUT (C), E"; break;
                         case 90: C = "ADC HL, DE"; break;
-
+                        case 91: C = "LD DE, (" + Bytes(++adr, ++adr) + ")"; break;
                         case 94: C = "IM 2"; break;
                         case 95: C = "LD A, R"; break;
                         case 96: C = "IN H, (C)"; break;
                         case 97: C = "OUT (C), H"; break;
                         case 98: C = "SBC HL, HL"; break;
-
+                        case 99: C = "LD (" + Bytes(++adr, ++adr) + "), HL"; break;
                         case 103: C = "RRD"; break;
                         case 104: C = "IN L, (C)"; break;
                         case 105: C = "OUT (C), L"; break;
                         case 106: C = "ADC HL, HL"; break;
-
+                        case 107: C = "LD HL, (" + Bytes(++adr, ++adr) + ")"; break;
                         case 111: C = "RLD"; break;
                         case 112: C = "IN F, (C)"; break;
                         case 114: C = "SBC HL, SP"; break;
-
+                        case 115: C = "LD (" + Bytes(++adr, ++adr) + "), SP"; break;
                         case 120: C = "IN A, (C)"; break;
                         case 121: C = "OUT (C), A"; break;
                         case 122: C = "ADC HL, SP"; break;
-
+                        case 123: C = "LD (SP), " + Bytes(++adr, ++adr); break;
                         case 168: C = "LDD"; break;
                         case 169: C = "CDP"; break;
                         case 170: C = "IND"; break;
@@ -577,50 +590,72 @@ namespace Spectrum
                     {
                         case 9: C = "ADD " + I + ", BC"; break;
                         case 25: C = "ADD " + I + ", DE"; break;
-
+                        case 33: C = "LD " + I + ", " + Bytes(++adr, ++adr); break;
                         case 35: C = "INC " + I; break;
                         case 41: C = "ADD " + I + ", " + I; break;
-
+                        case 42: C = "LD " + I + ", (" + Bytes(++adr, ++adr) + ")"; break;
                         case 43: C = "DEC " + I; break;
-
+                        case 52: C = "INC (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 53: C = "DEC (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 54: C = "LD (" + I + "+" + Bytes(++adr) + ")"; break;
                         case 57: C = "ADD " + I + ", SP"; break;
-
+                        case 70: C = "LD B, (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 78: C = "LD C, (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 86: C = "LD D, (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 94: C = "LD E, (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 102: C = "LD H, (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 110: C = "LD L, (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 112: C = "LD (" + I + "+" + Bytes(++adr) + "), B"; break;
+                        case 113: C = "LD (" + I + "+" + Bytes(++adr) + "), C"; break;
+                        case 114: C = "LD (" + I + "+" + Bytes(++adr) + "), D"; break;
+                        case 115: C = "LD (" + I + "+" + Bytes(++adr) + "), E"; break;
+                        case 116: C = "LD (" + I + "+" + Bytes(++adr) + "), H"; break;
+                        case 117: C = "LD (" + I + "+" + Bytes(++adr) + "), L"; break;
+                        case 119: C = "LD (" + I + "+" + Bytes(++adr) + "), A"; break;
+                        case 126: C = "LD A, (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 134: C = "ADD A, (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 142: C = "ADC A, (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 150: C = "SUB (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 158: C = "SBC A, (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 166: C = "AND (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 174: C = "XOR (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 182: C = "OR (" + I + "+" + Bytes(++adr) + ")"; break;
+                        case 190: C = "CP (" + I + "+" + Bytes(++adr) + ")"; break;
                         case 203:
                             byte B2 = Spectrum.Memory[adr + 2];
-                            if (B2 == 6) C = "RLC (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 14) C = "RRC (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 22) C = "RL (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 30) C = "RR (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 38) C = "SLA (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 46) C = "SRA (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 62) C = "SRL (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 70) C = "BIT 0, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 78) C = "BIT 1, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 86) C = "BIT 2, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 94) C = "BIT 3, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 102) C = "BIT 4, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 110) C = "BIT 5, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 118) C = "BIT 6, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 126) C = "BIT 7, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 134) C = "RES 0, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 142) C = "RES 1, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 150) C = "RES 2, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 158) C = "RES 3, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 166) C = "RES 4, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 174) C = "RES 5, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 182) C = "RES 6, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 190) C = "RES 7, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 198) C = "SET 0, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 206) C = "SET 1, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 214) C = "SET 2, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 222) C = "SET 3, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 230) C = "SET 4, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 238) C = "SET 5, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 246) C = "SET 6, (" + I + "+" + asm8(++adr) + ")";
-                            if (B2 == 254) C = "SET 7, (" + I + "+" + asm8(++adr) + ")";
+                            if (B2 == 6) C = "RLC (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 14) C = "RRC (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 22) C = "RL (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 30) C = "RR (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 38) C = "SLA (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 46) C = "SRA (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 62) C = "SRL (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 70) C = "BIT 0, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 78) C = "BIT 1, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 86) C = "BIT 2, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 94) C = "BIT 3, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 102) C = "BIT 4, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 110) C = "BIT 5, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 118) C = "BIT 6, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 126) C = "BIT 7, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 134) C = "RES 0, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 142) C = "RES 1, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 150) C = "RES 2, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 158) C = "RES 3, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 166) C = "RES 4, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 174) C = "RES 5, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 182) C = "RES 6, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 190) C = "RES 7, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 198) C = "SET 0, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 206) C = "SET 1, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 214) C = "SET 2, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 222) C = "SET 3, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 230) C = "SET 4, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 238) C = "SET 5, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 246) C = "SET 6, (" + I + "+" + Bytes(++adr) + ")";
+                            if (B2 == 254) C = "SET 7, (" + I + "+" + Bytes(++adr) + ")";
                             adr++;
                             break;
-
                         case 225: C = "POP " + I; break;
                         case 227: C = "EX (SP), " + I; break;
                         case 229: C = "PUSH " + I; break;
@@ -634,14 +669,25 @@ namespace Spectrum
             return C;
         }
 
-        static string asm8(int c1)
+        static string Bytes(int c1)
         {
             return (Spectrum.Memory[c1]).ToString();
         }
 
-        static string asm16(int c1, int c2)
+        static string Bytes(int c1, int c2)
         {
             return (Spectrum.Memory[c1] + Spectrum.Memory[c2] * 256).ToString();
+        }
+        //Подсчёт адреса в относительном переходе
+        static int JR(int adr)
+        {
+            byte TO = Spectrum.Memory[adr];
+            int result = 0;
+            if (TO < 128) result = adr + TO + 1;
+            else result = adr + TO - 255;
+            if (result < 0) return 0;
+            if (result > 65535) return 65535;
+            return result;
         }
     }
 }
