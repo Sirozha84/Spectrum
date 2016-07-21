@@ -33,6 +33,35 @@ namespace Spectrum
                 listBox1.Items.Add(com + asm);
                 
             } while (listBox1.Items.Count < 30);
+
+            labelPC.Text = Z80.PC.ToString();
         }
+
+        private void buttonPause_Click(object sender, EventArgs e)
+        {
+            if (Spectrum.Mode == Spectrum.Modes.Normal)
+            {
+                Spectrum.Mode = Spectrum.Modes.Stop;
+                buttonPause.Text = "|>";
+            }
+            else
+            {
+                Spectrum.Mode = Spectrum.Modes.Normal;
+                buttonPause.Text = "[_]";
+            }
+        }
+
+        private void buttonStep_Click(object sender, EventArgs e)
+        {
+            Spectrum.Mode = Spectrum.Modes.Step;
+            buttonPause.Text = "|>";
+        }
+
+        private void buttonFrame_Click(object sender, EventArgs e)
+        {
+            Spectrum.Mode = Spectrum.Modes.Frame;
+            buttonPause.Text = "|>";
+        }
+
     }
 }

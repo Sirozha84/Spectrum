@@ -16,9 +16,9 @@ namespace Spectrum
         {
             ROM = File.ReadAllBytes("48.rom");
             for (int i = 0; i < 16384; i++)
-                Memory[i] = ROM[i];
+                Memory[i + 16384] = ROM[i];
         }
-        public enum Modes {Stop, Frame, Normal};
+        public enum Modes {Normal, Stop, Step, Frame};
         public static Modes Mode = Modes.Normal;
     }
 }

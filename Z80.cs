@@ -10,7 +10,6 @@ namespace Spectrum
     {
         public static byte A, AA, F, FA, B, BA, C, CA, D, DA, E, EA, H, HA, L, LA, I, R;
         public static int SP, IX, IY, PC;
-
         /// <summary>
         /// Сброс
         /// </summary>
@@ -23,6 +22,8 @@ namespace Spectrum
 
         public static int Run()
         {
+            PC++;
+            if (PC > 65535) PC = 0;
             return 1;
         }
     }

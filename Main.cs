@@ -70,6 +70,8 @@ namespace Spectrum
             // TODO: Unload any non ContentManager content here
         }
 
+        int str = 0;
+        int takt = 0;
         /// <summary>
         /// Allows the game to run logic such as updating the world,
         /// checking for collisions, gathering input, and playing audio.
@@ -84,9 +86,41 @@ namespace Spectrum
                 Monitor = true;
             }
 
+            if (Spectrum.Mode == Spectrum.Modes.Normal)
+            {
+                do
+                {
+                    do
+                    {
+                        takt += Z80.Run();
+                    } while (takt < 224);
+                    NextString();
+                } while (str < Spectrum.Strings);
+                str = 0;
+            }
+            if (Spectrum.Mode == Spectrum.Modes.Step)
+            {
+                takt += Z80.Run();
+                if (takt >= 224) NextString();
+                if (str >= Spectrum.Strings) str = 0;
+                Spectrum.Mode = Spectrum.Modes.Stop;
+            }
+            if (Spectrum.Mode == Spectrum.Modes.Frame)
+            {
+                do
+                {
+                    do
+                    {
+                        takt += Z80.Run();
+                    } while (takt < 224);
+                    NextString();
+                } while (str < Spectrum.Strings);
+                str = 0;
+                Spectrum.Mode = Spectrum.Modes.Stop;
+            }
 
-            for (int i = 0; i < Spectrum.Strings; i++)
-                Screen.DrawString(i);
+            //for (int i = 0; i < Spectrum.Strings; i++)
+            //Screen.DrawString(i);
 
             /*FPS++;
             if (lastTime.Second != DateTime.Now.Second)
@@ -98,6 +132,11 @@ namespace Spectrum
 
             base.Update(gameTime);
         }
+        void NextString()
+        {
+            takt -= 224;
+            Screen.DrawString(str++);
+        }
 
         /// <summary>
         /// This is called when the game should draw itself.
@@ -105,8 +144,9 @@ namespace Spectrum
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            Dysplay.SetData(Screen.Pixels, 0, 640 * 480);
-            GraphicsDevice.Clear(Color.Black);
+            //Dysplay.SetData(Screen.Pixels, 0, 640 * 480);
+            Dysplay.SetData(Screen.Pixels, 0, 0);
+            //GraphicsDevice.Clear(Color.Black);
             spriteBatch.Begin();
             spriteBatch.Draw(Dysplay, ScreenSize, DysplaySorce, Color.White);
             spriteBatch.End();
