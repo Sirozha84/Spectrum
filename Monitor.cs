@@ -54,29 +54,33 @@ namespace Spectrum
             textBoxSP.Text = Z80.SP.ToString();
             textBoxI.Text = Z80.I.ToString();
             textBoxR.Text = Z80.R.ToString();
+
+            //Немножко кода в просмор памяти
+            listBox2.Items.Clear();
+            for (int i = 0; i < 10; i++)
+                listBox2.Items.Add(i + 23606 + " - " + Spectrum.Memory[i + 23606]);
+
+        }
+
+        void PauseButtonRefresh()
+        {
+            buttonPause.Text = Spectrum.Mode == Spectrum.Modes.Normal ? "[_]" : "|>";
             timerRefresh.Enabled = Spectrum.Mode != Spectrum.Modes.Stop;
         }
 
         private void buttonPause_Click(object sender, EventArgs e)
         {
             if (Spectrum.Mode == Spectrum.Modes.Normal)
-            {
                 Spectrum.Mode = Spectrum.Modes.Stop;
-                buttonPause.Text = "|>";
-            }
             else
-            {
                 Spectrum.Mode = Spectrum.Modes.Normal;
-                buttonPause.Text = "[_]";
-            }
-            timerRefresh_Tick(null, null);
+            PauseButtonRefresh();
         }
 
         private void buttonStep_Click(object sender, EventArgs e)
         {
             Spectrum.Mode = Spectrum.Modes.Step;
             buttonPause.Text = "|>";
-            timerRefresh_Tick(null, null);
         }
 
         private void buttonFrame_Click(object sender, EventArgs e)
@@ -86,5 +90,16 @@ namespace Spectrum
             timerRefresh_Tick(null, null);
         }
 
+        private void buttonReset_Click(object sender, EventArgs e)
+        {
+            Z80.Reset();
+            Spectrum.Mode = Spectrum.Modes.Normal;
+            timerRefresh_Tick(null, null);
+        }
+
+        private void Monitor_Load(object sender, EventArgs e)
+        {
+            PauseButtonRefresh();
+        }
     }
 }

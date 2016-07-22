@@ -70,6 +70,8 @@
             this.labelR = new System.Windows.Forms.Label();
             this.textBoxI = new System.Windows.Forms.TextBox();
             this.labelI = new System.Windows.Forms.Label();
+            this.buttonReset = new System.Windows.Forms.Button();
+            this.listBox2 = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // buttonPause
@@ -464,11 +466,32 @@
             this.labelI.TabIndex = 38;
             this.labelI.Text = "I";
             // 
+            // buttonReset
+            // 
+            this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonReset.Location = new System.Drawing.Point(475, 458);
+            this.buttonReset.Name = "buttonReset";
+            this.buttonReset.Size = new System.Drawing.Size(72, 47);
+            this.buttonReset.TabIndex = 42;
+            this.buttonReset.Text = "Reset";
+            this.buttonReset.UseVisualStyleBackColor = true;
+            this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+            // 
+            // listBox2
+            // 
+            this.listBox2.FormattingEnabled = true;
+            this.listBox2.Location = new System.Drawing.Point(322, 292);
+            this.listBox2.Name = "listBox2";
+            this.listBox2.Size = new System.Drawing.Size(225, 160);
+            this.listBox2.TabIndex = 43;
+            // 
             // Monitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(559, 517);
+            this.Controls.Add(this.listBox2);
+            this.Controls.Add(this.buttonReset);
             this.Controls.Add(this.textBoxR);
             this.Controls.Add(this.labelR);
             this.Controls.Add(this.textBoxI);
@@ -517,6 +540,7 @@
             this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Monitor";
+            this.Load += new System.EventHandler(this.Monitor_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -564,5 +588,7 @@
         private System.Windows.Forms.Label labelR;
         private System.Windows.Forms.TextBox textBoxI;
         private System.Windows.Forms.Label labelI;
+        private System.Windows.Forms.Button buttonReset;
+        private System.Windows.Forms.ListBox listBox2;
     }
 }
