@@ -79,7 +79,7 @@ namespace Spectrum
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            int BreakPoint = 4639;
+            int BreakPoint = 4642;
             //4591 - конец теста памяти
             //4618 - LDDR
 

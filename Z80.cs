@@ -14,6 +14,7 @@ namespace Spectrum
         static bool fS, fZ, fY, fH, fX, fP, fN, fC;
         static bool fSa, fZa, fYa, fHa, fXa, fPa, fNa, fCa;
         static bool Prer;
+        static byte IM;
         /// <summary>
         /// Сброс
         /// </summary>
@@ -72,8 +73,8 @@ namespace Spectrum
                 case 0:                                                         //NOP
                     return 4;
                 case 1:                                                         //LD BC, nn
-                    C = Spectrum.Memory[PC++]; //Тут работает правильно!
-                    B = Spectrum.Memory[PC++]; //Если возникнет вопрос как
+                    C = Spectrum.Memory[PC++]; //Проверенно! Работает!
+                    B = Spectrum.Memory[PC++];
                     return 10;
                 case 4:                                                         //INC B
                     INC(ref B);
@@ -93,7 +94,7 @@ namespace Spectrum
                     H = Spectrum.Memory[PC++];
                     return 10;
                 case 34:                                                        //LD (nn), HL
-                    tmp = (ushort)(PC++ + PC++ * 256);
+                    tmp = (ushort)(Spectrum.Memory[PC++] + Spectrum.Memory[PC++] * 256); //Проверенно! Работает!
                     Spectrum.Memory[tmp++] = L;
                     Spectrum.Memory[tmp] = H;
                     return 20;
@@ -103,9 +104,10 @@ namespace Spectrum
                 case 40:                                                        //JR Z, n
                     if (fZ) JR(); else PC++;
                     return 12;
-                case 42:                                                        //HL, (nn)
-                    L = Spectrum.Memory[PC++];
-                    H = Spectrum.Memory[PC++];
+                case 42:                                                        //LD HL, (nn)
+                    tmp = (ushort)(Spectrum.Memory[PC++] + Spectrum.Memory[PC++] * 256); //Проверенно! Работает!
+                    L = Spectrum.Memory[tmp++];
+                    H = Spectrum.Memory[tmp];
                     return 16;
                 case 43:                                                        //DEC HL
                     DEC(ref H, ref L);
@@ -162,6 +164,9 @@ namespace Spectrum
                 case 243:                                                       //DI
                     Prer = false;
                     return 40;
+                case 249:                                                       //LD SP, HL
+                    SP = (ushort)(H * 256 + L);
+                    return 6;
                 #region case 237 (Префикс ED)
                 case 237:                                                       //ED
                     R++;
@@ -169,7 +174,7 @@ namespace Spectrum
                     switch (Spectrum.Memory[PC++])
                     {
                         case 67:                                                //LD (nn), BC
-                            tmp = (ushort)(PC++ + PC++ * 256);
+                            tmp = (ushort)(Spectrum.Memory[PC++] + Spectrum.Memory[PC++] * 256);
                             Spectrum.Memory[tmp++] = C;
                             Spectrum.Memory[tmp] = B;
                             return 20;
@@ -180,10 +185,13 @@ namespace Spectrum
                             SBCHL(D, E);
                             return 15;
                         case 83:                                                //LD (nn), DE
-                            tmp = (ushort)(PC++ + PC++ * 256);
+                            tmp = (ushort)(Spectrum.Memory[PC++] + Spectrum.Memory[PC++] * 256);
                             Spectrum.Memory[tmp++] = E;
                             Spectrum.Memory[tmp] = D;
                             return 20;
+                        case 86:                                                //IM 1
+                            IM = 1;
+                            return 8;
                         case 184:                                               //LDDR
                             //Копирование "сверху"
                             Spectrum.Memory[D * 256 + E] = Spectrum.Memory[H * 256 + L];
@@ -201,6 +209,22 @@ namespace Spectrum
                             else
                                 return 16; //Если скопировали (последнее копирование тоже учитывается)
 
+                    }
+                    break;
+                #endregion
+                case 251:                                                       //EI
+                    Prer = true;
+                    return 4;
+                #region case 253 (Префикс IY)
+                case 253:
+                    R++;
+                    if (R > 127) R = 0;
+                    ushort IReg = (Spectrum.Memory[PC - 1] == 221) ? IX : IY;
+                    switch (Spectrum.Memory[PC++])
+                    {
+                        case 33:                                                //LD IY, nn
+                            IY = (ushort)(Spectrum.Memory[PC++] + Spectrum.Memory[PC++] * 256);
+                            return 14;
                     }
                     break;
                     #endregion
