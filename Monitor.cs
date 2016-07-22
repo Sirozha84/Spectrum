@@ -94,6 +94,7 @@ namespace Spectrum
         private void buttonReset_Click(object sender, EventArgs e)
         {
             Z80.Reset();
+<<<<<<< HEAD
             Spectrum.Mode = Spectrum.Modes.Normal;
             timerRefresh_Tick(null, null);
         }
@@ -102,5 +103,9 @@ namespace Spectrum
         {
             PauseButtonRefresh();
         }
+=======
+            timerRefresh_Tick(null, null);
+        }
+>>>>>>> origin/master
     }
 }
