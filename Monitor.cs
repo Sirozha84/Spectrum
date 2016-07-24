@@ -56,7 +56,7 @@ namespace Spectrum
             textBoxR.Text = Z80.R.ToString();
 
             //Немножко кода в просмор памяти
-            int start = 23606;
+            int start = 65360;
             listBox2.Items.Clear();
             for (int i = 0; i < 12; i++)
                 listBox2.Items.Add(i + start + " - " + Spectrum.Memory[i + start]);
@@ -94,7 +94,6 @@ namespace Spectrum
         private void buttonReset_Click(object sender, EventArgs e)
         {
             Z80.Reset();
-<<<<<<< HEAD
             Spectrum.Mode = Spectrum.Modes.Normal;
             timerRefresh_Tick(null, null);
         }
@@ -103,9 +102,5 @@ namespace Spectrum
         {
             PauseButtonRefresh();
         }
-=======
-            timerRefresh_Tick(null, null);
-        }
->>>>>>> origin/master
     }
 }

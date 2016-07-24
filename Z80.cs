@@ -29,7 +29,6 @@ namespace Spectrum
             fSa = false; fZa = false; fYa = false; fHa = false;
             fXa = false; fPa = false; fNa = false; fCa = false;
             Prer = false;
-            Spectrum.Mode = Spectrum.Modes.Normal;
         }
 
         /// <summary>
@@ -80,17 +79,27 @@ namespace Spectrum
                 case 4:                                                         //INC B
                     INC(ref B);
                     return 4;
+                case 14:                                                        //LD C, n
+                    C = Spectrum.Memory[PC++];
+                    return 7;
+                case 16:                                                        //DJNZ n
+                    B--;
+                    if (B == 0) { PC++; return 8; }
+                    else { JR(); return 13; }
                 case 17:                                                        //LD DE, nn
                     E = Spectrum.Memory[PC++];
                     D = Spectrum.Memory[PC++];
                     return 10;
+                case 22:                                                        //LD D, n
+                    D = Spectrum.Memory[PC++];
+                    return 7;
                 case 25:                                                        //ADD HL, DE
                     ADDHL(D, E);
                     return 11;
                 case 32:                                                        //JR NZ, n
                     if (!fZ) JR(); else PC++;
                     return 12;
-                case 33:                                                        // LD HL, nn
+                case 33:                                                        //LD HL, nn
                     L = Spectrum.Memory[PC++];
                     H = Spectrum.Memory[PC++];
                     return 10;
@@ -116,30 +125,10 @@ namespace Spectrum
                 case 48:                                                        //JR NC, n
                     if (!fC) JR(); else PC++;
                     return 12;
-                case 53:                                                        //DEC (HL)
-                    DEC(ref Spectrum.Memory[H * 256 + L]);
-                    return 11;
-                case 54:                                                        //LD (HL), n
-                    Spectrum.Memory[H * 256 + L] = Spectrum.Memory[PC++];
-                    return 10;
-                case 25:                                                        //ADD HL, DE
-                    ADDHL(D, E);
-                    return 11;
-                case 32:                                                        //JR NZ, n
-                    if (!fZ) JR(); else PC++;
-                    return 12;
-                case 35:                                                        //INC HL
-                    INC(ref H, ref L);
-                    return 6;
-                case 40:                                                        //JR Z, n
-                    if (fZ) JR(); else PC++;
-                    return 12;
-                case 43:                                                        //DEC HL
-                    DEC(ref H, ref L);
-                    return 6;
-                case 48:                                                        //JR NC, n
-                    if (!fC) JR(); else PC++;
-                    return 12;
+                case 50:                                                        //LD (nn), A
+                    tmp = (ushort)(Spectrum.Memory[PC++] + Spectrum.Memory[PC++] * 256);
+                    Spectrum.Memory[tmp] = A;
+                    return 13;
                 case 53:                                                        //DEC (HL)
                     DEC(ref Spectrum.Memory[H * 256 + L]);
                     return 11;
@@ -152,6 +141,9 @@ namespace Spectrum
                 case 71:                                                        //LD B, A
                     B = A;
                     return 4;
+                case 95:                                                        //LD E, A
+                    E = A;
+                    return 4;
                 case 98:                                                        //LD H, D
                     H = D;
                     return 4;
@@ -163,6 +155,12 @@ namespace Spectrum
                     return 4;
                 case 107:                                                       //LD L, E
                     L = E;
+                    return 4;
+                case 119:                                                       //LD (HL), A
+                    Spectrum.Memory[H * 256 + L] = A;
+                    return 7;
+                case 145:                                                       //SUB C
+                    SUB(C);
                     return 4;
                 case 167:                                                       //AND A
                     AND(A);
@@ -182,16 +180,19 @@ namespace Spectrum
                 case 217:                                                       //EXX
                     EXX();
                     return 4;
+                case 201:                                                       //RET
+                    PC = (ushort)(Spectrum.Memory[SP] + Spectrum.Memory[SP + 1] * 256);
+                    SP += 2;
+                    return 10;
+                case 205:                                                       //CALL;
+                    Spectrum.Memory[--SP] = (byte)((PC+2) / 256);
+                    Spectrum.Memory[--SP] = (byte)((PC+2) % 256);
+                    PC = (ushort)(Spectrum.Memory[PC] + Spectrum.Memory[PC + 1] * 256);
+                    return 17;
                 case 235:                                                       //EX DE, HL
                     byte t = D; D = H; H = t;
                     t = E; E = L; L = t;
                     return 4;
-                case 243:                                                       //DI
-                    Prer = false;
-                    return 40;
-                case 249:                                                       //LD SP, HL
-                    SP = (ushort)(H * 256 + L);
-                    return 6;
                 #region case 237 (Префикс ED)
                 case 237:                                                       //ED
                     R++;
@@ -209,7 +210,6 @@ namespace Spectrum
                         case 82:                                                //SBC HL, DE
                             SBCHL(D, E);
                             return 15;
-<<<<<<< HEAD
                         case 83:                                                //LD (nn), DE
                             tmp = (ushort)(Spectrum.Memory[PC++] + Spectrum.Memory[PC++] * 256);
                             Spectrum.Memory[tmp++] = E;
@@ -218,26 +218,51 @@ namespace Spectrum
                         case 86:                                                //IM 1
                             IM = 1;
                             return 8;
-                        case 184:                                               //LDDR
-                            //Копирование "сверху"
+                        case 176:                                               //LDIR - Копирование "снизу" (нормальное)
                             Spectrum.Memory[D * 256 + E] = Spectrum.Memory[H * 256 + L];
                             fN = false;
-                            fP = false;
+                            fH = false;
+                            C--; if (C == 255) B--;
+                            E++; if (E == 0) D++;
+                            L++; if (L == 0) H++;
+                            if (B != 0 | C != 0)
+                            {
+                                fP = true;
+                                PC -= 2;
+                                return 21; //Если копировали (если копирование не закончено)
+                            }
+                            else
+                            {
+                                fP = false;
+                                return 16; //Если скопировали (последнее копирование тоже учитывается)
+                            }
+                        case 184:                                               //LDDR - Копирование "сверху"
+                            Spectrum.Memory[D * 256 + E] = Spectrum.Memory[H * 256 + L];
+                            fN = false;
                             fH = false;
                             C--; if (C == 255) B--;
                             E--; if (E == 255) D--;
                             L--; if (L == 255) H--;
                             if (B != 0 | C != 0)
                             {
+                                fP = true;
                                 PC -= 2;
                                 return 21; //Если копировали (если копирование не закончено)
                             }
                             else
+                            {
+                                fP = false;
                                 return 16; //Если скопировали (последнее копирование тоже учитывается)
-
+                            }
                     }
                     break;
                 #endregion
+                case 243:                                                       //DI
+                    Prer = false;
+                    return 40;
+                case 249:                                                       //LD SP, HL
+                    SP = (ushort)(H * 256 + L);
+                    return 6;
                 case 251:                                                       //EI
                     Prer = true;
                     return 4;
@@ -251,12 +276,40 @@ namespace Spectrum
                         case 33:                                                //LD IY, nn
                             IY = (ushort)(Spectrum.Memory[PC++] + Spectrum.Memory[PC++] * 256);
                             return 14;
+                        case 53:                                                //DEC (IY+S)
+                            /*t = Spectrum.Memory[PC++];
+                            tmp = (ushort)(IY + t);
+                            if (t > 127) tmp -= 256;
+                            Spectrum.Memory[tmp]--;*/
+                            Spectrum.Memory[IplusS(IY)]--;
+                            //z
+                            //p
+                            //s
+                            return 23;
+                        case 113:                                               //LD (IY+s), C
+                            Spectrum.Memory[IplusS(IY)] = C;
+                            return 19;
+                        case 117:                                               //LD (IY+S), L
+                            Spectrum.Memory[IplusS(IY)] = L;
+                            return 19;
+                        case 203:
+                            PC++;
+                            switch (Spectrum.Memory[PC])
+                            {
+                                case 78:                                        //BIT 1, (IY+S)
+                                    fZ = (Spectrum.Memory[IplusS(IY)] & 2) == 0;
+                                    return 23;
+                                case 142:                                       //RES 1, (IY+S)
+                                    Spectrum.Memory[IplusS(IY)] &= 253; //11111101
+                                    return 23;
+                                case 206:                                       //SET 1, (IY+S)
+                                    Spectrum.Memory[IplusS(IY)] |= 2; //00000010
+                                    //Spectrum.Memory[IplusS(IY)] = 123; //00000010
+                                    return 23;
+                            }
+                            break;
                     }
                     break;
-=======
-                    }
-                    break;
->>>>>>> origin/master
                     #endregion
             }
             PC = pc;
@@ -281,7 +334,6 @@ namespace Spectrum
         {
             A ^= Reg;
             fC = false;
-<<<<<<< HEAD
             fZ = A == 0;
             fP = A % 2 == 0;
         }
@@ -306,17 +358,6 @@ namespace Spectrum
             {
                 fC = true; //Наверное
             }
-=======
-            //
-        }
-        //INC
-        static void INC(ref byte r1, ref byte r2)
-        {
-            r2++;
-            if (r2==0)
-                r1++;
-            //
->>>>>>> origin/master
         }
         //DEC
         static void DEC(ref byte b)
@@ -342,7 +383,14 @@ namespace Spectrum
             H = (byte)(H + r1 + c);
         }
         //SUB
-
+        static void SUB(byte Reg)
+        {
+            A -= Reg;
+            fC = A > Reg;
+            fZ = A == 0;
+            //
+            //
+        }
         //ADC
 
         //SBC
@@ -354,16 +402,11 @@ namespace Spectrum
             c = fH ? (byte)1 : (byte)0;
             fC = H - r1 - c < 0;
             H = (byte)(H - r1 - c);
-<<<<<<< HEAD
             //fN = true;
-=======
-            fN = true;
->>>>>>> origin/master
         }
         //CP
         static void CP(byte Reg)
         {
-<<<<<<< HEAD
             ushort a = (ushort)(A - Reg);
             fS = (a & 128) != 0;
             fN = true;
@@ -376,21 +419,9 @@ namespace Spectrum
         static void JR()
         {
             byte to = Spectrum.Memory[PC];
-            PC = (ushort)(PC + to);
-            if (to > 127) PC -= 255;
+            PC = (ushort)(PC + to + 1);
+            if (to > 127) PC -= 256;
         }
-=======
-            fC = A < Reg;
-            fN = true;
-            fZ = A == Reg;
-            //
-        }
-        //JR
-        static void JR()
-        {
-            PC = (ushort)(PC + Spectrum.Memory[PC++] - 255);
-        }
->>>>>>> origin/master
         //IN
 
         //OUT
@@ -410,6 +441,14 @@ namespace Spectrum
             temp = E; E = Ea; Ea = temp;
             temp = H; H = Ha; Ha = temp;
             temp = L; L = La; La = temp;
+        }
+        //IX+S / IY+S
+        static ushort IplusS(ushort IReg)
+        {
+            byte t = Spectrum.Memory[PC++ - 1];
+            ushort tmp = (ushort)(IY + t);
+            if (t > 127) tmp -= 256;
+            return tmp;
         }
     }
 }

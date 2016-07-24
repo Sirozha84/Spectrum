@@ -71,10 +71,7 @@
             this.textBoxI = new System.Windows.Forms.TextBox();
             this.labelI = new System.Windows.Forms.Label();
             this.buttonReset = new System.Windows.Forms.Button();
-<<<<<<< HEAD
             this.listBox2 = new System.Windows.Forms.ListBox();
-=======
->>>>>>> origin/master
             this.SuspendLayout();
             // 
             // buttonPause
@@ -480,7 +477,6 @@
             this.buttonReset.UseVisualStyleBackColor = true;
             this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
             // 
-<<<<<<< HEAD
             // listBox2
             // 
             this.listBox2.FormattingEnabled = true;
@@ -489,17 +485,12 @@
             this.listBox2.Size = new System.Drawing.Size(225, 160);
             this.listBox2.TabIndex = 43;
             // 
-=======
->>>>>>> origin/master
             // Monitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(559, 517);
-<<<<<<< HEAD
             this.Controls.Add(this.listBox2);
-=======
->>>>>>> origin/master
             this.Controls.Add(this.buttonReset);
             this.Controls.Add(this.textBoxR);
             this.Controls.Add(this.labelR);
@@ -546,7 +537,6 @@
             this.MinimizeBox = false;
             this.Name = "Monitor";
             this.ShowIcon = false;
-            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Monitor";
             this.Load += new System.EventHandler(this.Monitor_Load);
@@ -598,9 +588,6 @@
         private System.Windows.Forms.TextBox textBoxI;
         private System.Windows.Forms.Label labelI;
         private System.Windows.Forms.Button buttonReset;
-<<<<<<< HEAD
         private System.Windows.Forms.ListBox listBox2;
-=======
->>>>>>> origin/master
     }
 }
