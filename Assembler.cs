@@ -597,7 +597,7 @@ namespace Spectrum
                         case 43: C = "DEC " + I; break;
                         case 52: C = "INC (" + I + SByte(++adr) + ")"; break;
                         case 53: C = "DEC (" + I + SByte(++adr) + ")"; break;
-                        case 54: C = "LD (" + I + SByte(++adr) + ")"; break;
+                        case 54: C = "LD (" + I + SByte(++adr) + "), " + Bytes(++adr); break;
                         case 57: C = "ADD " + I + ", SP"; break;
                         case 70: C = "LD B, (" + I + SByte(++adr) + ")"; break;
                         case 78: C = "LD C, (" + I + SByte(++adr) + ")"; break;

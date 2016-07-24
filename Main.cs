@@ -79,18 +79,7 @@ namespace Spectrum
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            int BreakPoint = 4750;
-            //4591 - конец теста памяти
-            //4618 - LDDR
-            //4674 - LDIR
-            //4711 - LD(nn), A
-            //4726 - DEC(IY+S)
-            //4743 - SET 
-            //3819 - RES
-            //3548 - BIT
-            //3552 - JRNZ
-            //3574 - SUB C
-            //2818 - RET
+            int BreakPoint = 3554;
 
             if (Keyboard.GetState().IsKeyDown(Keys.Escape) & !Monitor)
             {

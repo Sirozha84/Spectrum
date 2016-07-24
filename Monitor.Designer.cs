@@ -72,6 +72,8 @@
             this.labelI = new System.Windows.Forms.Label();
             this.buttonReset = new System.Windows.Forms.Button();
             this.listBox2 = new System.Windows.Forms.ListBox();
+            this.textBoxA = new System.Windows.Forms.TextBox();
+            this.labelA = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // buttonPause
@@ -485,11 +487,31 @@
             this.listBox2.Size = new System.Drawing.Size(225, 160);
             this.listBox2.TabIndex = 43;
             // 
+            // textBoxA
+            // 
+            this.textBoxA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.textBoxA.Location = new System.Drawing.Point(348, 458);
+            this.textBoxA.Name = "textBoxA";
+            this.textBoxA.Size = new System.Drawing.Size(43, 20);
+            this.textBoxA.TabIndex = 45;
+            // 
+            // labelA
+            // 
+            this.labelA.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelA.AutoSize = true;
+            this.labelA.Location = new System.Drawing.Point(322, 461);
+            this.labelA.Name = "labelA";
+            this.labelA.Size = new System.Drawing.Size(14, 13);
+            this.labelA.TabIndex = 44;
+            this.labelA.Text = "A";
+            // 
             // Monitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(559, 517);
+            this.Controls.Add(this.textBoxA);
+            this.Controls.Add(this.labelA);
             this.Controls.Add(this.listBox2);
             this.Controls.Add(this.buttonReset);
             this.Controls.Add(this.textBoxR);
@@ -589,5 +611,7 @@
         private System.Windows.Forms.Label labelI;
         private System.Windows.Forms.Button buttonReset;
         private System.Windows.Forms.ListBox listBox2;
+        private System.Windows.Forms.TextBox textBoxA;
+        private System.Windows.Forms.Label labelA;
     }
 }

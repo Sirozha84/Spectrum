@@ -41,6 +41,7 @@ namespace Spectrum
             checkBoxN.Checked = (Z80.F() & 2) != 0;
             checkBoxC.Checked = (Z80.F() & 1) != 0;
             textBoxAF.Text = (Z80.A * 256 + Z80.F()).ToString();
+            textBoxA.Text = Z80.A.ToString(); //Потому-что задолбало...
             textBoxAFa.Text = (Z80.Aa * 256 + Z80.Fa()).ToString();
             textBoxBC.Text = (Z80.B * 256 + Z80.C).ToString();
             textBoxBCa.Text = (Z80.Ba * 256 + Z80.Ca).ToString();
@@ -54,9 +55,8 @@ namespace Spectrum
             textBoxSP.Text = Z80.SP.ToString();
             textBoxI.Text = Z80.I.ToString();
             textBoxR.Text = Z80.R.ToString();
-
             //Немножко кода в просмор памяти
-            int start = 65360;
+            int start = 23650;
             listBox2.Items.Clear();
             for (int i = 0; i < 12; i++)
                 listBox2.Items.Add(i + start + " - " + Spectrum.Memory[i + start]);
