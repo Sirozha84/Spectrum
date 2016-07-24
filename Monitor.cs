@@ -56,7 +56,7 @@ namespace Spectrum
             textBoxI.Text = Z80.I.ToString();
             textBoxR.Text = Z80.R.ToString();
             //Немножко кода в просмор памяти
-            int start = 23650;
+            int start = 65350;
             listBox2.Items.Clear();
             for (int i = 0; i < 12; i++)
                 listBox2.Items.Add(i + start + " - " + Spectrum.Memory[i + start]);

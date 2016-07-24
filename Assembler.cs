@@ -157,7 +157,7 @@ namespace Spectrum
                 case 141: C = "ADC A, L"; break;
                 case 142: C = "ADC A, (HL)"; break;
                 case 143: C = "ADC A, A"; break;
-                case 144: C = "ADC B"; break;
+                case 144: C = "SUB B"; break;
                 case 145: C = "SUB C"; break;
                 case 146: C = "SUB D"; break;
                 case 147: C = "SUB E"; break;
