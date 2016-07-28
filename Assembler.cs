@@ -21,7 +21,7 @@ namespace Spectrum
                 case 5: C = "DEC B"; break;
                 case 6: C = "LD B, " + Bytes(++adr); break;
                 case 7: C = "RLCA"; break;
-                case 8: C = "EX AF, AF"; break;
+                case 8: C = "EX AF, AF'"; break;
                 case 9: C = "ADD HL, BC"; break;
                 case 10: C = "LD A, (BC)"; break;
                 case 11: C = "DEC BC"; break;
@@ -262,7 +262,7 @@ namespace Spectrum
                 case 250: C = "JP M, " + Bytes(++adr, ++adr); break;
                 case 251: C = "EI"; break;
                 case 252: C = "CALL M, " + Bytes(++adr, ++adr); break;
-                case 254: C = "CP A, " + Bytes(++adr, ++adr); break;
+                case 254: C = "CP " + Bytes(++adr); break;
                 case 255: C = "RST 7"; break;
                 #region case 203 (CB)
                 case 203:
