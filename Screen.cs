@@ -10,10 +10,15 @@ namespace Spectrum
     {
         public static uint[] Pixels = new uint[640 * 512];
         static uint[] Palette = {
-            0xFF000000, 0xFFCB0000, 0xFF0000C0, 0xFFC000C0,
-            0xFF00C000, 0xFFCBC000, 0xFF00C0C0, 0xFFC0C0C0,
+            0xFF000000, 0xFFC00000, 0xFF0000C0, 0xFFC000C0,
+            0xFF00C000, 0xFFC0C000, 0xFF00C0C0, 0xFFC0C0C0,
             0xFF000000, 0xFFFF0000, 0xFF0000FF, 0xFFFF00FF,
             0xFF00FF00, 0xFFFFFF00, 0xFF00FFFF, 0xFFFFFFFF};
+        static uint[] Palette2 = {
+            0xFF000000, 0xFF900000, 0xFF000090, 0xFF900090,
+            0xFF009000, 0xFF909000, 0xFF009090, 0xFF909090,
+            0xFF000000, 0xFFC00000, 0xFF0000C0, 0xFFC000C0,
+            0xFF00C000, 0xFFC0C000, 0xFF00C0C0, 0xFFC0C0C0};
         static int[] AdressesOfStrings = {
             16384, 16640, 16896, 17152, 17408, 17664, 17920, 18176,
             16416, 16672, 16928, 17184, 17440, 17696, 17952, 18208,
@@ -109,8 +114,8 @@ namespace Spectrum
             int a = y * 1280 + x * 2;
             Pixels[a] = Palette[c];
             Pixels[a + 1] = Palette[c];
-            Pixels[a + 640] = Palette[c];
-            Pixels[a + 641] = Palette[c];
+            Pixels[a + 640] = Palette2[c];
+            Pixels[a + 641] = Palette2[c];
         }
     }
 }
