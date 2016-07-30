@@ -264,7 +264,7 @@ namespace Spectrum
                 case 251: C = "EI"; break;
                 case 252: C = "CALL M, " + Bytes(++adr, ++adr); break;
                 case 254: C = "CP " + Bytes(++adr); break;
-                case 255: C = "RST 7"; break;
+                case 255: C = "RST 38"; break;
                 #region case 203 (CB)
                 case 203:
                     switch (Spectrum.Memory[++adr])

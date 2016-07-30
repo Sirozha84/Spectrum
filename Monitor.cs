@@ -55,12 +55,14 @@ namespace Spectrum
             textBoxSP.Text = Z80.SP.ToString();
             textBoxI.Text = Z80.I.ToString();
             textBoxR.Text = Z80.R.ToString();
+            checkBoxInt.Checked = Z80.Interrupt;
             //Немножко кода в просмор памяти
-            int start = 21216; //65360 21216
+            int start = 21218;
             listBox2.Items.Clear();
             for (int i = 0; i < 12; i++)
                 listBox2.Items.Add(i + start + " - " + Spectrum.Memory[i + start]);
-
+            //Кнопочки
+            PauseButtonRefresh();
         }
 
         void PauseButtonRefresh()
@@ -81,7 +83,8 @@ namespace Spectrum
         private void buttonStep_Click(object sender, EventArgs e)
         {
             Spectrum.Mode = Spectrum.Modes.Step;
-            buttonPause.Text = "|>";
+            //buttonPause.Text = "|>";
+            timerRefresh_Tick(null, null);
         }
 
         private void buttonFrame_Click(object sender, EventArgs e)
@@ -93,7 +96,7 @@ namespace Spectrum
 
         private void buttonReset_Click(object sender, EventArgs e)
         {
-            Z80.Reset();
+            Spectrum.Init();
             Spectrum.Mode = Spectrum.Modes.Normal;
             timerRefresh_Tick(null, null);
         }

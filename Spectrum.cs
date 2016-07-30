@@ -19,6 +19,7 @@ namespace Spectrum
             ROM = File.ReadAllBytes("48.rom");
             for (int i = 0; i < 16384; i++)
                 Memory[i] = ROM[i];
+            Z80.Reset();
         Mode = Modes.Normal;
     }
 }

@@ -74,6 +74,9 @@
             this.listBox2 = new System.Windows.Forms.ListBox();
             this.textBoxA = new System.Windows.Forms.TextBox();
             this.labelA = new System.Windows.Forms.Label();
+            this.labelFlags = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.checkBoxInt = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // buttonPause
@@ -132,88 +135,80 @@
             // 
             this.checkBoxS.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxS.AutoSize = true;
-            this.checkBoxS.Location = new System.Drawing.Point(322, 66);
+            this.checkBoxS.Location = new System.Drawing.Point(322, 89);
             this.checkBoxS.Name = "checkBoxS";
-            this.checkBoxS.Size = new System.Drawing.Size(33, 17);
+            this.checkBoxS.Size = new System.Drawing.Size(15, 14);
             this.checkBoxS.TabIndex = 6;
-            this.checkBoxS.Text = "S";
             this.checkBoxS.UseVisualStyleBackColor = true;
             // 
             // checkBoxZ
             // 
             this.checkBoxZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxZ.AutoSize = true;
-            this.checkBoxZ.Location = new System.Drawing.Point(361, 66);
+            this.checkBoxZ.Location = new System.Drawing.Point(343, 89);
             this.checkBoxZ.Name = "checkBoxZ";
-            this.checkBoxZ.Size = new System.Drawing.Size(33, 17);
+            this.checkBoxZ.Size = new System.Drawing.Size(15, 14);
             this.checkBoxZ.TabIndex = 7;
-            this.checkBoxZ.Text = "Z";
             this.checkBoxZ.UseVisualStyleBackColor = true;
             // 
             // checkBoxY
             // 
             this.checkBoxY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxY.AutoSize = true;
-            this.checkBoxY.Location = new System.Drawing.Point(400, 66);
+            this.checkBoxY.Location = new System.Drawing.Point(364, 89);
             this.checkBoxY.Name = "checkBoxY";
-            this.checkBoxY.Size = new System.Drawing.Size(33, 17);
+            this.checkBoxY.Size = new System.Drawing.Size(15, 14);
             this.checkBoxY.TabIndex = 8;
-            this.checkBoxY.Text = "Y";
             this.checkBoxY.UseVisualStyleBackColor = true;
             // 
             // checkBoxH
             // 
             this.checkBoxH.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxH.AutoSize = true;
-            this.checkBoxH.Location = new System.Drawing.Point(439, 66);
+            this.checkBoxH.Location = new System.Drawing.Point(385, 89);
             this.checkBoxH.Name = "checkBoxH";
-            this.checkBoxH.Size = new System.Drawing.Size(34, 17);
+            this.checkBoxH.Size = new System.Drawing.Size(15, 14);
             this.checkBoxH.TabIndex = 9;
-            this.checkBoxH.Text = "H";
             this.checkBoxH.UseVisualStyleBackColor = true;
             // 
             // checkBoxC
             // 
             this.checkBoxC.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxC.AutoSize = true;
-            this.checkBoxC.Location = new System.Drawing.Point(439, 89);
+            this.checkBoxC.Location = new System.Drawing.Point(470, 89);
             this.checkBoxC.Name = "checkBoxC";
-            this.checkBoxC.Size = new System.Drawing.Size(33, 17);
+            this.checkBoxC.Size = new System.Drawing.Size(15, 14);
             this.checkBoxC.TabIndex = 13;
-            this.checkBoxC.Text = "C";
             this.checkBoxC.UseVisualStyleBackColor = true;
             // 
             // checkBoxN
             // 
             this.checkBoxN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxN.AutoSize = true;
-            this.checkBoxN.Location = new System.Drawing.Point(400, 89);
+            this.checkBoxN.Location = new System.Drawing.Point(449, 89);
             this.checkBoxN.Name = "checkBoxN";
-            this.checkBoxN.Size = new System.Drawing.Size(34, 17);
+            this.checkBoxN.Size = new System.Drawing.Size(15, 14);
             this.checkBoxN.TabIndex = 12;
-            this.checkBoxN.Text = "N";
             this.checkBoxN.UseVisualStyleBackColor = true;
             // 
             // checkBoxP
             // 
             this.checkBoxP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxP.AutoSize = true;
-            this.checkBoxP.Location = new System.Drawing.Point(361, 89);
+            this.checkBoxP.Location = new System.Drawing.Point(428, 89);
             this.checkBoxP.Name = "checkBoxP";
-            this.checkBoxP.Size = new System.Drawing.Size(33, 17);
+            this.checkBoxP.Size = new System.Drawing.Size(15, 14);
             this.checkBoxP.TabIndex = 11;
-            this.checkBoxP.Text = "P";
             this.checkBoxP.UseVisualStyleBackColor = true;
             // 
             // checkBoxX
             // 
             this.checkBoxX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxX.AutoSize = true;
-            this.checkBoxX.Location = new System.Drawing.Point(322, 89);
+            this.checkBoxX.Location = new System.Drawing.Point(406, 89);
             this.checkBoxX.Name = "checkBoxX";
-            this.checkBoxX.Size = new System.Drawing.Size(33, 17);
+            this.checkBoxX.Size = new System.Drawing.Size(15, 14);
             this.checkBoxX.TabIndex = 10;
-            this.checkBoxX.Text = "X";
             this.checkBoxX.UseVisualStyleBackColor = true;
             // 
             // labelAF
@@ -505,11 +500,44 @@
             this.labelA.TabIndex = 44;
             this.labelA.Text = "A";
             // 
+            // labelFlags
+            // 
+            this.labelFlags.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.labelFlags.AutoSize = true;
+            this.labelFlags.Location = new System.Drawing.Point(322, 71);
+            this.labelFlags.Name = "labelFlags";
+            this.labelFlags.Size = new System.Drawing.Size(162, 13);
+            this.labelFlags.TabIndex = 46;
+            this.labelFlags.Text = "S    Z     Y     H    X     P    NV   C";
+            // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(528, 71);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(19, 13);
+            this.label1.TabIndex = 47;
+            this.label1.Text = "Int";
+            // 
+            // checkBoxInt
+            // 
+            this.checkBoxInt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.checkBoxInt.AutoSize = true;
+            this.checkBoxInt.Location = new System.Drawing.Point(531, 89);
+            this.checkBoxInt.Name = "checkBoxInt";
+            this.checkBoxInt.Size = new System.Drawing.Size(15, 14);
+            this.checkBoxInt.TabIndex = 48;
+            this.checkBoxInt.UseVisualStyleBackColor = true;
+            // 
             // Monitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(559, 517);
+            this.Controls.Add(this.checkBoxInt);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.labelFlags);
             this.Controls.Add(this.textBoxA);
             this.Controls.Add(this.labelA);
             this.Controls.Add(this.listBox2);
@@ -613,5 +641,8 @@
         private System.Windows.Forms.ListBox listBox2;
         private System.Windows.Forms.TextBox textBoxA;
         private System.Windows.Forms.Label labelA;
+        private System.Windows.Forms.Label labelFlags;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.CheckBox checkBoxInt;
     }
 }

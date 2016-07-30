@@ -79,7 +79,7 @@ namespace Spectrum
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            int BreakPoint = 3004;
+            int BreakPoint = -1; //4780 4791
 
             if (Keyboard.GetState().IsKeyDown(Keys.Escape) & !Monitor)
             {
@@ -88,61 +88,41 @@ namespace Spectrum
                 Monitor = true;
             }
 
-            if (Spectrum.Mode == Spectrum.Modes.Normal)
+            if (Spectrum.Mode == Spectrum.Modes.Normal | Spectrum.Mode == Spectrum.Modes.Frame)
             {
                 do
                 {
                     do
                     {
-                        takt += Z80.Run();
                         if (Z80.PC == BreakPoint)
                         {
                             Spectrum.Mode = Spectrum.Modes.Stop;
                             return;
                         }
+                        takt += Z80.Run();
                     } while (takt < 224);
-                    NextString();
-                } while (str < Spectrum.Strings);
-                str = 0;
+                } while (!NextString());
+                if (Spectrum.Mode == Spectrum.Modes.Frame) Spectrum.Mode = Spectrum.Modes.Stop;
             }
             if (Spectrum.Mode == Spectrum.Modes.Step)
             {
                 takt += Z80.Run();
                 if (takt >= 224) NextString();
-                if (str >= Spectrum.Strings) str = 0;
                 Spectrum.Mode = Spectrum.Modes.Stop;
             }
-            if (Spectrum.Mode == Spectrum.Modes.Frame)
-            {
-                do
-                {
-                    do
-                    {
-                        takt += Z80.Run();
-                    } while (takt < 224);
-                    NextString();
-                } while (str < Spectrum.Strings);
-                str = 0;
-                Spectrum.Mode = Spectrum.Modes.Stop;
-            }
-
-            //for (int i = 0; i < Spectrum.Strings; i++)
-            //Screen.DrawString(i);
-
-            /*FPS++;
-            if (lastTime.Second != DateTime.Now.Second)
-            {
-                lastTime = DateTime.Now;
-                Window.Title = FPS.ToString("FPS: 0");
-                FPS = 0;
-            }*/
-
             base.Update(gameTime);
         }
-        void NextString()
+        bool NextString()
         {
             takt -= 224;
             Screen.DrawString(str++);
+            if (str >= Spectrum.Strings)
+            {
+                str = 0;
+                takt += Z80.RunRST38(); //Генерируем прерывание в каждый новый кадАр
+                return true;
+            }
+            return false;
         }
 
         /// <summary>
@@ -151,6 +131,7 @@ namespace Spectrum
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
+            graphics.GraphicsDevice.Clear(Color.Black);
             Dysplay.SetData(Screen.Pixels, 0, 0);
             spriteBatch.Begin();
             spriteBatch.Draw(Dysplay, ScreenSize, DysplaySorce, Color.White);
