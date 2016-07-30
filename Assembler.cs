@@ -209,6 +209,7 @@ namespace Spectrum
                 case 193: C = "POP BC"; break;
                 case 194: C = "JP NZ, " + Bytes(++adr, ++adr); break;
                 case 195: C = "JP " + Bytes(++adr, ++adr); break;
+                case 196: C = "CALL NZ, " + Bytes(++adr, ++adr); break;
                 case 197: C = "PUSH BC"; break;
                 case 198: C = "ADD A, " + Bytes(++adr); break;
                 case 199: C = "RST 0"; break;
