@@ -79,7 +79,7 @@ namespace Spectrum
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            int BreakPoint = -1; //4780 4791
+            int BreakPoint = -54; //4780 4791
 
             if (Keyboard.GetState().IsKeyDown(Keys.Escape) & !Monitor)
             {
@@ -87,6 +87,10 @@ namespace Spectrum
                 form.Show();
                 Monitor = true;
             }
+            if (Keyboard.GetState().IsKeyDown(Keys.Space))
+                Z80.IN[254] = 253;
+            else
+                Z80.IN[254] = 255;
 
             if (Spectrum.Mode == Spectrum.Modes.Normal | Spectrum.Mode == Spectrum.Modes.Frame)
             {

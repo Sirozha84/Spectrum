@@ -73,8 +73,8 @@ namespace Spectrum
                         int str = String - 32;
                         int tab = (i - 32) / 8;
                         //Надо найти байт точек и байт атрибутов
-                        Byte = Spectrum.Memory[AdressesOfStrings[str] + tab];
-                        Attr = Spectrum.Memory[22528 + (str / 8) * 32 + tab];
+                        Byte = Z80.RAM[AdressesOfStrings[str] + tab];
+                        Attr = Z80.RAM[22528 + (str / 8) * 32 + tab];
                         //Находим цвета по атрибутам
                         Ink = Attr & 7;
                         Paper = (Attr & 56) / 8;

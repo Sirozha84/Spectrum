@@ -77,6 +77,7 @@
             this.labelFlags = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.checkBoxInt = new System.Windows.Forms.CheckBox();
+            this.button1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // buttonPause
@@ -115,7 +116,7 @@
             // timerRefresh
             // 
             this.timerRefresh.Enabled = true;
-            this.timerRefresh.Interval = 40;
+            this.timerRefresh.Interval = 20;
             this.timerRefresh.Tick += new System.EventHandler(this.timerRefresh_Tick);
             // 
             // listBox1
@@ -530,11 +531,22 @@
             this.checkBoxInt.TabIndex = 48;
             this.checkBoxInt.UseVisualStyleBackColor = true;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(325, 482);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(66, 23);
+            this.button1.TabIndex = 49;
+            this.button1.Text = "Set";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // Monitor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(559, 517);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.checkBoxInt);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.labelFlags);
@@ -644,5 +656,6 @@
         private System.Windows.Forms.Label labelFlags;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox checkBoxInt;
+        private System.Windows.Forms.Button button1;
     }
 }

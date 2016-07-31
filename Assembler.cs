@@ -11,7 +11,7 @@ namespace Spectrum
         public static string GetCommand(ref int adr)
         {
             string C = "*****";
-            switch (Spectrum.Memory[adr])
+            switch (Z80.RAM[adr])
             {
                 case 0: C = "NOP"; break;
                 case 1: C = "LD BC, " + Bytes(++adr, ++adr); break;
@@ -267,7 +267,7 @@ namespace Spectrum
                 case 255: C = "RST 38"; break;
                 #region case 203 (CB)
                 case 203:
-                    switch (Spectrum.Memory[++adr])
+                    switch (Z80.RAM[++adr])
                     {
                         case 0: C = "RLC B"; break;
                         case 1: C = "RLC C"; break;
@@ -522,7 +522,7 @@ namespace Spectrum
                     #endregion
                 #region case 237 (ED)
                 case 237: //После ED
-                    switch (Spectrum.Memory[++adr])
+                    switch (Z80.RAM[++adr])
                     {
                         case 64: C = "IN B, (C)"; break;
                         case 65: C = "OUT (C), B"; break;
@@ -586,8 +586,8 @@ namespace Spectrum
                 case 221:
                 case 253:
                     string I = "IY";
-                    if (Spectrum.Memory[adr] == 251) I = "IX";
-                    switch (Spectrum.Memory[++adr])
+                    if (Z80.RAM[adr] == 251) I = "IX";
+                    switch (Z80.RAM[++adr])
                     {
                         case 9: C = "ADD " + I + ", BC"; break;
                         case 25: C = "ADD " + I + ", DE"; break;
@@ -623,7 +623,7 @@ namespace Spectrum
                         case 182: C = "OR (" + I + SByte(++adr) + ")"; break;
                         case 190: C = "CP (" + I + SByte(++adr) + ")"; break;
                         case 203:
-                            byte B2 = Spectrum.Memory[adr + 2];
+                            byte B2 = Z80.RAM[adr + 2];
                             if (B2 == 6) C = "RLC (" + I + SByte(++adr) + ")";
                             if (B2 == 14) C = "RRC (" + I + SByte(++adr) + ")";
                             if (B2 == 22) C = "RL (" + I + SByte(++adr) + ")";
@@ -672,22 +672,22 @@ namespace Spectrum
 
         static string Bytes(int c1)
         {
-            return (Spectrum.Memory[c1]).ToString();
+            return (Z80.RAM[c1]).ToString();
         }
 
         static string Bytes(int c1, int c2)
         {
-            return (Spectrum.Memory[c1] + Spectrum.Memory[c2] * 256).ToString();
+            return (Z80.RAM[c1] + Z80.RAM[c2] * 256).ToString();
         }
         //Байт со знаком (-128 - +127)
         static string SByte(int c1)
         {
-            return (Spectrum.Memory[c1] < 128) ? "+" + Spectrum.Memory[c1] : (Spectrum.Memory[c1] - 256).ToString();
+            return (Z80.RAM[c1] < 128) ? "+" + Z80.RAM[c1] : (Z80.RAM[c1] - 256).ToString();
         }
         //Подсчёт адреса в относительном переходе
         static int JR(int adr)
         {
-            byte TO = Spectrum.Memory[adr];
+            byte TO = Z80.RAM[adr];
             int result = 0;
             if (TO < 128) result = adr + TO + 1;
             else result = adr + TO - 255;

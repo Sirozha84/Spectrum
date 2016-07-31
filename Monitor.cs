@@ -28,7 +28,7 @@ namespace Spectrum
                 string asm = Assembler.GetCommand(ref adr);
                 while (asm.Length < 15) asm += " ";
                 for (int i = startadr; i < adr; i++)
-                    asm += Spectrum.Memory[i].ToString(" 000");
+                    asm += Z80.RAM[i].ToString(" 000");
                 listBox1.Items.Add(com + asm);
                 
             } while (listBox1.Items.Count < 44);
@@ -60,7 +60,7 @@ namespace Spectrum
             int start = 21218;
             listBox2.Items.Clear();
             for (int i = 0; i < 12; i++)
-                listBox2.Items.Add(i + start + " - " + Spectrum.Memory[i + start]);
+                listBox2.Items.Add(i + start + " - " + Z80.RAM[i + start]);
             //Кнопочки
             PauseButtonRefresh();
         }
@@ -104,6 +104,11 @@ namespace Spectrum
         private void Monitor_Load(object sender, EventArgs e)
         {
             PauseButtonRefresh();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            Z80.A = Convert.ToByte(textBoxA.Text);
         }
     }
 }

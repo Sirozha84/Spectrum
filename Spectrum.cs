@@ -9,7 +9,6 @@ namespace Spectrum
 {
     static class Spectrum
     {
-        public static byte[] Memory = new byte[65536];
         public static byte[] ROM;
         public static int Strings = 312;//Количество строк 
         public enum Modes { Normal, Stop, Step, Frame };
@@ -18,7 +17,7 @@ namespace Spectrum
         {
             ROM = File.ReadAllBytes("48.rom");
             for (int i = 0; i < 16384; i++)
-                Memory[i] = ROM[i];
+                Z80.RAM[i] = ROM[i];
             Z80.Reset();
         Mode = Modes.Normal;
     }
