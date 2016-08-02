@@ -269,6 +269,7 @@ namespace Spectrum
                             fC = (H & 1) == 1;
                             H /= 2;
                             H &= 127;
+                            fZ = H == 0;
                             return 8;
                         case 126: BIT(RAM[H * 256 + L], 7); return 12;          //BIT 7,(HL)
                         case 134: RES(ref RAM[H * 256 + L], 0); return 15;      //RES 0,(HL)
@@ -534,8 +535,8 @@ namespace Spectrum
         //SUB
         static void SUB(byte Reg)
         {
+            fC = A < Reg;
             A -= Reg;
-            fC = A > Reg;
             fZ = A == 0;
             //
             //
