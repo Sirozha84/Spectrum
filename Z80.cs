@@ -191,6 +191,7 @@ namespace Spectrum
                 case 63: fC ^= true; return 4;                                  //CCF
                 case 66: B = D; return 4;                                       //LD B,D
                 case 68: B = H; return 4;                                       //LD B,H
+                case 70: B = RAM[H * 256 + L]; return 7;                        //LD B,(HL)
                 case 71: B = A; return 4;                                       //LD B,A
                 case 77: C = L; return 4;                                       //LD C,L
                 case 78: C = RAM[H * 256 + L]; return 7;                        //LD C,(HL)
@@ -358,6 +359,11 @@ namespace Spectrum
                             RAM[tmp++] = C;
                             RAM[tmp] = B;
                             return 20;
+                        case 68:                                                //NEG
+                            A = (byte)(256 - A);
+                            fZ = A == 0;
+                            //флаги... остальные
+                            return 8;
                         case 71: I = A; return 9;                               //LD I,A
                         case 75:                                                //LD BC,(nn)
                             tmp = (ushort)(RAM[PC++] + RAM[PC++] * 256);

@@ -13,7 +13,7 @@ namespace Spectrum
         public static int Strings = 312;//Количество строк 
         public enum Modes { Normal, Stop, Step, Frame };
         public static Modes Mode;
-        public static int BreakPoint = -4441;
+        public static int BreakPoint = -3360;
         public static void Init()
         {
             ROM = File.ReadAllBytes("48.rom");
