@@ -115,7 +115,7 @@ namespace Spectrum
             Pixels[a] = Palette[c];
             Pixels[a + 1] = Palette[c];
             Pixels[a + 640] = Palette2[c];
-            Pixels[a + 641] = Palette2[c];
+            Pixels[a + 641] = Palette2[c]; //(uint)(Palette2[c] / (rnd.Next(2)+1));
         }
     }
 }

@@ -23,7 +23,8 @@ namespace Spectrum
             listBox1.Items.Clear();
             do
             {
-                string com = adr.ToString("00000 - ");
+                string b = Z80.Be[adr] ? "|" : " ";
+                string com = adr.ToString("00000" + b + "- ");
                 int startadr = adr;
                 string asm = Assembler.GetCommand(ref adr);
                 while (asm.Length < 15) asm += " ";
@@ -57,7 +58,7 @@ namespace Spectrum
             textBoxR.Text = Z80.R.ToString();
             checkBoxInt.Checked = Z80.Interrupt;
             //Немножко кода в просмор памяти
-            int start = 21218;
+            int start = 23690;
             listBox2.Items.Clear();
             for (int i = 0; i < 12; i++)
                 listBox2.Items.Add(i + start + " - " + Z80.RAM[i + start]);
@@ -76,7 +77,10 @@ namespace Spectrum
             if (Spectrum.Mode == Spectrum.Modes.Normal)
                 Spectrum.Mode = Spectrum.Modes.Stop;
             else
+            {
                 Spectrum.Mode = Spectrum.Modes.Normal;
+                Spectrum.BreakPoint = -1;
+            }
             PauseButtonRefresh();
         }
 
