@@ -16,7 +16,7 @@ namespace Spectrum
         static bool fSa, fZa, fYa, fHa, fXa, fPa, fNa, fCa;
         static byte IM;
         public static bool Interrupt;
-        public static byte[] IN = new byte[256];
+        public static byte[] IN = new byte[65536];
         /// <summary>
         /// Сброс
         /// </summary>
@@ -31,7 +31,14 @@ namespace Spectrum
             fXa = false; fPa = false; fNa = false; fCa = false;
             Interrupt = false;
 
-            IN[254] = 255;
+            IN[65278] = 255;
+            IN[65022] = 255;
+            IN[64510] = 255;
+            IN[63486] = 255;
+            IN[61438] = 255;
+            IN[57342] = 255;
+            IN[49150] = 255;
+            IN[32766] = 255;
         }
 
         /// <summary>
@@ -109,6 +116,7 @@ namespace Spectrum
                     return 4;
                 case 9: ADDHL(B, C); return 11;                                 //ADD HL,BC
                 case 11: DEC(ref B, ref C); return 6;                           //DEC BC
+                case 12: INC(ref C); return 4;                                  //INC C
                 case 13: DEC(ref C); return 4;                                  //DEC C
                 case 14: C = RAM[PC++]; return 7;                               //LD C,n
                 case 15:                                                        //RRCA - вращение аккумулятора вправо с переносом бита
@@ -203,6 +211,7 @@ namespace Spectrum
                 case 115: RAM[H * 256 + L] = E; return 7;                       //LD (HL),E
                 case 119: RAM[H * 256 + L] = A; return 7;                       //LD (HL),A
                 case 120: A = B; return 4;                                      //LD A,B
+                case 121: A = C; return 4;                                      //LD A,C
                 case 122: A = D; return 4;                                      //LD A,D
                 case 123: A = E; return 4;                                      //LD A,E
                 case 124: A = H; return 4;                                      //LD A,H
@@ -224,12 +233,14 @@ namespace Spectrum
                 case 185: CP(C); return 4;                                      //CP C
                 case 188: CP(H); return 4;                                      //CP H
                 case 189: CP(L); return 4;                                      //CP L
+                case 190: CP(RAM[H * 256 + L]); return 7;                       //CP (HL)
                 case 192:                                                       //RET NZ
                     if (!fZ) { RET(); return 5; }
                     else return 11;
                 case 193: C = RAM[SP++]; B = RAM[SP++]; return 10;              //POP BC
                 case 194:                                                       //JP NZ, nn
                     if (!fZ) PC = (ushort)(RAM[PC] + RAM[PC + 1] * 256);
+                    else PC += 2;
                     return 10;
                 case 195:                                                       //JP nn
                     PC = (ushort)(RAM[PC] + RAM[PC + 1] * 256);
@@ -265,12 +276,11 @@ namespace Spectrum
                             B *= 2;
                             if (fC) B++;
                             return 8;
-                        case 60:                                                //SRL H - вращение вправо
-                            fC = (H & 1) == 1;
-                            H /= 2;
-                            H &= 127;
-                            fZ = H == 0;
-                            return 8;
+                        case 60: SRL(ref H); return 8;                          //SRL H - вращение вправо
+                        case 61: SRL(ref L); return 8;                          //SRL L
+                        case 64: BIT(B, 0); return 8;                           //BIT 0,B
+                        case 90: BIT(D, 3); return 8;                           //BIT 3,D
+                        case 103: BIT(A, 4); return 8;                          //BIT 4,A
                         case 126: BIT(RAM[H * 256 + L], 7); return 12;          //BIT 7,(HL)
                         case 134: RES(ref RAM[H * 256 + L], 0); return 15;      //RES 0,(HL)
                         case 174: RES(ref RAM[H * 256 + L], 5); return 15;      //RES 5,(HL)
@@ -306,6 +316,7 @@ namespace Spectrum
                     return 10;
                 case 210:                                                       //JP NC,nn
                     if (!fC) PC = (ushort)(RAM[PC] + RAM[PC + 1] * 256);
+                    else PC += 2;
                     return 10;
                 case 211:                                                       //OUT (n),A
                     OUT(RAM[PC++], A);
@@ -321,7 +332,6 @@ namespace Spectrum
                     if (fC) { RET(); return 5; }
                     else return 11;
                 case 217: EXX(); return 4;                                      //EXX
-                case 121: A = C; return 4;                                      //LD A,C
                 case 225: L = RAM[SP++]; H = RAM[SP++]; return 10;              //POP HL
                 case 227:                                                       //EX (SP),HL
                     t = RAM[SP]; RAM[SP] = L; L = t;
@@ -365,7 +375,9 @@ namespace Spectrum
                             RAM[tmp++] = (byte)(SP % 256);
                             RAM[tmp] = (byte)(SP / 256);
                             return 20;
-                        case 120: A = IN[C]; return 12;                         //IN A,(C)
+                        case 120: A = IN[B * 256 + C];
+                            Console.WriteLine((B * 256 + C).ToString() + " - " + A.ToString());
+                            return 12;               //IN A,(C)
                         case 176:                                               //LDIR - Копирование "снизу" (нормальное)
                             RAM[D * 256 + E] = RAM[H * 256 + L];
                             fN = false;
@@ -387,51 +399,22 @@ namespace Spectrum
                     }
                     break;
                 #endregion
+                case 238: XOR(RAM[PC++]); return 7;                             //XOR N
                 case 241: GetFlags(RAM[SP++]); A = RAM[SP++]; return 10;        //POP AF
                 case 243: Interrupt = false; return 40;                         //DI
                 case 245: RAM[--SP] = A; RAM[--SP] = F(); return 11;            //PUSH AF
                 case 246: OR(RAM[PC++]); return 7;                              //OR n
                 case 249: SP = (ushort)(H * 256 + L); return 6;                 //LD SP, HL
+                case 250:                                                       //JP M, nn
+                    if (fS) PC = (ushort)(RAM[PC] + RAM[PC + 1] * 256);
+                    else PC += 2;
+                    return 10;
                 case 251: Interrupt = true; return 4;                           //EI
                 #region case 253 (Префикс IY)
+                case 221:
+                    return IndexOperation(ref IX);
                 case 253:
-                    R++;
-                    if (R > 127) R = 0;
-                    ushort IReg = (RAM[PC - 1] == 221) ? IX : IY;
-                    switch (RAM[PC++])
-                    {
-                        case 33:                                                //LD IY,nn
-                            IY = (ushort)(RAM[PC++] + RAM[PC++] * 256);
-                            return 14;
-                        case 53: DEC(ref RAM[IplusS(IY)]); return 23;           //DEC (IY+S)
-                        case 54: RAM[IplusS(IY)] = RAM[PC++]; return 19;        //LD (IY+S),N
-                        case 70: B = RAM[IplusS(IY)]; return 19;                //LD B,(IY+S)
-                        case 110: L = RAM[IplusS(IY)]; return 19;               //LD L,(IY+S)
-                        case 113: RAM[IplusS(IY)] = C; return 19;               //LD (IY+S),C
-                        case 117: RAM[IplusS(IY)] = L; return 19;               //LD (IY+S),L
-                        case 134: ADD(ref A, RAM[IplusS(IY)]); return 19;       //ADD A,(IY+S)
-                        case 203:
-                            PC++;
-                            switch (RAM[PC])
-                            {
-                                case 70: BIT(RAM[IplusS4(IY)], 0); return 23;   //BIT 0,(IY+S)
-                                case 78: BIT(RAM[IplusS4(IY)], 1); return 23;   //BIT 1,(IY+S)
-                                case 94: BIT(RAM[IplusS4(IY)], 3); return 23;   //BIT 3,(IY+S)
-                                case 102: BIT(RAM[IplusS4(IY)], 4); return 23;  //BIT 4,(IY+S)
-                                case 110: BIT(RAM[IplusS4(IY)], 5); return 23;  //BIT 5,(IY+S)
-                                case 118: BIT(RAM[IplusS4(IY)], 6); return 23;  //BIT 6,(IY+S)
-                                case 134: RES(ref RAM[IplusS4(IY)], 0); return 23;  //RES 0,(IY+S)
-                                case 142: RES(ref RAM[IplusS4(IY)], 1); return 23;  //RES 1,(IY+S)
-                                case 166: RES(ref RAM[IplusS4(IY)], 4); return 23;  //RES 4,(IY+S)
-                                case 174: RES(ref RAM[IplusS4(IY)], 5); return 23;  //RES 5,(IY+S)
-                                case 198: SET(ref RAM[IplusS4(IY)], 0); return 23;  //SET 0,(IY+S)
-                                case 206: SET(ref RAM[IplusS4(IY)], 1); return 23;  //SET 1,(IY+S)
-                                case 230: SET(ref RAM[IplusS4(IY)], 4); return 23;  //SET 4,(IY+S)
-                                case 238: SET(ref RAM[IplusS4(IY)], 5); return 23;  //SET 5,(IY+S)
-                            }
-                            break;
-                    }
-                    break;
+                    return IndexOperation(ref IY);
                 #endregion
                 case 254: CP(RAM[PC++]); return 7;                              //CP n
                 case 255:                                                       //RST 38
@@ -443,6 +426,53 @@ namespace Spectrum
             PC = pc;
             return 1;
         }
+
+        //Операции с индексами IX, IY
+        static int IndexOperation(ref ushort Index)
+        {
+            R++;
+            if (R > 127) R = 0;
+            switch (RAM[PC++])
+            {
+                case 9: ADD(ref Index, B, C); return 15;                        //ADD II,BC
+                case 33:                                                        //LD IY,nn
+                    Index = (ushort)(RAM[PC++] + RAM[PC++] * 256);
+                    return 14;
+                case 53: DEC(ref RAM[IplusS(Index)]); return 23;                //DEC (II+S)
+                case 54: RAM[IplusS(Index)] = RAM[PC++]; return 19;             //LD (II+S),N
+                case 70: B = RAM[IplusS(Index)]; return 19;                     //LD B,(II+S)
+                case 78: C = RAM[IplusS(Index)]; return 19;                     //LD C,(II+S)
+                case 86: D = RAM[IplusS(Index)]; return 19;                     //LD D,(II+S)
+                case 94: E = RAM[IplusS(Index)]; return 19;                     //LD E,(II+S)
+                case 110: L = RAM[IplusS(Index)]; return 19;                    //LD L,(II+S)
+                case 113: RAM[IplusS(Index)] = C; return 19;                    //LD (II+S),C
+                case 117: RAM[IplusS(Index)] = L; return 19;                    //LD (II+S),L
+                case 134: ADD(ref A, RAM[IplusS(Index)]); return 19;            //ADD A,(II+S)
+                case 203:
+                    PC++;
+                    switch (RAM[PC])
+                    {
+                        case 70: BIT(RAM[IplusS4(Index)], 0); return 23;        //BIT 0,(II+S)
+                        case 78: BIT(RAM[IplusS4(Index)], 1); return 23;        //BIT 1,(II+S)
+                        case 94: BIT(RAM[IplusS4(Index)], 3); return 23;        //BIT 3,(II+S)
+                        case 102: BIT(RAM[IplusS4(Index)], 4); return 23;       //BIT 4,(II+S)
+                        case 110: BIT(RAM[IplusS4(Index)], 5); return 23;       //BIT 5,(II+S)
+                        case 118: BIT(RAM[IplusS4(Index)], 6); return 23;       //BIT 6,(II+S)
+                        case 134: RES(ref RAM[IplusS4(Index)], 0); return 23;   //RES 0,(II+S)
+                        case 142: RES(ref RAM[IplusS4(Index)], 1); return 23;   //RES 1,(II+S)
+                        case 166: RES(ref RAM[IplusS4(Index)], 4); return 23;   //RES 4,(II+S)
+                        case 174: RES(ref RAM[IplusS4(Index)], 5); return 23;   //RES 5,(II+S)
+                        case 198: SET(ref RAM[IplusS4(Index)], 0); return 23;   //SET 0,(II+S)
+                        case 206: SET(ref RAM[IplusS4(Index)], 1); return 23;   //SET 1,(II+S)
+                        case 230: SET(ref RAM[IplusS4(Index)], 4); return 23;   //SET 4,(II+S)
+                        case 238: SET(ref RAM[IplusS4(Index)], 5); return 23;   //SET 5,(II+S)
+                    }
+                    break;
+            }
+            PC -= 2;
+            return 1;
+        }
+
         public static int RunRST38()
         {
             if (Interrupt)
@@ -505,6 +535,7 @@ namespace Spectrum
             b--;
             fC = b == 255; //Наверное...
             fZ = b == 0;   //Наверное...
+            fS = b > 127;  //Наверное...
         }
         static void DEC(ref byte r1, ref byte r2)
         {
@@ -522,6 +553,10 @@ namespace Spectrum
             //czps
             fC = t > r1;
             fZ = r1 == 0;
+        }
+        static void ADD(ref ushort ii, byte r1, byte r2)
+        {
+            ii += (ushort)(r1 * 256 + r2);
         }
         static void ADDHL(byte r1, byte r2)
         {
@@ -659,6 +694,14 @@ namespace Spectrum
             if (bit == 5) fZ = (Byte & 32) == 0;
             if (bit == 6) fZ = (Byte & 64) == 0;
             if (bit == 7) fZ = (Byte & 128) == 0;
+        }
+        //SRL
+        static void SRL(ref byte Reg)
+        {
+            fC = (Reg & 1) == 1;
+            Reg /= 2;
+            Reg &= 127;
+            fZ = Reg == 0;
         }
     }
 }

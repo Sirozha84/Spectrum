@@ -586,7 +586,7 @@ namespace Spectrum
                 case 221:
                 case 253:
                     string I = "IY";
-                    if (Z80.RAM[adr] == 251) I = "IX";
+                    if (Z80.RAM[adr] == 221) I = "IX";
                     switch (Z80.RAM[++adr])
                     {
                         case 9: C = "ADD " + I + ", BC"; break;
