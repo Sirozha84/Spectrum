@@ -58,7 +58,7 @@ namespace Spectrum
             textBoxR.Text = Z80.R.ToString();
             checkBoxInt.Checked = Z80.Interrupt;
             //Немножко кода в просмор памяти
-            int start = 23690;
+            int start = 23420;
             listBox2.Items.Clear();
             for (int i = 0; i < 12; i++)
                 listBox2.Items.Add(i + start + " - " + Z80.RAM[i + start]);

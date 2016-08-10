@@ -18,6 +18,7 @@ namespace Spectrum
         static byte IM;
         public static bool Interrupt;
         public static byte[] IN = new byte[65536];
+        public static byte[] OUT = new byte[65536];
         /// <summary>
         /// Сброс
         /// </summary>
@@ -140,6 +141,7 @@ namespace Spectrum
                 case 25: ADDHL(D, E); return 11;                                //ADD HL,DE
                 case 26: A = RAM[D * 256 + E]; return 7;                        //LD A,(DE)
                 case 27: DEC(ref D, ref E); return 6;                           //DEC DE
+                case 30: E = RAM[PC++]; return 7;                               //LD E,n
                 case 31:                                                        //RRA - вращение аккумулятора вправо
                     fC = (A & 1) != 0;
                     A /= 2;
@@ -174,6 +176,7 @@ namespace Spectrum
                 case 48:                                                        //JR NC,n
                     if (!fC) { JR(); return 12; }
                     else { PC++; return 7; }
+                case 49: SP = (ushort)(RAM[PC++] + RAM[PC++] * 256); return 10; //LD SP,nn
                 case 50:                                                        //LD (nn),A
                     tmp = (ushort)(RAM[PC++] + RAM[PC++] * 256);
                     RAM[tmp] = A;
@@ -190,6 +193,7 @@ namespace Spectrum
                 case 62: A = RAM[PC++]; return 7;                               //LD A,n
                 case 63: fC ^= true; return 4;                                  //CCF
                 case 66: B = D; return 4;                                       //LD B,D
+                case 67: B = E; return 4;                                       //LD B,E
                 case 68: B = H; return 4;                                       //LD B,H
                 case 70: B = RAM[H * 256 + L]; return 7;                        //LD B,(HL)
                 case 71: B = A; return 4;                                       //LD B,A
@@ -206,6 +210,7 @@ namespace Spectrum
                 case 97: H = C; return 4;                                       //LD H,C
                 case 98: H = D; return 4;                                       //LD H,D
                 case 99: H = E; return 4;                                       //LD H,E
+                case 102: H = RAM[H * 256 + L]; return 7;                       //LD H,(HL)
                 case 103: H = A; return 4;                                      //LD H,A
                 case 104: L = B; return 4;                                      //LD L,B
                 case 106: L = D; return 4;                                      //LD L,D
@@ -233,6 +238,7 @@ namespace Spectrum
                 case 171: XOR(E); return 4;                                     //XOR E
                 case 174: XOR(RAM[H * 256 + L]); return 7;                      //XOR (HL)
                 case 175: XOR(A); return 4;                                     //XOR A
+                case 177: OR(C); return 4;                                      //OR C
                 case 179: OR(E); return 4;                                      //OR E
                 case 181: OR(L); return 4;                                      //OR L
                 case 185: CP(C); return 4;                                      //CP C
@@ -325,9 +331,7 @@ namespace Spectrum
                     if (!fC) PC = (ushort)(RAM[PC] + RAM[PC + 1] * 256);
                     else PC += 2;
                     return 10;
-                case 211:                                                       //OUT (n),A
-                    OUT(RAM[PC++], A);
-                    return 11;
+                case 211: OUT[RAM[PC++]] = A; return 11;                        //OUT (n),A
                 case 213: RAM[--SP] = D; RAM[--SP] = E; return 11;              //PUSH DE
                 case 214: SUB(RAM[PC++]); return 7;                             //SUB n
                 case 215:                                                       //RST 10
@@ -389,6 +393,7 @@ namespace Spectrum
                             RAM[tmp] = (byte)(SP / 256);
                             return 20;
                         case 120: A = IN[B * 256 + C]; return 12;               //IN A,(C)
+                        case 121: OUT[B * 256 + C] = A; return 12;              //OUT (C),A
                         case 176:                                               //LDIR - Копирование "снизу" (нормальное)
                             RAM[D * 256 + E] = RAM[H * 256 + L];
                             fN = false;
@@ -411,6 +416,11 @@ namespace Spectrum
                     break;
                 #endregion
                 case 238: XOR(RAM[PC++]); return 7;                             //XOR N
+                case 239:                                                       //RST 28
+                    RAM[--SP] = (byte)((PC) / 256);
+                    RAM[--SP] = (byte)((PC) % 256);
+                    PC = 40;
+                    return 11;
                 case 241: GetFlags(RAM[SP++]); A = RAM[SP++]; return 10;        //POP AF
                 case 243: Interrupt = false; return 40;                         //DI
                 case 245: RAM[--SP] = A; RAM[--SP] = F(); return 11;            //PUSH AF
@@ -446,6 +456,11 @@ namespace Spectrum
                 case 33:                                                        //LD IY,nn
                     Index = (ushort)(RAM[PC++] + RAM[PC++] * 256);
                     return 14;
+                case 34:                                                        //LD (nn),II
+                    int adr = RAM[PC++] + RAM[PC++] * 256;                 
+                    RAM[adr] = (byte)(Index % 256);
+                    RAM[adr + 1] = (byte)(Index / 256);
+                    return 20;
                 case 53: DEC(ref RAM[IplusS(Index)]); return 23;                //DEC (II+S)
                 case 54: RAM[IplusS(Index)] = RAM[PC++]; return 19;             //LD (II+S),N
                 case 70: B = RAM[IplusS(Index)]; return 19;                     //LD B,(II+S)
@@ -640,15 +655,6 @@ namespace Spectrum
             //PC = (ushort)(Spectrum.Memory[SP] + Spectrum.Memory[SP + 1] * 256);
             //SP += 2;
             PC = (ushort)(RAM[SP++] + RAM[SP++] * 256);
-        }
-
-        //IN
-
-        //OUT
-        static void OUT(byte Port, byte Reg)
-        {
-            if (Port == 254) Screen.Border = Reg % 8;
-            //
         }
         //EXX
         static void EXX()

@@ -592,6 +592,7 @@ namespace Spectrum
                         case 9: C = "ADD " + I + ", BC"; break;
                         case 25: C = "ADD " + I + ", DE"; break;
                         case 33: C = "LD " + I + ", " + Bytes(++adr, ++adr); break;
+                        case 34: C = "LD (" + Bytes(++adr, ++adr) + ")," + I; break;
                         case 35: C = "INC " + I; break;
                         case 41: C = "ADD " + I + ", " + I; break;
                         case 42: C = "LD " + I + ", (" + Bytes(++adr, ++adr) + ")"; break;

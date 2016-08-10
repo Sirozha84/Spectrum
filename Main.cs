@@ -90,7 +90,7 @@ namespace Spectrum
             {
                 //Spectrum.BreakPoint = 3117;
                 Z80.IN[65278] = 254; //FEFE
-                Z80.IN[65022] = 253; //FDFE
+                Z80.IN[65022] = 254; //FDFE
             }
             else
             {
