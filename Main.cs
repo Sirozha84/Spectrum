@@ -86,23 +86,54 @@ namespace Spectrum
                 form.Show();
                 Monitor = true;
             }
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
-            {
-                //Spectrum.BreakPoint = 3117;
-                Z80.IN[65278] = 254; //FEFE
-                Z80.IN[65022] = 254; //FDFE
-            }
-            else
-            {
-                Z80.IN[65278] = 255;
-                Z80.IN[65022] = 255;
-                Z80.IN[64510] = 255;
-                Z80.IN[63486] = 255;
-                Z80.IN[61438] = 255;
-                Z80.IN[57342] = 255;
-                Z80.IN[49150] = 255;
-                Z80.IN[32766] = 255;
-            }
+            Z80.IN[65278] = 255;
+            Z80.IN[65022] = 255;
+            Z80.IN[64510] = 255;
+            Z80.IN[63486] = 255;
+            Z80.IN[61438] = 255;
+            Z80.IN[57342] = 255;
+            Z80.IN[49150] = 255;
+            Z80.IN[32766] = 255;
+            if (Keyboard.GetState().IsKeyDown(Keys.D1)) { Z80.IN[63486] &= 254; }
+            if (Keyboard.GetState().IsKeyDown(Keys.D2)) { Z80.IN[63486] &= 253; }
+            if (Keyboard.GetState().IsKeyDown(Keys.D3)) { Z80.IN[63486] &= 251; }
+            if (Keyboard.GetState().IsKeyDown(Keys.D4)) { Z80.IN[63486] &= 247; }
+            if (Keyboard.GetState().IsKeyDown(Keys.D5)) { Z80.IN[63486] &= 239; }
+            if (Keyboard.GetState().IsKeyDown(Keys.D6)) { Z80.IN[61438] &= 239; }
+            if (Keyboard.GetState().IsKeyDown(Keys.D7)) { Z80.IN[61438] &= 247; }
+            if (Keyboard.GetState().IsKeyDown(Keys.D8)) { Z80.IN[61438] &= 251; }
+            if (Keyboard.GetState().IsKeyDown(Keys.D9)) { Z80.IN[61438] &= 253; }
+            if (Keyboard.GetState().IsKeyDown(Keys.D0)) { Z80.IN[61438] &= 254; }
+            if (Keyboard.GetState().IsKeyDown(Keys.Q)) { Z80.IN[64510] &= 254; }
+            if (Keyboard.GetState().IsKeyDown(Keys.W)) { Z80.IN[64510] &= 253; }
+            if (Keyboard.GetState().IsKeyDown(Keys.E)) { Z80.IN[64510] &= 251; }
+            if (Keyboard.GetState().IsKeyDown(Keys.R)) { Z80.IN[64510] &= 247; }
+            if (Keyboard.GetState().IsKeyDown(Keys.T)) { Z80.IN[64510] &= 239; }
+            if (Keyboard.GetState().IsKeyDown(Keys.Y)) { Z80.IN[57342] &= 239; }
+            if (Keyboard.GetState().IsKeyDown(Keys.U)) { Z80.IN[57342] &= 247; }
+            if (Keyboard.GetState().IsKeyDown(Keys.I)) { Z80.IN[57342] &= 251; }
+            if (Keyboard.GetState().IsKeyDown(Keys.O)) { Z80.IN[57342] &= 253; }
+            if (Keyboard.GetState().IsKeyDown(Keys.P)) { Z80.IN[57342] &= 254; }
+            if (Keyboard.GetState().IsKeyDown(Keys.A)) { Z80.IN[65022] &= 254; }
+            if (Keyboard.GetState().IsKeyDown(Keys.S)) { Z80.IN[65022] &= 253; }
+            if (Keyboard.GetState().IsKeyDown(Keys.D)) { Z80.IN[65022] &= 251; }
+            if (Keyboard.GetState().IsKeyDown(Keys.F)) { Z80.IN[65022] &= 247; }
+            if (Keyboard.GetState().IsKeyDown(Keys.G)) { Z80.IN[65022] &= 239; }
+            if (Keyboard.GetState().IsKeyDown(Keys.H)) { Z80.IN[49150] &= 239; }
+            if (Keyboard.GetState().IsKeyDown(Keys.J)) { Z80.IN[49150] &= 247; }
+            if (Keyboard.GetState().IsKeyDown(Keys.K)) { Z80.IN[49150] &= 251; }
+            if (Keyboard.GetState().IsKeyDown(Keys.L)) { Z80.IN[49150] &= 253; }
+            if (Keyboard.GetState().IsKeyDown(Keys.Enter)) { Z80.IN[49150] &= 254; }
+            if (Keyboard.GetState().IsKeyDown(Keys.LeftShift)) { Z80.IN[65278] &= 254; }
+            if (Keyboard.GetState().IsKeyDown(Keys.Z)) { Z80.IN[65278] &= 253; }
+            if (Keyboard.GetState().IsKeyDown(Keys.X)) { Z80.IN[65278] &= 251; }
+            if (Keyboard.GetState().IsKeyDown(Keys.C)) { Z80.IN[65278] &= 247; }
+            if (Keyboard.GetState().IsKeyDown(Keys.V)) { Z80.IN[65278] &= 239; }
+            if (Keyboard.GetState().IsKeyDown(Keys.B)) { Z80.IN[32766] &= 239; }
+            if (Keyboard.GetState().IsKeyDown(Keys.N)) { Z80.IN[32766] &= 247; }
+            if (Keyboard.GetState().IsKeyDown(Keys.M)) { Z80.IN[32766] &= 251; }
+            if (Keyboard.GetState().IsKeyDown(Keys.RightShift)) { Z80.IN[32766] &= 253; }
+            if (Keyboard.GetState().IsKeyDown(Keys.Space)) { Z80.IN[32766] &= 254; }
 
             if (Spectrum.Mode == Spectrum.Modes.Normal | Spectrum.Mode == Spectrum.Modes.Frame)
             {
