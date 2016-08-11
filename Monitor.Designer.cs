@@ -146,7 +146,7 @@
             // 
             this.checkBoxZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxZ.AutoSize = true;
-            this.checkBoxZ.Location = new System.Drawing.Point(343, 89);
+            this.checkBoxZ.Location = new System.Drawing.Point(341, 89);
             this.checkBoxZ.Name = "checkBoxZ";
             this.checkBoxZ.Size = new System.Drawing.Size(15, 14);
             this.checkBoxZ.TabIndex = 7;
@@ -156,7 +156,7 @@
             // 
             this.checkBoxY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxY.AutoSize = true;
-            this.checkBoxY.Location = new System.Drawing.Point(364, 89);
+            this.checkBoxY.Location = new System.Drawing.Point(360, 89);
             this.checkBoxY.Name = "checkBoxY";
             this.checkBoxY.Size = new System.Drawing.Size(15, 14);
             this.checkBoxY.TabIndex = 8;
@@ -166,7 +166,7 @@
             // 
             this.checkBoxH.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxH.AutoSize = true;
-            this.checkBoxH.Location = new System.Drawing.Point(385, 89);
+            this.checkBoxH.Location = new System.Drawing.Point(379, 89);
             this.checkBoxH.Name = "checkBoxH";
             this.checkBoxH.Size = new System.Drawing.Size(15, 14);
             this.checkBoxH.TabIndex = 9;
@@ -176,7 +176,7 @@
             // 
             this.checkBoxC.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxC.AutoSize = true;
-            this.checkBoxC.Location = new System.Drawing.Point(470, 89);
+            this.checkBoxC.Location = new System.Drawing.Point(456, 89);
             this.checkBoxC.Name = "checkBoxC";
             this.checkBoxC.Size = new System.Drawing.Size(15, 14);
             this.checkBoxC.TabIndex = 13;
@@ -186,7 +186,7 @@
             // 
             this.checkBoxN.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxN.AutoSize = true;
-            this.checkBoxN.Location = new System.Drawing.Point(449, 89);
+            this.checkBoxN.Location = new System.Drawing.Point(437, 89);
             this.checkBoxN.Name = "checkBoxN";
             this.checkBoxN.Size = new System.Drawing.Size(15, 14);
             this.checkBoxN.TabIndex = 12;
@@ -196,7 +196,7 @@
             // 
             this.checkBoxP.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxP.AutoSize = true;
-            this.checkBoxP.Location = new System.Drawing.Point(428, 89);
+            this.checkBoxP.Location = new System.Drawing.Point(418, 89);
             this.checkBoxP.Name = "checkBoxP";
             this.checkBoxP.Size = new System.Drawing.Size(15, 14);
             this.checkBoxP.TabIndex = 11;
@@ -206,7 +206,7 @@
             // 
             this.checkBoxX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.checkBoxX.AutoSize = true;
-            this.checkBoxX.Location = new System.Drawing.Point(406, 89);
+            this.checkBoxX.Location = new System.Drawing.Point(398, 89);
             this.checkBoxX.Name = "checkBoxX";
             this.checkBoxX.Size = new System.Drawing.Size(15, 14);
             this.checkBoxX.TabIndex = 10;
@@ -507,9 +507,9 @@
             this.labelFlags.AutoSize = true;
             this.labelFlags.Location = new System.Drawing.Point(322, 71);
             this.labelFlags.Name = "labelFlags";
-            this.labelFlags.Size = new System.Drawing.Size(162, 13);
+            this.labelFlags.Size = new System.Drawing.Size(149, 13);
             this.labelFlags.TabIndex = 46;
-            this.labelFlags.Text = "S    Z     Y     H    X     P    NV   C";
+            this.labelFlags.Text = "S    Z    Y    H    X    V    N    C";
             // 
             // label1
             // 

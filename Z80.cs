@@ -13,8 +13,8 @@ namespace Spectrum
         public static byte A, B, C, D, E, H, L, I, R;
         public static byte Aa, Ba, Ca, Da, Ea, Ha, La;
         public static UInt16 PC, SP, IX, IY;
-        static bool fS, fZ, fY, fH, fX, fP, fN, fC;
-        static bool fSa, fZa, fYa, fHa, fXa, fPa, fNa, fCa;
+        static bool fS, fZ, fY, fH, fX, fV, fN, fC;
+        static bool fSa, fZa, fYa, fHa, fXa, fVa, fNa, fCa;
         static byte IM;
         public static bool Interrupt;
         public static byte[] IN = new byte[65536];
@@ -28,9 +28,9 @@ namespace Spectrum
             Aa = 0; Ba = 0; Ca = 0; Da = 0; Ea = 0; Ha = 0; La = 0;
             PC = 0; SP = 0; IX = 0; IY = 0; I = 0; R = 0;
             fS = false; fZ = false; fY = false; fH = false;
-            fX = false; fP = false; fN = false; fC = false;
+            fX = false; fV = false; fN = false; fC = false;
             fSa = false; fZa = false; fYa = false; fHa = false;
-            fXa = false; fPa = false; fNa = false; fCa = false;
+            fXa = false; fVa = false; fNa = false; fCa = false;
             Interrupt = false;
 
             IN[65278] = 255;
@@ -55,7 +55,7 @@ namespace Spectrum
             if (fY) reg += 32;
             if (fH) reg += 16;
             if (fX) reg += 8;
-            if (fP) reg += 4;
+            if (fV) reg += 4;
             if (fN) reg += 2;
             if (fC) reg += 1;
             return reg;
@@ -68,7 +68,7 @@ namespace Spectrum
             if (fYa) reg += 32;
             if (fHa) reg += 16;
             if (fXa) reg += 8;
-            if (fPa) reg += 4;
+            if (fVa) reg += 4;
             if (fNa) reg += 2;
             if (fCa) reg += 1;
             return reg;
@@ -84,7 +84,7 @@ namespace Spectrum
             fY = (f & 32) != 0;
             fH = (f & 16) != 0;
             fX = (f & 8) != 0;
-            fP = (f & 4) != 0;
+            fV = (f & 4) != 0;
             fN = (f & 2) != 0;
             fC = (f & 1) != 0;
         }
@@ -103,6 +103,7 @@ namespace Spectrum
             {
                 case 0: return 4;                                               //NOP
                 case 1: C = RAM[PC++]; B = RAM[PC++]; return 10;                //LD BC,nn
+                case 2: RAM[B * 256 + C] = A; return 7;                         //LD (BC),A
                 case 3: INC(ref B, ref C); return 6;                            //INC BC
                 case 4: INC(ref B); return 4;                                   //INC B
                 case 5: DEC(ref B); return 4;                                   //DEC B
@@ -114,7 +115,7 @@ namespace Spectrum
                     tb = fY; fY = fYa; fSa = tb;
                     tb = fH; fH = fHa; fSa = tb;
                     tb = fX; fX = fXa; fSa = tb;
-                    tb = fP; fP = fPa; fSa = tb;
+                    tb = fV; fV = fVa; fSa = tb;
                     tb = fN; fN = fNa; fSa = tb;
                     tb = fC; fC = fCa; fSa = tb;
                     return 4;
@@ -238,6 +239,7 @@ namespace Spectrum
                 case 171: XOR(E); return 4;                                     //XOR E
                 case 174: XOR(RAM[H * 256 + L]); return 7;                      //XOR (HL)
                 case 175: XOR(A); return 4;                                     //XOR A
+                case 176: OR(B); return 4;                                      //OR B
                 case 177: OR(C); return 4;                                      //OR C
                 case 179: OR(E); return 4;                                      //OR E
                 case 181: OR(L); return 4;                                      //OR L
@@ -401,8 +403,8 @@ namespace Spectrum
                             C--; if (C == 255) B--;
                             E++; if (E == 0) D++;
                             L++; if (L == 0) H++;
-                            if (B != 0 | C != 0) { fP = true; PC -= 2; return 21; }
-                            else { fP = false; return 16; }
+                            if (B != 0 | C != 0) { fV = true; PC -= 2; return 21; }
+                            else { fV = false; return 16; }
                         case 184:                                               //LDDR - Копирование "сверху"
                             RAM[D * 256 + E] = RAM[H * 256 + L];
                             fN = false;
@@ -410,8 +412,8 @@ namespace Spectrum
                             C--; if (C == 255) B--;
                             E--; if (E == 255) D--;
                             L--; if (L == 255) H--;
-                            if (B != 0 | C != 0) { fP = true; PC -= 2; return 21; }
-                            else { fP = false; return 16; }
+                            if (B != 0 | C != 0) { fV = true; PC -= 2; return 21; }
+                            else { fV = false; return 16; }
                     }
                     break;
                 #endregion
@@ -536,17 +538,19 @@ namespace Spectrum
             A ^= Reg;
             fC = false;
             fZ = A == 0;
-            fP = A % 2 == 0;
+            fV = A % 2 == 0;
         }
         //INC
         static void INC(ref byte Reg)
         {
             Reg++;
-            if (Reg == 0)
-            {
-                fC = true; //Наверное
-            }
+            fS = Reg > 127;
             fZ = Reg == 0;
+            fY = (Reg & 32) == 32;
+            fH = (Reg & 15) == 0;
+            fX = (Reg & 8) == 8;
+            fV = Reg == 128;
+            //Протестировано
         }
         static void INC(ref byte r1, ref byte r2)
         {
@@ -640,7 +644,7 @@ namespace Spectrum
             fZ = a == 0;
             fC = (a & 256) != 0;
             fH = ((A & 15) - (Reg & 15) & 16) != 0; //Не разбирался, тупо списал
-            fP = ((A ^ Reg) & (A ^ a) & 128) != 0; //Не разбирался, тупо списал
+            fV = ((A ^ Reg) & (A ^ a) & 128) != 0; //Не разбирался, тупо списал
         }
         //JR
         static void JR()

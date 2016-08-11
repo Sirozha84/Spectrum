@@ -46,7 +46,7 @@ namespace Spectrum
             20704, 20960, 21216, 21472, 21728, 21984, 22240, 22496};
 
         static Random rnd = new Random();
-        public static int Border = 0;
+        //public static int Border = 0;
         static bool flash;
         static int flashtimer;
         static int Byte;
@@ -65,7 +65,7 @@ namespace Spectrum
             for (int i = 0; i < 320; i++)
             {
                 if (String - 32 < 0 | String - 32 > 191 | i < 32 | i > 287)
-                    SetPixel(i, String, Border);
+                    SetPixel(i, String, Z80.OUT[254] & 7);
                 else
                 {
                     if ((i - 32) % 8 == 0)

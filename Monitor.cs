@@ -23,6 +23,7 @@ namespace Spectrum
             listBox1.Items.Clear();
             do
             {
+                
                 string b = Z80.Be[adr] ? "|" : " ";
                 string com = adr.ToString("00000" + b + "- ");
                 int startadr = adr;
@@ -31,7 +32,18 @@ namespace Spectrum
                 for (int i = startadr; i < adr; i++)
                     asm += Z80.RAM[i].ToString(" 000");
                 listBox1.Items.Add(com + asm);
-                
+                //Отступ если переход
+                if (listBox1.Items.Count < 44)
+                    switch (Z80.RAM[startadr])
+                    {
+                        case 16:
+                        case 24:
+                        case 32:
+                        case 195:
+                        case 201:
+                            listBox1.Items.Add("");
+                            break;
+                    }
             } while (listBox1.Items.Count < 44);
             checkBoxS.Checked = (Z80.F() & 128) != 0;
             checkBoxZ.Checked = (Z80.F() & 64) != 0;
