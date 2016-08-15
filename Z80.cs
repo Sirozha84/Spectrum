@@ -120,9 +120,9 @@ namespace Spectrum
                     tb = fN; fN = fNa; fNa = tb;
                     tb = fC; fC = fCa; fCa = tb;
                     return 4;
+                case 9: ADDHL(B, C); return 11;                                 //ADD HL,BC
                 //Протестировано
 
-                case 9: ADDHL(B, C); return 11;                                 //ADD HL,BC
                 case 11: DEC(ref B, ref C); return 6;                           //DEC BC
                 case 12: INC(ref C); return 4;                                  //INC C
                 case 13: DEC(ref C); return 4;                                  //DEC C
@@ -580,6 +580,32 @@ namespace Spectrum
             fX = (b & 8) == 8;
             //Протестировано
         }
+        //ADD
+        static void ADD(ref byte r1, byte r2)
+        {
+            byte t = r1;
+            r1 += r2;
+            //czps
+            fC = t > r1;
+            fZ = r1 == 0; //Проверить
+        }
+        static void ADD(ref ushort ii, byte r1, byte r2)
+        {
+            ii += (ushort)(r1 * 256 + r2);
+        }
+        static void ADDHL(byte r1, byte r2)
+        {
+            byte h = H;
+            byte c = L + r2 > 255 ? (byte)1 : (byte)0;
+            L = (byte)(L + r2);
+            fC = H + r1 + c > 255;
+            H = (byte)(H + r1 + c);
+            fY = (H & 32) == 32;
+            fH = (((h & 15) + (r1 & 15) + c) & 16) != 0;
+            fX = (H & 8) == 8;
+            fN = false;
+            //не Протестировано*/
+        }
 
 
         public static int RunRST38()
@@ -614,28 +640,6 @@ namespace Spectrum
             fC = false;
             fZ = A == 0;
             fV = A % 2 == 0;
-        }
-        //ADD
-        static void ADD(ref byte r1, byte r2)
-        {
-            byte t = r1;
-            r1 += r2;
-            //czps
-            fC = t > r1;
-            fZ = r1 == 0;
-        }
-        static void ADD(ref ushort ii, byte r1, byte r2)
-        {
-            ii += (ushort)(r1 * 256 + r2);
-        }
-        static void ADDHL(byte r1, byte r2)
-        {
-            fH = L + r2 > 255;
-            L = (byte)(L + r2);
-            byte c = fH ? (byte)1 : (byte)0;
-            fC = H + r1 + c > 255;
-            H = (byte)(H + r1 + c);
-            fZ = H == 0 & L == 0;
         }
         //SUB
         static void SUB(byte Reg)
