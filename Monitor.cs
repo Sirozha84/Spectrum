@@ -70,10 +70,9 @@ namespace Spectrum
             textBoxR.Text = Z80.R.ToString();
             checkBoxInt.Checked = Z80.Interrupt;
             //Немножко кода в просмор памяти
-            int start = 29990;
             listBox2.Items.Clear();
             for (int i = 0; i < 12; i++)
-                listBox2.Items.Add(i + start + " - " + Z80.RAM[i + start]);
+                listBox2.Items.Add(i + Spectrum.View + " - " + Z80.RAM[i + Spectrum.View]);
             //Кнопочки
             PauseButtonRefresh();
         }

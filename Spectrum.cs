@@ -13,7 +13,8 @@ namespace Spectrum
         public static int Strings = 312;//Количество строк 
         public enum Modes { Normal, Stop, Step, Frame };
         public static Modes Mode;
-        public static int BreakPoint = 0; //13166 - Enter, 4178 - DEL, 4344 - "E"
+        public static int View = 65360;
+        public static int BreakPoint = -88; //13166 - Enter, 4344 - "E"
         public static void Init()
         {
             //ROM = File.ReadAllBytes(@"c:\Users\sg\YandexDisk\test.rom");
