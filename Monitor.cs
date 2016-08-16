@@ -19,17 +19,17 @@ namespace Spectrum
 
         private void timerRefresh_Tick(object sender, EventArgs e)
         {
-            int adr = Z80.PC;
+            ushort adr = Z80.PC;
             listBox1.Items.Clear();
             do
             {
                 
                 string b = Z80.Be[adr] ? "|" : " ";
                 string com = adr.ToString("00000" + b + "- ");
-                int startadr = adr;
+                ushort startadr = adr;
                 string asm = Assembler.GetCommand(ref adr);
                 while (asm.Length < 15) asm += " ";
-                for (int i = startadr; i < adr; i++)
+                for (ushort i = startadr; i < adr; i++)
                     asm += Z80.RAM[i].ToString(" 000");
                 listBox1.Items.Add(com + asm);
                 //Отступ если переход

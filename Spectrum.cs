@@ -13,7 +13,7 @@ namespace Spectrum
         public static int Strings = 312;//Количество строк 
         public enum Modes { Normal, Stop, Step, Frame };
         public static Modes Mode;
-        public static int BreakPoint = 13166;
+        public static int BreakPoint = 0; //13166 - Enter, 4178 - DEL, 4344 - "E"
         public static void Init()
         {
             //ROM = File.ReadAllBytes(@"c:\Users\sg\YandexDisk\test.rom");
@@ -21,7 +21,7 @@ namespace Spectrum
             for (int i = 0; i < 16384; i++)
                 Z80.RAM[i] = ROM[i];
             Z80.Reset();
-        Mode = Modes.Normal;
+            Mode = Modes.Normal;
+        }
     }
-}
 }

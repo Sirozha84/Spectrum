@@ -8,7 +8,7 @@ namespace Spectrum
 {
     static class Assembler
     {
-        public static string GetCommand(ref int adr)
+        public static string GetCommand(ref ushort adr)
         {
             string C = "*****";
             switch (Z80.RAM[adr])
@@ -686,15 +686,11 @@ namespace Spectrum
             return (Z80.RAM[c1] < 128) ? "+" + Z80.RAM[c1] : (Z80.RAM[c1] - 256).ToString();
         }
         //Подсчёт адреса в относительном переходе
-        static int JR(int adr)
+        static ushort JR(ushort adr)
         {
             byte TO = Z80.RAM[adr];
-            int result = 0;
-            if (TO < 128) result = adr + TO + 1;
-            else result = adr + TO - 255;
-            if (result < 0) return 0;
-            if (result > 65535) return 65535;
-            return result;
+            if (TO < 128) return (ushort)(adr + TO + 1);
+            else return (ushort)(adr + TO - 255);
         }
     }
 }

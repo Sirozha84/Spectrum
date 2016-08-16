@@ -109,29 +109,14 @@ namespace Spectrum
                 case 5: DEC(ref B); return 4;                                   //DEC B
                 case 6: B = RAM[PC++]; return 7;                                //LD B,n
                 case 7: RL(ref A, false); return 4;                             //RLCA
-                case 8:                                                         //EX AF,AF'
-                    t = A; A = Aa; Aa = t;
-                    tb = fS; fS = fSa; fSa = tb;
-                    tb = fZ; fZ = fZa; fZa = tb;
-                    tb = fY; fY = fYa; fYa = tb;
-                    tb = fH; fH = fHa; fHa = tb;
-                    tb = fX; fX = fXa; fXa = tb;
-                    tb = fV; fV = fVa; fVa = tb;
-                    tb = fN; fN = fNa; fNa = tb;
-                    tb = fC; fC = fCa; fCa = tb;
-                    return 4;
-                case 9: ADDHL(B, C); return 11;                                 //ADD HL,BC
-                //Протестировано
-
+                case 8: EXAF(); return 4;                                       //EX AF,AF'
+                case 9: ADDHL(B, C, false); return 11;                          //ADD HL,BC
+                case 10: A = RAM[B * 256 + C]; return 7;                        //LD A,(BC);
                 case 11: DEC(ref B, ref C); return 6;                           //DEC BC
                 case 12: INC(ref C); return 4;                                  //INC C
                 case 13: DEC(ref C); return 4;                                  //DEC C
                 case 14: C = RAM[PC++]; return 7;                               //LD C,n
-                case 15:                                                        //RRCA - вращение аккумулятора вправо с переносом бита
-                    fC = (A & 1) != 0;
-                    A /= 2;
-                    if (fC) A += 128;
-                    return 4;
+                case 15: RR(ref A, false); return 4;                            //RRCA
                 case 16:                                                        //DJNZ n
                     B--;
                     if (B != 0) { JR(); return 13; }
@@ -140,18 +125,17 @@ namespace Spectrum
                 case 18: RAM[D * 256 + E] = A; return 7;                        //LD (DE),A
                 case 19: INC(ref D, ref E); return 6;                           //INC DE
                 case 20: INC(ref D); return 4;                                  //INC D
+                case 21: DEC(ref D); return 4;                                  //DEC D
                 case 22: D = RAM[PC++]; return 7;                               //LD D,n
                 case 23: RL(ref A, true); return 4;                             //RLA
                 case 24: JR(); return 4;                                        //JR s
-                case 25: ADDHL(D, E); return 11;                                //ADD HL,DE
+                case 25: ADDHL(D, E, false); return 11;                         //ADD HL,DE
                 case 26: A = RAM[D * 256 + E]; return 7;                        //LD A,(DE)
                 case 27: DEC(ref D, ref E); return 6;                           //DEC DE
+                //Протестировано
+
                 case 30: E = RAM[PC++]; return 7;                               //LD E,n
-                case 31:                                                        //RRA - вращение аккумулятора вправо
-                    fC = (A & 1) != 0;
-                    A /= 2;
-                    //if (fC) A += 128; //Наверное так...
-                    return 4;
+                case 31: RR(ref A, true); return 4;                             //RRA - вращение аккумулятора вправо
                 case 32:                                                        //JR NZ, s
                     if (!fZ) { JR(); return 12; }
                     else { PC++; return 7; }
@@ -168,7 +152,7 @@ namespace Spectrum
                 case 40:                                                        //JR Z,n
                     if (fZ) { JR(); return 12; }
                     else { PC++; return 7; }
-                case 41: ADDHL(H, L); return 11;                                //ADD HL,HL
+                case 41: ADDHL(H, L, false); return 11;                         //ADD HL,HL
                 case 42:                                                        //LD HL,(nn)
                     tmp = (ushort)(RAM[PC++] + RAM[PC++] * 256); //Проверенно! Работает!
                     L = RAM[tmp++];
@@ -225,6 +209,8 @@ namespace Spectrum
                 case 106: L = D; return 4;                                      //LD L,D
                 case 107: L = E; return 4;                                      //LD L,E
                 case 111: L = A; return 4;                                      //LD L,A
+                case 112: RAM[H * 256 + L] = B; return 7;                       //LD (HL),B
+                case 113: RAM[H * 256 + L] = C; return 7;                       //LD (HL),C
                 case 114: RAM[H * 256 + L] = D; return 7;                       //LD (HL),D
                 case 115: RAM[H * 256 + L] = E; return 7;                       //LD (HL),E
                 case 119: RAM[H * 256 + L] = A; return 7;                       //LD (HL),A
@@ -236,10 +222,10 @@ namespace Spectrum
                 case 125: A = L; return 4;                                      //LD A,L
                 case 126: A = RAM[H * 256 + L]; return 7;                       //LD A,(HL)
                 case 135: ADD(ref A, A); return 4;                              //ADD A,A
-                case 144: SUB(B); return 4;                                     //SUB B
-                case 145: SUB(C); return 4;                                     //SUB C
-                case 146: SUB(D); return 4;                                     //SUB D
-                case 159: SBCA(A); return 4;                                    //SBC A,A
+                case 144: SUB(B, false); return 4;                              //SUB B
+                case 145: SUB(C, false); return 4;                              //SUB C
+                case 146: SUB(D, false); return 4;                              //SUB D
+                case 159: SUB(A, true); return 4;                               //SBC A,A
                 case 160: AND(B); return 4;                                     //AND B
                 case 162: AND(D); return 4;                                     //AND D
                 case 167: AND(A); return 4;                                     //AND A
@@ -255,6 +241,7 @@ namespace Spectrum
                 case 188: CP(H); return 4;                                      //CP H
                 case 189: CP(L); return 4;                                      //CP L
                 case 190: CP(RAM[H * 256 + L]); return 7;                       //CP (HL)
+                case 191: CP(A); return 4;                                      //CP A
                 case 192:                                                       //RET NZ
                     if (!fZ) { RET(); return 5; }
                     else return 11;
@@ -291,12 +278,13 @@ namespace Spectrum
                     if (R > 127) R = 0;
                     switch (RAM[PC++])
                     {
-                        case 0: RLC(ref B); return 8;                           //RLC B
-                        case 7: RLC(ref B); return 8;                           //RLC A
+                        case 0: RL(ref B, false); return 8;                     //RLC B
+                        case 7: RL(ref B, false); return 8;                     //RLC A
                         case 60: SRL(ref H); return 8;                          //SRL H - вращение вправо
                         case 61: SRL(ref L); return 8;                          //SRL L
                         case 64: BIT(B, 0); return 8;                           //BIT 0,B
                         case 86: BIT(D, 2); return 8;                           //BIT 2,D
+                        case 88: BIT(B, 3); return 8;                           //BIT 3,B
                         case 90: BIT(D, 3); return 8;                           //BIT 3,D
                         case 103: BIT(A, 4); return 8;                          //BIT 4,A
                         case 104: BIT(B, 5); return 8;                          //BIT 5,B
@@ -332,6 +320,7 @@ namespace Spectrum
                     RAM[--SP] = (byte)((PC + 2) % 256);
                     PC = (ushort)(RAM[PC] + RAM[PC + 1] * 256);
                     return 17;
+                //case 206:                                                     //ADC A,n
                 case 208:                                                       //RET NC
                     if (!fC) { RET(); return 5; }
                     else return 11;
@@ -345,7 +334,7 @@ namespace Spectrum
                     return 10;
                 case 211: OUT[RAM[PC++]] = A; return 11;                        //OUT (n),A
                 case 213: RAM[--SP] = D; RAM[--SP] = E; return 11;              //PUSH DE
-                case 214: SUB(RAM[PC++]); return 7;                             //SUB n
+                case 214: SUB(RAM[PC++], false); return 7;                      //SUB n
                 case 215:                                                       //RST 10
                     RAM[--SP] = (byte)((PC) / 256);
                     RAM[--SP] = (byte)((PC) % 256);
@@ -355,6 +344,10 @@ namespace Spectrum
                     if (fC) { RET(); return 5; }
                     else return 11;
                 case 217: EXX(); return 4;                                      //EXX
+                case 218:                                                       //JP C,nn
+                    if (fC) PC = (ushort)(RAM[PC] + RAM[PC + 1] * 256);
+                    else PC += 2;
+                    return 10;
                 case 219: A = IN[RAM[PC] + A * 256]; return 11;                 //IN A,(n)
                 case 225: L = RAM[SP++]; H = RAM[SP++]; return 10;              //POP HL
                 case 227:                                                       //EX (SP),HL
@@ -376,6 +369,7 @@ namespace Spectrum
                     if (R > 127) R = 0;
                     switch (RAM[PC++])
                     {
+                        case 66: SBC(B, C); return 15;                          //SBC HL,BC
                         case 67:                                                //LD (nn),BC
                             tmp = (ushort)(RAM[PC++] + RAM[PC++] * 256);
                             RAM[tmp++] = C;
@@ -392,7 +386,7 @@ namespace Spectrum
                             C = RAM[tmp++];
                             B = RAM[tmp];
                             return 20;
-                        case 82: SBCHL(D, E); return 15;                        //SBC HL,DE
+                        case 82: SBC(D, E); return 15;                          //SBC HL,DE
                         case 83:                                                //LD (nn),DE
                             tmp = (ushort)(RAM[PC++] + RAM[PC++] * 256);
                             RAM[tmp++] = E;
@@ -404,7 +398,9 @@ namespace Spectrum
                             E = RAM[tmp++];
                             D = RAM[tmp];
                             return 20;
-                        case 114: SBCHL((byte)(SP / 256), (byte)(SP % 256)); return 15;     //SPB HL,SP
+                        case 114:                                               //SBC HL,SP
+                            SBC((byte)(SP / 256), (byte)(SP % 256));
+                            return 15;   
                         case 115:                                               //LD (nn),SP
                             tmp = (ushort)(RAM[PC++] + RAM[PC++] * 256);
                             RAM[tmp++] = (byte)(SP % 256);
@@ -490,11 +486,12 @@ namespace Spectrum
                 case 86: D = RAM[IplusS(Index)]; return 19;                     //LD D,(II+S)
                 case 94: E = RAM[IplusS(Index)]; return 19;                     //LD E,(II+S)
                 case 110: L = RAM[IplusS(Index)]; return 19;                    //LD L,(II+S)
+                case 112: RAM[IplusS(Index)] = B; return 19;                    //LD (II+S),B
                 case 113: RAM[IplusS(Index)] = C; return 19;                    //LD (II+S),C
                 case 116: RAM[IplusS(Index)] = H; return 19;                    //LD (II+S),H
                 case 117: RAM[IplusS(Index)] = L; return 19;                    //LD (II+S),L
                 case 134: ADD(ref A, RAM[IplusS(Index)]); return 19;            //ADD A,(II+S)
-                case 150: SUB(RAM[IplusS(Index)]); return 19;                   //SUB (II+S)
+                case 150: SUB(RAM[IplusS(Index)], false); return 19;            //SUB (II+S)
                 case 203:
                     PC++;
                     switch (RAM[PC])
@@ -529,7 +526,7 @@ namespace Spectrum
             Interrupt = false;
             return 1;
         }
-
+        #region Сложение и вычитание
         //INC
         static void INC(ref byte Reg)
         {
@@ -568,7 +565,76 @@ namespace Spectrum
             if (r2 == 255) r1--;
             //Протестировано
         }
-        //RL/R[C][A]
+
+        //ADD, C - ADC
+        static void ADD(ref byte r1, byte r2)
+        {
+            byte t = r1;
+            r1 += r2;
+            fC = t > r1;
+            fY = (A & 32) == 32;
+            fX = (A & 8) == 8;
+            fN = false;
+        }
+        static void ADD(ref ushort ii, byte r1, byte r2)
+        {
+            ii += (ushort)(r1 * 256 + r2);
+        }
+        static void ADDHL(byte r1, byte r2, bool C)
+        {
+            byte h = H;
+            byte c2 = (C & fC) ? (byte)1 : (byte)0;
+            byte c1 = L + r2 + c2> 255 ? (byte)1 : (byte)0;
+            L = (byte)(L + r2);
+            fC = H + r1 + c2 > 255;
+            H = (byte)(H + r1 + c1);
+            //fZ = (H == 0) & (L == 0); //Потестить
+            fY = (H & 32) == 32;
+            fH = (((h & 15) + (r1 & 15) + c1) & 16) != 0;
+            fX = (H & 8) == 8;
+            fN = false;
+            //Протестировано
+        }
+  
+        //SUB, C - SBC
+        static void SUB(byte Reg, bool C)
+        {
+            byte c = (C & fC) ? (byte)1 : (byte)0;
+            fC = A - Reg - c < 0;
+            fV = ((A ^ Reg) & (A ^ ((A-Reg) & 255)) & 128) != 0;
+            fH = (((A & 15) - (Reg & 15) - c) & 16) != 0;
+            A = (byte)(A - Reg - c);
+            fS = (A & 128) != 0;
+            fZ = A == 0;
+            fY = (A & 32) == 32;
+            fX = (A & 8) == 8;
+            fN = true;
+            //Протестировано
+        }
+        static void SUB(ref ushort ii, byte r1, byte r2)
+        {
+            ii -= (ushort)(r1 * 256 + r2);
+        }
+        static void SBC(byte r1, byte r2)
+        {
+            byte h = H;
+            byte c2 = fC ? (byte)1 : (byte)0;
+            byte c1 = L - r2 - c2 < 0 ? (byte)1 : (byte)0;
+            L = (byte)(L - r2 - c2);
+            fC = H - r1 - c1 < 0;
+            fV = ((H ^ r1) & (H ^ ((H - r1 - c1) & 255)) & 128) != 0;
+            fH = (((H & 15) - (r1 & 15) - c1) & 16) != 0;
+            H = (byte)(H - r1 - c1);
+            fS = (H & 128) != 0;
+            fZ = (H == 0) & (L == 0); //Потестить
+            fY = (H & 32) == 32;
+            fX = (H & 8) == 8;
+            fN = true;
+        }
+
+        #endregion
+        #region Вращение/сдвиг битов
+        //RL/R[C][A] bool c - участие регистра переноса true в RL, RLA, RR, RRA, в остальных false
         static void RL(ref byte b, bool c)
         {
             bool be = fC;
@@ -580,45 +646,27 @@ namespace Spectrum
             fX = (b & 8) == 8;
             //Протестировано
         }
-        //ADD
-        static void ADD(ref byte r1, byte r2)
+        static void RR(ref byte b, bool c)
         {
-            byte t = r1;
-            r1 += r2;
-            //czps
-            fC = t > r1;
-            fZ = r1 == 0; //Проверить
+            bool be = fC;
+            fC = (b & 1) == 1;
+            b /= 2;
+            if ((c & be) | (!c & fC)) b |= 128;
+            fY = (b & 32) == 32;
+            fH = false;
+            fX = (b & 8) == 8;
+            //Протестировано
         }
-        static void ADD(ref ushort ii, byte r1, byte r2)
+        //SRL
+        static void SRL(ref byte Reg)
         {
-            ii += (ushort)(r1 * 256 + r2);
+            fC = (Reg & 1) == 1;
+            Reg /= 2;
+            Reg &= 127;
+            fZ = Reg == 0;
         }
-        static void ADDHL(byte r1, byte r2)
-        {
-            byte h = H;
-            byte c = L + r2 > 255 ? (byte)1 : (byte)0;
-            L = (byte)(L + r2);
-            fC = H + r1 + c > 255;
-            H = (byte)(H + r1 + c);
-            fY = (H & 32) == 32;
-            fH = (((h & 15) + (r1 & 15) + c) & 16) != 0;
-            fX = (H & 8) == 8;
-            fN = false;
-            //не Протестировано*/
-        }
-
-
-        public static int RunRST38()
-        {
-            if (Interrupt)
-            {
-                RAM[--SP] = (byte)((PC) / 256);
-                RAM[--SP] = (byte)((PC) % 256);
-                PC = 56;
-                return 11;
-            }
-            else return 0;
-        }
+        #endregion
+        #region Логика
         //AND
         static void AND(byte Reg)
         {
@@ -641,38 +689,6 @@ namespace Spectrum
             fZ = A == 0;
             fV = A % 2 == 0;
         }
-        //SUB
-        static void SUB(byte Reg)
-        {
-            fC = A < Reg;
-            A -= Reg;
-            fZ = A == 0;
-            //
-            //
-        }
-        //ADC
-
-        //SBC
-        static void SBCA(byte Reg)
-        {
-            if (fC) A--;
-            A -= Reg;
-            fC = A > Reg;
-            fZ = A == 0;
-            //
-            //
-        }
-        static void SBCHL(byte r1, byte r2)
-        {
-            byte c = fC ? (byte)1 : (byte)0;
-            fH = L - r2 - c < 0;
-            L = (byte)(L - r2 - c);
-            c = fH ? (byte)1 : (byte)0;
-            fC = H - r1 - c < 0;
-            H = (byte)(H - r1 - c);
-            fZ = (H == 0) & (L == 0);
-            //fN = true;
-        }
         //CP
         static void CP(byte Reg)
         {
@@ -684,12 +700,15 @@ namespace Spectrum
             fH = ((A & 15) - (Reg & 15) & 16) != 0; //Не разбирался, тупо списал
             fV = ((A ^ Reg) & (A ^ a) & 128) != 0; //Не разбирался, тупо списал
         }
+        #endregion
+        #region Разное
         //JR
         static void JR()
         {
-            byte to = RAM[PC];
-            PC = (ushort)(PC + to + 1);
-            if (to > 127) PC -= 256;
+            byte TO = RAM[PC];
+            if (TO < 128) PC = (ushort)(PC + TO + 1);
+            else PC = (ushort)(PC + TO - 255);
+            //Протестировано
         }
         //RET
         static void RET()
@@ -698,7 +717,31 @@ namespace Spectrum
             //SP += 2;
             PC = (ushort)(RAM[SP++] + RAM[SP++] * 256);
         }
+        //Обработка прерывания
+        public static int RunRST38()
+        {
+            if (Interrupt)
+            {
+                RAM[--SP] = (byte)((PC) / 256);
+                RAM[--SP] = (byte)((PC) % 256);
+                PC = 56;
+                return 11;
+            }
+            else return 0;
+        }
         //EXX
+        static void EXAF()
+        {
+            t = A; A = Aa; Aa = t;
+            tb = fS; fS = fSa; fSa = tb;
+            tb = fZ; fZ = fZa; fZa = tb;
+            tb = fY; fY = fYa; fYa = tb;
+            tb = fH; fH = fHa; fHa = tb;
+            tb = fX; fX = fXa; fXa = tb;
+            tb = fV; fV = fVa; fVa = tb;
+            tb = fN; fN = fNa; fNa = tb;
+            tb = fC; fC = fCa; fCa = tb;
+        }
         static void EXX()
         {
             //bc de hl - меняются на альтернативные
@@ -725,6 +768,8 @@ namespace Spectrum
             if (t > 127) tmp -= 256;
             return tmp;
         }
+        #endregion
+        #region Побитовые операции
         //SET
         static void SET(ref byte Byte, byte bit)
         {
@@ -761,21 +806,6 @@ namespace Spectrum
             if (bit == 6) fZ = (Byte & 64) == 0;
             if (bit == 7) fZ = (Byte & 128) == 0;
         }
-        //SRL
-        static void SRL(ref byte Reg)
-        {
-            fC = (Reg & 1) == 1;
-            Reg /= 2;
-            Reg &= 127;
-            fZ = Reg == 0;
-        }
-        //RLC B - вращение влево без учёта флага C
-        static void RLC(ref byte Reg)
-        {
-            fC = (Reg & 128) == 128;
-            Reg &= 127; //откусываем левый бит, что бы он не перенёсся
-            Reg *= 2;
-            if (fC) Reg++;
-        }
+        #endregion
     }
 }
