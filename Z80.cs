@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Spectrum
 {
@@ -11,24 +7,46 @@ namespace Spectrum
         public static byte[] RAM = new byte[65536];
         public static bool[] Be = new bool[65536];
         public static byte A, B, C, D, E, H, L, I, R;
-        public static byte Aa, Ba, Ca, Da, Ea, Ha, La;
+        public static byte Aa, Fa, Ba, Ca, Da, Ea, Ha, La;
         public static UInt16 PC, SP, IX, IY;
         public static bool fS, fZ, f5, fH, f3, fV, fN, fC;
-        public static bool fSa, fZa, f5a, fHa, f3a, fVa, fNa, fCa;
         public static byte IM;
         public static byte[] IN = new byte[65536];
+        public static byte F
+        {
+            get
+            {
+                byte reg = 0;
+                if (fS) reg += 128;
+                if (fZ) reg += 64;
+                if (f5) reg += 32;
+                if (fH) reg += 16;
+                if (f3) reg += 8;
+                if (fV) reg += 4;
+                if (fN) reg += 2;
+                if (fC) reg += 1;
+                return reg;
+            }
+            set
+            {
+                fS = (value & 128) != 0;
+                fZ = (value & 64) != 0;
+                f5 = (value & 32) != 0;
+                fH = (value & 16) != 0;
+                f3 = (value & 8) != 0;
+                fV = (value & 4) != 0;
+                fN = (value & 2) != 0;
+                fC = (value & 1) != 0;
+            }
+        }
         /// <summary>
         /// Сброс
         /// </summary>
         public static void Reset()
         {
-            A = 0; B = 0; C = 0; D = 0; E = 0; H = 0; L = 0;
-            Aa = 0; Ba = 0; Ca = 0; Da = 0; Ea = 0; Ha = 0; La = 0;
+            A = 0; F = 0; B = 0; C = 0; D = 0; E = 0; H = 0; L = 0;
+            Aa = 0; Fa = 0; Ba = 0; Ca = 0; Da = 0; Ea = 0; Ha = 0; La = 0;
             PC = 0; SP = 0; IX = 0; IY = 0; I = 0; R = 0;
-            fS = false; fZ = false; f5 = false; fH = false;
-            f3 = false; fV = false; fN = false; fC = false;
-            fSa = false; fZa = false; f5a = false; fHa = false;
-            f3a = false; fVa = false; fNa = false; fCa = false;
             IN[65278] = 255;
             IN[65022] = 255;
             IN[64510] = 255;
@@ -39,54 +57,7 @@ namespace Spectrum
             IN[32766] = 255;
         }
 
-        /// <summary>
-        /// Получение флагового регистра из флагов
-        /// </summary>
-        /// <returns></returns>
-        public static byte F()
-        {
-            byte reg = 0;
-            if (fS) reg += 128;
-            if (fZ) reg += 64;
-            if (f5) reg += 32;
-            if (fH) reg += 16;
-            if (f3) reg += 8;
-            if (fV) reg += 4;
-            if (fN) reg += 2;
-            if (fC) reg += 1;
-            return reg;
-        }
-        public static byte Fa()
-        {
-            byte reg = 0;
-            if (fSa) reg += 128;
-            if (fZa) reg += 64;
-            if (f5a) reg += 32;
-            if (fHa) reg += 16;
-            if (f3a) reg += 8;
-            if (fVa) reg += 4;
-            if (fNa) reg += 2;
-            if (fCa) reg += 1;
-            return reg;
-        }
-        /// <summary>
-        /// Получение флагов из регистра
-        /// </summary>
-        /// <param name="f"></param>
-        static void GetFlags(byte f)
-        {
-            fS = (f & 128) != 0;
-            fZ = (f & 64) != 0;
-            f5 = (f & 32) != 0;
-            fH = (f & 16) != 0;
-            f3 = (f & 8) != 0;
-            fV = (f & 4) != 0;
-            fN = (f & 2) != 0;
-            fC = (f & 1) != 0;
-        }
-
         static byte t;
-        static bool tb;
 
         public static int Run()
         {
@@ -259,7 +230,7 @@ namespace Spectrum
                 case 190: CP(RAM[H * 256 + L]); return 7;                       //CP (HL)
                 case 191: CP(A); return 4;                                      //CP A
                 case 192: return RET(!fZ);                                      //RET NZ
-                case 193: C = RAM[SP++]; B = RAM[SP++]; return 10;              //POP BC
+                case 193: return POP(ref B, ref C);                             //POP BC
                 case 194: return JP(!fZ);                                       //JP NZ, nn
                 case 195: return JP(true);                                      //JP nn
                 case 196: return CALL(!fZ);                                     //CALL NZ, nn
@@ -344,10 +315,7 @@ namespace Spectrum
                 case 206: ADD(RAM[PC++], true); return 7;                       //ADC A,n
                 case 207: return RST(8);                                        //RST 8
                 case 208: return RET(!fC);                                      //RET NC
-                case 209:                                                       //POP DE
-                    E = RAM[SP++];
-                    D = RAM[SP++];
-                    return 10;
+                case 209: return POP(ref D, ref E);                             //POP DE
                 case 210: return JP(!fC);                                       //JP NC,nn
                 case 211: OUT(RAM[PC++], A); return 11;                         //OUT (n),A
                 case 212: return CALL(!fC);                                     //CALL NC, nn
@@ -360,17 +328,14 @@ namespace Spectrum
                 case 219: A = IN[RAM[PC] + A * 256]; return 11;                 //IN A,(n)
                 case 220: return CALL(fC);                                      //CALL C, nn
                 case 223: return RST(24);                                       //RST 18
-                case 225: L = RAM[SP++]; H = RAM[SP++]; return 10;              //POP HL
-                case 227:                                                       //EX (SP),HL
-                    t = RAM[SP]; RAM[SP] = L; L = t;
-                    t = RAM[(ushort)(SP + 1)]; RAM[(ushort)(SP + 1)] = H; H = t;
-                    return 19;
+                case 225: return POP(ref H, ref L);                             //POP HL
+                case 227: EX(ref RAM[SP + 1], ref RAM[SP], ref H, ref L); return 19;    //EX (SP),HL
                 case 228: return CALL(!fV);                                     //CALL PO,nn
                 case 229: return PUSH(H, L);                                    //PUSH HL
                 case 230: AND(RAM[PC++]); return 7;                             //AND n
                 case 231: return RST(32);                                       //RST 20
                 case 233: PC = (ushort)(H * 256 + L); return 4;                 //JP (HL)
-                case 235: t = D; D = H; H = t; t = E; E = L; L = t; return 4;   //EX DE,HL
+                case 235: EX(ref D, ref E, ref H, ref L); return 4;
                 #region case 237 (Префикс ED)                                   
                 case 237:                                                       //-------------------- Префикс ED
                     R++;
@@ -405,52 +370,18 @@ namespace Spectrum
                             tmp = (ushort)(RAM[PC++] + RAM[PC++] * 256);
                             SP = (ushort)(RAM[tmp++] + RAM[tmp] * 256);
                             return 20;
-                        case 176:                                               //LDIR - Копирование "снизу" (нормальное)
-                            RAM[D * 256 + E] = RAM[H * 256 + L];
-                            t = RAM[D * 256 + E];
-                            C--; if (C == 255) B--;
-                            E++; if (E == 0) D++;
-                            L++; if (L == 0) H++;
-                            if (B != 0 | C != 0) { PC -= 2; return 21; }
-                            else
-                            {
-                                //fY = ((t + A) & 1) != 0; //Опять врут в найденной документации :-(
-                                f5 = (t & 32) != 0;
-                                fH = false;
-                                //fX = ((t + A) & 8) != 0;
-                                f3 = (t & 8) != 0;
-                                fV = false;
-                                fN = false;
-                                return 16;
-                            }
-                        case 184:                                               //LDDR - Копирование "сверху"
-                            RAM[D * 256 + E] = RAM[H * 256 + L];
-                            t = RAM[D * 256 + E];
-                            C--; if (C == 255) B--;
-                            E--; if (E == 255) D--;
-                            L--; if (L == 255) H--;
-                            if (B != 0 | C != 0) { PC -= 2; return 21; }
-                            else
-                            {
-                                //fY = ((t + A) & 1) != 0;
-                                f5 = (t & 32) != 0;
-                                fH = false;
-                                //fX = ((t + A) & 8) != 0;
-                                f3 = (t & 8) != 0;
-                                fV = false;
-                                fN = false;
-                                return 16;
-                            }
+                        case 176: return LDI(true, false);                      //LDIR
+                        case 184: return LDI(true, true);                       //LDDR
                     }
                     break;
                 #endregion
                 case 238: XOR(RAM[PC++]); return 7;                             //XOR N
                 case 239: return RST(40);                                       //RST 28
-                case 241: GetFlags(RAM[SP++]); A = RAM[SP++]; return 10;        //POP AF
+                case 241: F = RAM[SP++]; A = RAM[SP++]; return 10;              //POP AF
                 case 242: return JP(!fS);                                       //JP P,nn
                 case 243: IM = 0; return 40;                                    //DI
                 case 244: return CALL(!fS);                                     //CALL P,nn
-                case 245: return PUSH(A, F());                                  //PUSH AF
+                case 245: return PUSH(A, F);                                    //PUSH AF
                 case 246: OR(RAM[PC++]); return 7;                              //OR n
                 case 248: return RET(fS);                                       //RET M
                 case 249: SP = (ushort)(H * 256 + L); return 6;                 //LD SP, HL
@@ -532,7 +463,9 @@ namespace Spectrum
                     break;
                 case 182: OR(RAM[IplusS4(II)]); return 19;                      //OR (II+S)
                 case 190: CP(RAM[IplusS4(II)]); return 19;                      //CP (II+S)
-                case 225: II = POP(); return 14;                                //POP II
+                case 225: return POP(ref II);                                   //POP II
+
+
                 case 229: return PUSH(II);                                      //PUSH II
                 case 233: PC = II; return 8;                                    //JP (II)
             }
@@ -560,6 +493,26 @@ namespace Spectrum
             ushort adr = (ushort)(RAM[PC++] + RAM[PC++] * 256);
             r2 = RAM[adr++];
             r1 = RAM[adr];
+        }
+        static int LDI(bool Rep, bool Down)
+        {
+            RAM[D * 256 + E] = RAM[H * 256 + L];
+            t = RAM[D * 256 + E];
+            C--; if (C == 255) B--;
+            if (!Down) { E++; if (E == 0) D++; L++; if (L == 0) H++; }
+            else { E--; if (E == 255) D--; L--; if (L == 255) H--; }
+            if (Rep & (B != 0 | C != 0)) { PC -= 2; return 21; }
+            else
+            {
+                //fY = ((t + A) & 1) != 0; //Опять врут в найденной документации :-(
+                f5 = (t & 32) != 0;
+                fH = false;
+                //fX = ((t + A) & 8) != 0;
+                f3 = (t & 8) != 0;
+                fV = false;
+                fN = false;
+                return 16;
+            }
         }
         #endregion
         #region Сложение и вычитание
@@ -861,21 +814,20 @@ namespace Spectrum
         #region Стэк
         static int PUSH(byte r1, byte r2) { RAM[--SP] = r1; RAM[--SP] = r2; return 11; }
         static int PUSH(ushort Reg) { RAM[--SP] = (byte)(Reg / 256); RAM[--SP] = (byte)(Reg % 256); return 15; }
-        static ushort POP() { return (ushort)(RAM[SP++] + RAM[SP++] * 256); }
+        static int POP(ref byte r1, ref byte r2) { r2 = RAM[SP++]; r1 = RAM[SP++]; return 10; }
+        static int POP(ref ushort Reg) { Reg = (ushort)(RAM[SP++] + RAM[SP++] * 256); return 14; }
+        //static 
         #endregion
         #region Разное
-        //EXX
+        static void EX(ref byte r1, ref byte r2, ref byte ra1, ref byte ra2)
+        {
+            byte t = r1; r1 = ra1; ra1 = t;
+            t = r2; r2 = ra2; ra2 = t;
+        }
         static void EXAF()
         {
-            t = A; A = Aa; Aa = t;
-            tb = fS; fS = fSa; fSa = tb;
-            tb = fZ; fZ = fZa; fZa = tb;
-            tb = f5; f5 = f5a; f5a = tb;
-            tb = fH; fH = fHa; fHa = tb;
-            tb = f3; f3 = f3a; f3a = tb;
-            tb = fV; fV = fVa; fVa = tb;
-            tb = fN; fN = fNa; fNa = tb;
-            tb = fC; fC = fCa; fCa = tb;
+            byte t = A; A = Aa; Aa = t;
+            t = F; F = Fa; Fa = t;
         }
         static void EXX()
         {
@@ -935,7 +887,6 @@ namespace Spectrum
         }
         static void OUT(ushort port, byte Byte)
         {
-            //Z80.OUT[254] & 7
             if (port % 256 == 254) Screen.Border = Byte & 7;
         }
         #endregion
