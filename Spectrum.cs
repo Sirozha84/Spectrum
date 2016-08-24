@@ -14,7 +14,7 @@ namespace Spectrum
         public enum Modes { Normal, Stop, Step, Frame };
         public static Modes Mode;
         public static int View = 24656;
-        public static int BreakPoint = -34674;
+        public static int BreakPoint = -5676;
         public static void Init()
         {
             //ROM = File.ReadAllBytes(@"c:\Users\sg\YandexDisk\test.rom");
@@ -72,7 +72,7 @@ namespace Spectrum
             Z80.IM = Bytes[25];
             Screen.Border = Bytes[26];
             for (int i = 0; i < 49152; i++) Z80.RAM[16384 + i] = Bytes[27 + i];
-            Z80.RET();
+            Z80.RET(true);
         }
     }
 }

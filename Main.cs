@@ -166,7 +166,7 @@ namespace Spectrum
             if (str >= Spectrum.Strings)
             {
                 str = 0;
-                takt += Z80.RunRST38(); //Генерируем прерывание в каждый новый кадАр
+                takt += Z80.Interrupt(); //Генерируем прерывание в каждый новый кадАр
                 return true;
             }
             return false;
