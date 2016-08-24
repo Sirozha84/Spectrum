@@ -36,23 +36,21 @@ namespace Spectrum
                 if (listBox1.Items.Count < 44)
                     switch (Z80.RAM[startadr])
                     {
-                        case 16:
-                        case 24:
-                        case 32:
+                        case 16: case 24: case 32: case 40: case 48: case 56:
                         case 195:
-                        case 201:
+                        case 200: case 201: case 208: case 233:
                             listBox1.Items.Add("");
                             break;
                     }
             } while (listBox1.Items.Count < 44);
-            checkBoxS.Checked = (Z80.F() & 128) != 0;
-            checkBoxZ.Checked = (Z80.F() & 64) != 0;
-            checkBoxY.Checked = (Z80.F() & 32) != 0;
-            checkBoxH.Checked = (Z80.F() & 16) != 0;
-            checkBoxX.Checked = (Z80.F() & 8) != 0;
-            checkBoxP.Checked = (Z80.F() & 4) != 0;
-            checkBoxN.Checked = (Z80.F() & 2) != 0;
-            checkBoxC.Checked = (Z80.F() & 1) != 0;
+            checkBoxS.Checked = Z80.fS;
+            checkBoxZ.Checked = Z80.fZ;
+            checkBoxY.Checked = Z80.f5;
+            checkBoxH.Checked = Z80.fH;
+            checkBoxX.Checked = Z80.f3;
+            checkBoxP.Checked = Z80.fV;
+            checkBoxN.Checked = Z80.fN;
+            checkBoxC.Checked = Z80.fC;
             textBoxAF.Text = (Z80.A * 256 + Z80.F()).ToString();
             textBoxA.Text = Z80.A.ToString(); //Потому-что задолбало...
             textBoxAFa.Text = (Z80.Aa * 256 + Z80.Fa()).ToString();
@@ -68,7 +66,7 @@ namespace Spectrum
             textBoxSP.Text = Z80.SP.ToString();
             textBoxI.Text = Z80.I.ToString();
             textBoxR.Text = Z80.R.ToString();
-            checkBoxInt.Checked = Z80.Interrupt;
+            checkBoxInt.Checked = Z80.IM > 0;
             //Немножко кода в просмор памяти
             listBox2.Items.Clear();
             for (int i = 0; i < 12; i++)
@@ -111,7 +109,8 @@ namespace Spectrum
 
         private void buttonReset_Click(object sender, EventArgs e)
         {
-            Spectrum.Init();
+            //Spectrum.Init();
+            Z80.Reset();
             Spectrum.Mode = Spectrum.Modes.Normal;
             timerRefresh_Tick(null, null);
         }

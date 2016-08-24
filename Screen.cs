@@ -10,10 +10,10 @@ namespace Spectrum
     {
         public static uint[] Pixels = new uint[640 * 512];
         static uint[] Palette = {
-            0xFF101010, 0xFFC00000, 0xFF0000C0, 0xFFC000C0,
-            0xFF00C000, 0xFFC0C000, 0xFF00C0C0, 0xFFC0C0C0,
-            0xFF000000, 0xFFFF0000, 0xFF0000FF, 0xFFFF00FF,
-            0xFF00FF00, 0xFFFFFF00, 0xFF00FFFF, 0xFFFFFFFF};
+            0xFF101010, 0xFFC01010, 0xFF1010C0, 0xFFC010C0,
+            0xFF00C000, 0xFFC0C010, 0xFF10C0C0, 0xFFC0C0C0,
+            0xFF202020, 0xFFFF2020, 0xFF2020FF, 0xFFFF20FF,
+            0xFF20FF20, 0xFFFFFF20, 0xFF20FFFF, 0xFFFFFFFF};
         static uint[] Palette2 = {
             0xFF000000, 0xFF900000, 0xFF000090, 0xFF900090,
             0xFF009000, 0xFF909000, 0xFF009090, 0xFF909090,
@@ -46,7 +46,7 @@ namespace Spectrum
             20704, 20960, 21216, 21472, 21728, 21984, 22240, 22496};
 
         static Random rnd = new Random();
-        //public static int Border = 0;
+        public static int Border = 0;
         static bool flash;
         static int flashtimer;
         static int Byte;
@@ -65,7 +65,7 @@ namespace Spectrum
             for (int i = 0; i < 320; i++)
             {
                 if (String - 32 < 0 | String - 32 > 191 | i < 32 | i > 287)
-                    SetPixel(i, String, Z80.OUT[254] & 7);
+                    SetPixel(i, String, Border);
                 else
                 {
                     if ((i - 32) % 8 == 0)

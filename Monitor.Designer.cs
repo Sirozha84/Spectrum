@@ -507,9 +507,9 @@
             this.labelFlags.AutoSize = true;
             this.labelFlags.Location = new System.Drawing.Point(322, 71);
             this.labelFlags.Name = "labelFlags";
-            this.labelFlags.Size = new System.Drawing.Size(149, 13);
+            this.labelFlags.Size = new System.Drawing.Size(147, 13);
             this.labelFlags.TabIndex = 46;
-            this.labelFlags.Text = "S    Z    Y    H    X    V    N    C";
+            this.labelFlags.Text = "S    Z    5    H    3    V    N    C";
             // 
             // label1
             // 
