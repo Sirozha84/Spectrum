@@ -21,7 +21,7 @@ namespace Spectrum
 
             //LoadSNA(@"..\..\..\..\..\..\zexall.sna");
             //LoadSNA(@"..\..\..\..\..\..\Dizzy 6.SNA");
-            //LoadSNA(@"..\..\..\..\..\..\Panama Joe.sna");
+            LoadSNA(@"..\..\..\..\..\..\Panama Joe.sna");
             //BreakPoint = Z80.PC;
         }
 
