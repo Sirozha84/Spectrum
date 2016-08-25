@@ -51,9 +51,9 @@ namespace Spectrum
             checkBoxP.Checked = Z80.fV;
             checkBoxN.Checked = Z80.fN;
             checkBoxC.Checked = Z80.fC;
-            textBoxAF.Text = (Z80.A * 256 + Z80.F()).ToString();
+            textBoxAF.Text = (Z80.A * 256 + Z80.F).ToString();
             textBoxA.Text = Z80.A.ToString(); //Потому-что задолбало...
-            textBoxAFa.Text = (Z80.Aa * 256 + Z80.Fa()).ToString();
+            textBoxAFa.Text = (Z80.Aa * 256 + Z80.Fa).ToString();
             textBoxBC.Text = (Z80.B * 256 + Z80.C).ToString();
             textBoxBCa.Text = (Z80.Ba * 256 + Z80.Ca).ToString();
             textBoxDE.Text = (Z80.D * 256 + Z80.E).ToString();

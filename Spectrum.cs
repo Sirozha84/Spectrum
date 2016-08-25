@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
+﻿using System.IO;
 
 namespace Spectrum
 {
@@ -40,14 +35,7 @@ namespace Spectrum
             Z80.Da = Bytes[4];
             Z80.Ca = Bytes[5];
             Z80.Ba = Bytes[6];
-            Z80.fSa = (Bytes[7] & 128) != 0;
-            Z80.fZa = (Bytes[7] & 64) != 0;
-            Z80.f5a = (Bytes[7] & 32) != 0;
-            Z80.fHa = (Bytes[7] & 16) != 0;
-            Z80.f3a = (Bytes[7] & 8) != 0;
-            Z80.fVa = (Bytes[7] & 4) != 0;
-            Z80.fNa = (Bytes[7] & 2) != 0;
-            Z80.fCa = (Bytes[7] & 1) != 0;
+            Z80.F = Bytes[7];
             Z80.Aa = Bytes[8];
             Z80.L = Bytes[9];
             Z80.H = Bytes[10];
@@ -59,14 +47,7 @@ namespace Spectrum
             Z80.IX = (ushort)(Bytes[17] + Bytes[18] * 256);
             //Bytes[19] - последний посланный байт в порт IFF2
             Z80.R = Bytes[20];
-            Z80.fS = (Bytes[21] & 128) != 0;
-            Z80.fZ = (Bytes[21] & 64) != 0;
-            Z80.f5 = (Bytes[21] & 32) != 0;
-            Z80.fH = (Bytes[21] & 16) != 0;
-            Z80.f3 = (Bytes[21] & 8) != 0;
-            Z80.fV = (Bytes[21] & 4) != 0;
-            Z80.fN = (Bytes[21] & 2) != 0;
-            Z80.fC = (Bytes[21] & 1) != 0;
+            Z80.Fa = Bytes[21];
             Z80.A = Bytes[22];
             Z80.SP = (ushort)(Bytes[23] + Bytes[24] * 256);
             Z80.IM = Bytes[25];

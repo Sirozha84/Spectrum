@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Spectrum
 {
@@ -11,24 +7,49 @@ namespace Spectrum
         public static byte[] RAM = new byte[65536];
         public static bool[] Be = new bool[65536];
         public static byte A, B, C, D, E, H, L, I, R;
-        public static byte Aa, Ba, Ca, Da, Ea, Ha, La;
+        public static byte Aa, Fa, Ba, Ca, Da, Ea, Ha, La;
         public static UInt16 PC, SP, IX, IY;
         public static bool fS, fZ, f5, fH, f3, fV, fN, fC;
-        public static bool fSa, fZa, f5a, fHa, f3a, fVa, fNa, fCa;
         public static byte IM;
         public static byte[] IN = new byte[65536];
+        public static byte F
+        {
+            get
+            {
+                byte reg = 0;
+                if (fS) reg += 128;
+                if (fZ) reg += 64;
+                if (f5) reg += 32;
+                if (fH) reg += 16;
+                if (f3) reg += 8;
+                if (fV) reg += 4;
+                if (fN) reg += 2;
+                if (fC) reg += 1;
+                return reg;
+            }
+            set
+            {
+                fS = (value & 128) != 0;
+                fZ = (value & 64) != 0;
+                f5 = (value & 32) != 0;
+                fH = (value & 16) != 0;
+                f3 = (value & 8) != 0;
+                fV = (value & 4) != 0;
+                fN = (value & 2) != 0;
+                fC = (value & 1) != 0;
+            }
+        }
+        static ushort BC { get { return (ushort)(B * 256 + C); } set { B = (byte)(value / 256); C = (byte)(value % 256); } }
+        static ushort DE { get { return (ushort)(D * 256 + E); } set { D = (byte)(value / 256); E = (byte)(value % 256); } }
+        static ushort HL { get { return (ushort)(H * 256 + L); } set { H = (byte)(value / 256); L = (byte)(value % 256); } }
         /// <summary>
         /// Сброс
         /// </summary>
         public static void Reset()
         {
-            A = 0; B = 0; C = 0; D = 0; E = 0; H = 0; L = 0;
-            Aa = 0; Ba = 0; Ca = 0; Da = 0; Ea = 0; Ha = 0; La = 0;
+            A = 0; F = 0; B = 0; C = 0; D = 0; E = 0; H = 0; L = 0;
+            Aa = 0; Fa = 0; Ba = 0; Ca = 0; Da = 0; Ea = 0; Ha = 0; La = 0;
             PC = 0; SP = 0; IX = 0; IY = 0; I = 0; R = 0;
-            fS = false; fZ = false; f5 = false; fH = false;
-            f3 = false; fV = false; fN = false; fC = false;
-            fSa = false; fZa = false; f5a = false; fHa = false;
-            f3a = false; fVa = false; fNa = false; fCa = false;
             IN[65278] = 255;
             IN[65022] = 255;
             IN[64510] = 255;
@@ -39,54 +60,7 @@ namespace Spectrum
             IN[32766] = 255;
         }
 
-        /// <summary>
-        /// Получение флагового регистра из флагов
-        /// </summary>
-        /// <returns></returns>
-        public static byte F()
-        {
-            byte reg = 0;
-            if (fS) reg += 128;
-            if (fZ) reg += 64;
-            if (f5) reg += 32;
-            if (fH) reg += 16;
-            if (f3) reg += 8;
-            if (fV) reg += 4;
-            if (fN) reg += 2;
-            if (fC) reg += 1;
-            return reg;
-        }
-        public static byte Fa()
-        {
-            byte reg = 0;
-            if (fSa) reg += 128;
-            if (fZa) reg += 64;
-            if (f5a) reg += 32;
-            if (fHa) reg += 16;
-            if (f3a) reg += 8;
-            if (fVa) reg += 4;
-            if (fNa) reg += 2;
-            if (fCa) reg += 1;
-            return reg;
-        }
-        /// <summary>
-        /// Получение флагов из регистра
-        /// </summary>
-        /// <param name="f"></param>
-        static void GetFlags(byte f)
-        {
-            fS = (f & 128) != 0;
-            fZ = (f & 64) != 0;
-            f5 = (f & 32) != 0;
-            fH = (f & 16) != 0;
-            f3 = (f & 8) != 0;
-            fV = (f & 4) != 0;
-            fN = (f & 2) != 0;
-            fC = (f & 1) != 0;
-        }
-
         static byte t;
-        static bool tb;
 
         public static int Run()
         {
@@ -99,31 +73,31 @@ namespace Spectrum
             {
                 case 0: return 4;                                               //NOP
                 case 1: C = RAM[PC++]; B = RAM[PC++]; return 10;                //LD BC,nn
-                case 2: RAM[B * 256 + C] = A; return 7;                         //LD (BC),A
+                case 2: RAM[BC] = A; return 7;                                  //LD (BC),A
                 case 3: INC(ref B, ref C); return 6;                            //INC BC
                 case 4: INC(ref B); return 4;                                   //INC B
                 case 5: DEC(ref B); return 4;                                   //DEC B
                 case 6: B = RAM[PC++]; return 7;                                //LD B,n
                 case 7: RL(ref A, false); return 4;                             //RLCA
                 case 8: EXAF(); return 4;                                       //EX AF,AF'
-                case 9: ADDHL(B, C, false); return 11;                          //ADD HL,BC
-                case 10: A = RAM[B * 256 + C]; return 7;                        //LD A,(BC);
+                case 9: ADDHL(BC, false); return 11;                            //ADD HL,BC
+                case 10: A = RAM[BC]; return 7;                                 //LD A,(BC);
                 case 11: DEC(ref B, ref C); return 6;                           //DEC BC
                 case 12: INC(ref C); return 4;                                  //INC C
                 case 13: DEC(ref C); return 4;                                  //DEC C
                 case 14: C = RAM[PC++]; return 7;                               //LD C,n
                 case 15: RR(ref A, false); return 4;                            //RRCA
-                case 16: B--; return JR(B != 0) + 1;                            //DJNZ n
+                case 16: B--; return JR(B != 0) + 1;                            //DJNZ s
                 case 17: E = RAM[PC++]; D = RAM[PC++]; return 10;               //LD DE,nn
-                case 18: RAM[D * 256 + E] = A; return 7;                        //LD (DE),A
+                case 18: RAM[DE] = A; return 7;                                 //LD (DE),A
                 case 19: INC(ref D, ref E); return 6;                           //INC DE
                 case 20: INC(ref D); return 4;                                  //INC D
                 case 21: DEC(ref D); return 4;                                  //DEC D
                 case 22: D = RAM[PC++]; return 7;                               //LD D,n
                 case 23: RL(ref A, true); return 4;                             //RLA
-                case 24: JR(true); return 4;                                    //JR n
-                case 25: ADDHL(D, E, false); return 11;                         //ADD HL,DE
-                case 26: A = RAM[D * 256 + E]; return 7;                        //LD A,(DE)
+                case 24: JR(true); return 4;                                    //JR s
+                case 25: ADDHL(DE, false); return 11;                           //ADD HL,DE
+                case 26: A = RAM[DE]; return 7;                                 //LD A,(DE)
                 case 27: DEC(ref D, ref E); return 6;                           //DEC DE
                 case 28: INC(ref E); return 4;                                  //INC E
                 case 29: DEC(ref E); return 4;                                  //DEC E
@@ -131,30 +105,32 @@ namespace Spectrum
                 case 31: RR(ref A, true); return 4;                             //RRA
                 case 32: return JR(!fZ);                                        //JR NZ,s
                 case 33: L = RAM[PC++]; H = RAM[PC++]; return 10;               //LD HL,nn
-                case 34: return POKE(H, L);                                     //LD (nn),HL
+                case 34: return POKE(HL);                                       //LD (nn),HL
                 case 35: INC(ref H, ref L); return 6;                           //INC HL
                 case 36: INC(ref H); return 4;                                  //INC H
                 case 37: DEC(ref H); return 4;                                  //DEC H
                 case 38: H = RAM[PC++]; return 7;                               //LD H,n
-                case 40: return JR(fZ);                                         //JR Z,n
-                case 41: ADDHL(H, L, false); return 11;                         //ADD HL,HL
-                case 42: PEEK(ref H, ref L); return 16;                         //LD HL,(nn)
+                //case 39:                                                        //DAA
+                case 40: return JR(fZ);                                         //JR Z,s
+                case 41: ADDHL(HL, false); return 11;                           //ADD HL,HL
+                case 42: HL = PEEK(); return 16;                         //LD HL,(nn)
                 case 43: DEC(ref H, ref L); return 6;                           //DEC HL
                 case 44: INC(ref L); return 4;                                  //INC L
                 case 45: DEC(ref L); return 4;                                  //DEC L
                 case 46: L = RAM[PC++]; return 7;                               //LD L,n
-                case 47: A ^= 255; return 4;                                    //CPL
+                case 47: CPL(); return 4;                                       //CPL
                 case 48: return JR(!fC);                                        //JR NC,n
                 case 49: SP = (ushort)(RAM[PC++] + RAM[PC++] * 256); return 10; //LD SP,nn
                 case 50: RAM[RAM[PC++] + RAM[PC++] * 256] = A; return 13;       //LD (nn),A
-                case 51: SP++; return 6;                                        //INC SP                //Не проверено
-                case 52: INC(ref RAM[H * 256 + L]); return 11;                  //INC (HL)
-                case 53: DEC(ref RAM[H * 256 + L]); return 11;                  //DEC (HL)
-                case 54: RAM[H * 256 + L] = RAM[PC++]; return 10;               //LD (HL),n
+                case 51: SP++; return 6;                                        //INC SP
+                case 52: INC(ref RAM[HL]); return 11;                           //INC (HL)
+                case 53: DEC(ref RAM[HL]); return 11;                           //DEC (HL)
+                case 54: RAM[HL] = RAM[PC++]; return 10;                        //LD (HL),n
                 case 55: SCF(); return 4;                                       //SCF
                 case 56: return JR(fC);                                         //JR C,n
-                case 57: ADDHL((byte)(SP / 256), (byte)(SP % 256), false); return 11;   //ADD HL,SP
+                case 57: ADDHL(SP, false); return 11;                           //ADD HL,SP
                 case 58: A = RAM[RAM[PC++] + RAM[PC++] * 256]; return 13;       //LD A,(nn)
+                case 59: SP--; return 6;                                        //DEC SP
                 case 60: INC(ref A); return 4;                                  //INC A
                 case 61: DEC(ref A); return 4;                                  //DEC A
                 case 62: A = RAM[PC++]; return 7;                               //LD A,n
@@ -165,106 +141,136 @@ namespace Spectrum
                 case 67: B = E; return 4;                                       //LD B,E
                 case 68: B = H; return 4;                                       //LD B,H
                 case 69: B = L; return 4;                                       //LD B,L
-                case 70: B = RAM[H * 256 + L]; return 7;                        //LD B,(HL)
+                case 70: B = RAM[HL]; return 7;                                 //LD B,(HL)
                 case 71: B = A; return 4;                                       //LD B,A
                 case 72: C = B; return 4;                                       //LD C,B
                 case 73: return 4;                                              //LD C,C
+                case 74: C = D; return 4;                                       //LD C,D
                 case 75: C = E; return 4;                                       //LD C,E
                 case 76: C = H; return 4;                                       //LD C,H
                 case 77: C = L; return 4;                                       //LD C,L
-                case 78: C = RAM[H * 256 + L]; return 7;                        //LD C,(HL)
+                case 78: C = RAM[HL]; return 7;                                 //LD C,(HL)
                 case 79: C = A; return 4;                                       //LD C,A
+                case 80: D = B; return 4;                                       //LD D,B
                 case 81: D = C; return 4;                                       //LD D,C
                 case 82: return 4;                                              //LD D,D
                 case 83: D = E; return 4;                                       //LD D,E
                 case 84: D = H; return 4;                                       //LD D,H
                 case 85: D = L; return 4;                                       //LD D,H
-                case 86: D = RAM[H * 256 + L]; return 7;                        //LD D,(HL)
+                case 86: D = RAM[HL]; return 7;                                 //LD D,(HL)
                 case 87: D = A; return 4;                                       //LD D,A
                 case 88: E = B; return 4;                                       //LD E,B
+                case 89: E = C; return 4;                                       //LD E,C
                 case 90: E = D; return 4;                                       //LD E,D
+                case 91: return 4;                                              //LD E,E
                 case 92: E = H; return 4;                                       //LD E,H
                 case 93: E = L; return 4;                                       //LD E,L
-                case 94: E = RAM[H * 256 + L]; return 7;                        //LD E,(HL)
+                case 94: E = RAM[HL]; return 7;                                 //LD E,(HL)
                 case 95: E = A; return 4;                                       //LD E,A
                 case 96: H = B; return 4;                                       //LD H,B
                 case 97: H = C; return 4;                                       //LD H,C
                 case 98: H = D; return 4;                                       //LD H,D
                 case 99: H = E; return 4;                                       //LD H,E
+                case 100: return 4;                                             //LD H,H
                 case 101: H = L; return 4;                                      //LD H,L
-                case 102: H = RAM[H * 256 + L]; return 7;                       //LD H,(HL)
+                case 102: H = RAM[HL]; return 7;                                //LD H,(HL)
                 case 103: H = A; return 4;                                      //LD H,A
                 case 104: L = B; return 4;                                      //LD L,B
                 case 105: L = C; return 4;                                      //LD L,C
                 case 106: L = D; return 4;                                      //LD L,D
                 case 107: L = E; return 4;                                      //LD L,E
-                case 110: L = RAM[H * 256 + L]; return 7;                       //LD L,(HL)
+                case 108: L = H; return 4;                                      //LD L,H
+                case 109: return 4;                                             //LD L,L
+                case 110: L = RAM[HL]; return 7;                                //LD L,(HL)
                 case 111: L = A; return 4;                                      //LD L,A
-                case 112: RAM[H * 256 + L] = B; return 7;                       //LD (HL),B
-                case 113: RAM[H * 256 + L] = C; return 7;                       //LD (HL),C
-                case 114: RAM[H * 256 + L] = D; return 7;                       //LD (HL),D
-                case 115: RAM[H * 256 + L] = E; return 7;                       //LD (HL),E
+                case 112: RAM[HL] = B; return 7;                                //LD (HL),B
+                case 113: RAM[HL] = C; return 7;                                //LD (HL),C
+                case 114: RAM[HL] = D; return 7;                                //LD (HL),D
+                case 115: RAM[HL] = E; return 7;                                //LD (HL),E
+                case 116: RAM[HL] = H; return 7;                                //LD (HL),H
+                case 117: RAM[HL] = L; return 7;                                //LD (HL),L
                 case 118: fC = true; PC--; return 4;                            //HALT
-                case 119: RAM[H * 256 + L] = A; return 7;                       //LD (HL),A
+                case 119: RAM[HL] = A; return 7;                                //LD (HL),A
                 case 120: A = B; return 4;                                      //LD A,B
                 case 121: A = C; return 4;                                      //LD A,C
                 case 122: A = D; return 4;                                      //LD A,D
                 case 123: A = E; return 4;                                      //LD A,E
                 case 124: A = H; return 4;                                      //LD A,H
                 case 125: A = L; return 4;                                      //LD A,L
-                case 126: A = RAM[H * 256 + L]; return 7;                       //LD A,(HL)
+                case 126: A = RAM[HL]; return 7;                                //LD A,(HL)
+                case 127: return 4;                                             //LD A,A
                 case 128: ADD(B, false); return 4;                              //ADD A,B
                 case 129: ADD(C, false); return 4;                              //ADD A,C
                 case 130: ADD(D, false); return 4;                              //ADD A,D
                 case 131: ADD(E, false); return 4;                              //ADD A,E
                 case 132: ADD(H, false); return 4;                              //ADD A,H
                 case 133: ADD(L, false); return 4;                              //ADD A,L
-                case 134: ADD(RAM[H * 256 + L], true); return 7;                //ADD A,(HL)
+                case 134: ADD(RAM[HL], true); return 7;                         //ADD A,(HL)
                 case 135: ADD(A, false); return 4;                              //ADD A,A
                 case 136: ADD(B, true); return 4;                               //ADC A,B
                 case 137: ADD(C, true); return 4;                               //ADC A,C
-                case 142: ADD(RAM[H * 256 + L], true); return 7;                //ADC A,(HL)
+                case 138: ADD(D, true); return 4;                               //ADC A,D
+                case 139: ADD(E, true); return 4;                               //ADC A,E
+                case 140: ADD(H, true); return 4;                               //ADC A,H
+                case 141: ADD(L, true); return 4;                               //ADC A,L
+                case 142: ADD(RAM[HL], true); return 7;                         //ADC A,(HL)
                 case 143: ADD(A, true); return 4;                               //ADC A,A
                 case 144: SUB(B, false); return 4;                              //SUB B
                 case 145: SUB(C, false); return 4;                              //SUB C
                 case 146: SUB(D, false); return 4;                              //SUB D
+                case 147: SUB(E, false); return 4;                              //SUB E
                 case 148: SUB(H, false); return 4;                              //SUB H
                 case 149: SUB(L, false); return 4;                              //SUB L
-                case 150: SUB(RAM[H * 256 + L], true); return 7;                //SUB (HL)
+                case 150: SUB(RAM[HL], false); return 7;                        //SUB (HL)
+                case 151: SUB(A, false); return 4;                              //SUB A
                 case 152: SUB(B, true); return 4;                               //SBC A,B
+                case 153: SUB(C, true); return 4;                               //SBC A,C
+                case 154: SUB(D, true); return 4;                               //SBC A,D
                 case 155: SUB(E, true); return 4;                               //SBC A,E
+                case 156: SUB(H, true); return 4;                               //SBC A,H
+                case 157: SUB(L, true); return 4;                               //SBC A,L
+                case 158: SUB(RAM[HL], true); return 7;                         //SBC A,(HL)
                 case 159: SUB(A, true); return 4;                               //SBC A,A
                 case 160: AND(B); return 4;                                     //AND B
                 case 161: AND(C); return 4;                                     //AND C
                 case 162: AND(D); return 4;                                     //AND D
-                case 166: AND(RAM[H * 256 + L]); return 7;                      //AND (HL)
+                case 163: AND(E); return 4;                                     //AND E
+                case 164: AND(H); return 4;                                     //AND H
+                case 165: AND(L); return 4;                                     //AND L
+                case 166: AND(RAM[HL]); return 7;                               //AND (HL)
                 case 167: AND(A); return 4;                                     //AND A
                 case 168: XOR(B); return 4;                                     //XOR B
                 case 169: XOR(C); return 4;                                     //XOR C
+                case 170: XOR(D); return 4;                                     //XOR D
                 case 171: XOR(E); return 4;                                     //XOR E
-                case 174: XOR(RAM[H * 256 + L]); return 7;                      //XOR (HL)
+                case 172: XOR(H); return 4;                                     //XOR H
+                case 173: XOR(L); return 4;                                     //XOR L
+                case 174: XOR(RAM[HL]); return 7;                               //XOR (HL)
                 case 175: XOR(A); return 4;                                     //XOR A
                 case 176: OR(B); return 4;                                      //OR B
                 case 177: OR(C); return 4;                                      //OR C
+                case 178: OR(D); return 4;                                      //OR D
                 case 179: OR(E); return 4;                                      //OR E
                 case 180: OR(H); return 4;                                      //OR H
                 case 181: OR(L); return 4;                                      //OR L
-                case 182: OR(RAM[H * 256 + L]); return 4;                       //OR (HL)
+                case 182: OR(RAM[HL]); return 4;                                //OR (HL)
                 case 183: OR(A); return 4;                                      //OR A
                 case 184: CP(B); return 4;                                      //CP B
                 case 185: CP(C); return 4;                                      //CP C
                 case 186: CP(D); return 4;                                      //CP D
+                case 187: CP(E); return 4;                                      //CP E
                 case 188: CP(H); return 4;                                      //CP H
                 case 189: CP(L); return 4;                                      //CP L
-                case 190: CP(RAM[H * 256 + L]); return 7;                       //CP (HL)
+                case 190: CP(RAM[HL]); return 7;                                //CP (HL)
                 case 191: CP(A); return 4;                                      //CP A
                 case 192: return RET(!fZ);                                      //RET NZ
-                case 193: C = RAM[SP++]; B = RAM[SP++]; return 10;              //POP BC
+                case 193: return POP(ref B, ref C);                             //POP BC
                 case 194: return JP(!fZ);                                       //JP NZ, nn
                 case 195: return JP(true);                                      //JP nn
                 case 196: return CALL(!fZ);                                     //CALL NZ, nn
                 case 197: return PUSH(B, C);                                    //PUSH BC
-                case 198: ADD(RAM[PC++], false); return 7;                      //ADD A, n
+                case 198: ADD(RAM[PC++], false); return 7;                      //ADD A,n
+                case 199: return RST(0);                                        //RST 0
                 case 200: return RET(fZ);                                       //RET Z
                 case 201: RET(true); return 10;                                 //RET
                 case 202: return JP(fZ);                                        //JP Z,nn
@@ -275,66 +281,244 @@ namespace Spectrum
                     switch (RAM[PC++])
                     {
                         case 0: RL(ref B, false); return 8;                     //RLC B
-                        case 7: RL(ref B, false); return 8;                     //RLC A
+                        case 1: RL(ref C, false); return 8;                     //RLC C
+                        case 2: RL(ref D, false); return 8;                     //RLC D
+                        case 3: RL(ref E, false); return 8;                     //RLC E
+                        case 4: RL(ref H, false); return 8;                     //RLC H
+                        case 5: RL(ref L, false); return 8;                     //RLC L
+                        case 6: RL(ref RAM[HL], false); return 8;               //RLC (HL)
+                        case 7: RL(ref A, false); return 8;                     //RLC A
+                        case 8: RR(ref B, false); return 8;                     //RRC B
                         case 9: RR(ref C, false); return 8;                     //RRC C
-                        case 16: RL(ref B, true); return 8;                     //RL C
+                        case 10: RR(ref D, false); return 8;                    //RRC D
+                        case 11: RR(ref E, false); return 8;                    //RRC E
+                        case 12: RR(ref H, false); return 8;                    //RRC H
+                        case 13: RR(ref L, false); return 8;                    //RRC L
+                        case 14: RR(ref RAM[HL], false); return 8;              //RRC (HL)
+                        case 15: RR(ref A, false); return 8;                    //RRC A
+                        case 16: RL(ref B, true); return 8;                     //RL B
                         case 17: RL(ref C, true); return 8;                     //RL C
+                        case 18: RL(ref D, true); return 8;                     //RL D
                         case 19: RL(ref E, true); return 8;                     //RL E
-                        case 22: RL(ref RAM[H * 256 + L], true); return 15;     //RL (HL)
+                        case 20: RL(ref H, true); return 8;                     //RL H
+                        case 21: RL(ref L, true); return 8;                     //RL L
+                        case 22: RL(ref RAM[HL], true); return 15;              //RL (HL)
+                        case 23: RL(ref A, true); return 8;                     //RL A
                         case 24: RR(ref B, true); return 8;                     //RR B
                         case 25: RR(ref C, true); return 8;                     //RR C
+                        case 26: RR(ref D, true); return 8;                     //RR D
+                        case 27: RR(ref E, true); return 8;                     //RR E
                         case 28: RR(ref H, true); return 8;                     //RR H
                         case 29: RR(ref L, true); return 8;                     //RR L
+                        case 30: RR(ref RAM[HL], true); return 8;               //RR (HL)
+                        case 31: RR(ref A, true); return 8;                     //RR A
+                        case 32: SLA(ref B); return 8;                          //SLA B
                         case 33: SLA(ref C); return 8;                          //SLA C
+                        case 34: SLA(ref D); return 8;                          //SLA D
+                        case 35: SLA(ref E); return 8;                          //SLA E
+                        case 36: SLA(ref H); return 8;                          //SLA H
+                        case 37: SLA(ref L); return 8;                          //SLA L
+                        case 38: SLA(ref RAM[HL]); return 8;                    //SLA (HL)
+                        case 39: SLA(ref A); return 8;                          //SLA A
                         case 56: SRL(ref B); return 8;                          //SRL B
                         case 57: SRL(ref C); return 8;                          //SRL C
                         case 58: SRL(ref D); return 8;                          //SRL D
+                        case 59: SRL(ref E); return 8;                          //SRL E
                         case 60: SRL(ref H); return 8;                          //SRL H
                         case 61: SRL(ref L); return 8;                          //SRL L
+                        case 62: SRL(ref RAM[HL]); return 8;                    //SRL (HL)
                         case 63: SRL(ref A); return 8;                          //SRL A
                         case 64: BIT(B, 0); return 8;                           //BIT 0,B
-                        case 71: BIT(A, 0); return 8;                           //BIT 0,A
+                        case 65: BIT(C, 0); return 8;                           //BIT 0,C
+                        case 66: BIT(D, 0); return 8;                           //BIT 0,D
+                        case 67: BIT(E, 0); return 8;                           //BIT 0,E
+                        case 68: BIT(H, 0); return 8;                           //BIT 0,H
+                        case 69: BIT(L, 0); return 8;                           //BIT 0,L
+                        case 70: BIT(RAM[HL], 0); return 8;                     //BIT 0,(HL)
+                        case 71: BIT(A, 1); return 8;                           //BIT 0,A
+                        case 72: BIT(B, 1); return 8;                           //BIT 1,B
+                        case 73: BIT(C, 1); return 8;                           //BIT 1,C
+                        case 74: BIT(D, 1); return 8;                           //BIT 1,D
+                        case 75: BIT(E, 1); return 8;                           //BIT 1,E
+                        case 76: BIT(H, 1); return 8;                           //BIT 1,H
+                        case 77: BIT(L, 1); return 8;                           //BIT 1,L
+                        case 78: BIT(RAM[HL], 1); return 8;                     //BIT 1,(HL)
                         case 79: BIT(A, 1); return 8;                           //BIT 1,A
-                        case 86: BIT(D, 2); return 8;                           //BIT 2,D
+                        case 80: BIT(B, 2); return 8;                           //BIT 2,B
+                        case 81: BIT(C, 2); return 8;                           //BIT 2,C
+                        case 82: BIT(D, 2); return 8;                           //BIT 2,D
+                        case 83: BIT(E, 2); return 8;                           //BIT 2,E
+                        case 84: BIT(H, 2); return 8;                           //BIT 2,H
+                        case 85: BIT(L, 2); return 8;                           //BIT 2,L
+                        case 86: BIT(RAM[HL], 2); return 8;                     //BIT 2,(HL)
                         case 87: BIT(A, 2); return 8;                           //BIT 2,A
                         case 88: BIT(B, 3); return 8;                           //BIT 3,B
+                        case 89: BIT(C, 3); return 8;                           //BIT 3,C
                         case 90: BIT(D, 3); return 8;                           //BIT 3,D
+                        case 91: BIT(E, 3); return 8;                           //BIT 3,E
+                        case 92: BIT(H, 3); return 8;                           //BIT 3,H
+                        case 93: BIT(L, 3); return 8;                           //BIT 3,L
+                        case 94: BIT(RAM[HL], 3); return 8;                     //BIT 3,(HL)
                         case 95: BIT(A, 3); return 8;                           //BIT 3,A
+                        case 96: BIT(B, 4); return 8;                           //BIT 4,B
+                        case 97: BIT(C, 4); return 8;                           //BIT 4,C
+                        case 98: BIT(D, 4); return 8;                           //BIT 4,D
+                        case 99: BIT(E, 4); return 8;                           //BIT 4,E
+                        case 100: BIT(H, 4); return 8;                          //BIT 4,H
+                        case 101: BIT(L, 4); return 8;                          //BIT 4,L
+                        case 102: BIT(RAM[HL], 4); return 8;                    //BIT 4,(HL)
                         case 103: BIT(A, 4); return 8;                          //BIT 4,A
                         case 104: BIT(B, 5); return 8;                          //BIT 5,B
+                        case 105: BIT(C, 5); return 8;                          //BIT 5,C
+                        case 106: BIT(D, 5); return 8;                          //BIT 5,D
+                        case 107: BIT(E, 5); return 8;                          //BIT 5,E
+                        case 108: BIT(H, 5); return 8;                          //BIT 5,H
+                        case 109: BIT(L, 5); return 8;                          //BIT 5,L
+                        case 110: BIT(RAM[HL], 5); return 8;                    //BIT 5,(HL)
                         case 111: BIT(A, 5); return 8;                          //BIT 5,A
                         case 112: BIT(B, 6); return 8;                          //BIT 6,B
+                        case 113: BIT(C, 6); return 8;                          //BIT 6,C
+                        case 114: BIT(D, 6); return 8;                          //BIT 6,D
+                        case 115: BIT(E, 6); return 8;                          //BIT 6,E
+                        case 116: BIT(H, 6); return 8;                          //BIT 6,H
+                        case 117: BIT(L, 6); return 8;                          //BIT 6,L
+                        case 118: BIT(RAM[HL], 6); return 8;                    //BIT 6,(HL)
+                        case 119: BIT(A, 6); return 8;                          //BIT 6,A
                         case 120: BIT(B, 7); return 8;                          //BIT 7,B
                         case 121: BIT(C, 7); return 8;                          //BIT 7,C
-                        case 126: BIT(RAM[H * 256 + L], 7); return 12;          //BIT 7,(HL)
+                        case 122: BIT(D, 7); return 8;                          //BIT 7,D
+                        case 123: BIT(E, 7); return 8;                          //BIT 7,E
+                        case 124: BIT(H, 7); return 8;                          //BIT 7,H
+                        case 125: BIT(L, 7); return 8;                          //BIT 7,L
+                        case 126: BIT(RAM[HL], 7); return 8;                    //BIT 7,(HL)
                         case 127: BIT(A, 7); return 8;                          //BIT 7,A
                         case 128: RES(ref B, 0); return 8;                      //RES 0,B
-                        case 134: RES(ref RAM[H * 256 + L], 0); return 15;      //RES 0,(HL)
+                        case 129: RES(ref C, 0); return 8;                      //RES 0,C
+                        case 130: RES(ref D, 0); return 8;                      //RES 0,D
+                        case 131: RES(ref E, 0); return 8;                      //RES 0,E
+                        case 132: RES(ref H, 0); return 8;                      //RES 0,H
+                        case 133: RES(ref L, 0); return 8;                      //RES 0,L
+                        case 134: RES(ref RAM[HL], 0); return 15;               //RES 0,(HL)
+                        case 135: RES(ref A, 0); return 8;                      //RES 0,A
+                        case 136: RES(ref B, 1); return 8;                      //RES 1,B
+                        case 137: RES(ref C, 1); return 8;                      //RES 1,C
+                        case 138: RES(ref D, 1); return 8;                      //RES 1,D
+                        case 139: RES(ref E, 1); return 8;                      //RES 1,E
+                        case 140: RES(ref H, 1); return 8;                      //RES 1,H
+                        case 141: RES(ref L, 1); return 8;                      //RES 1,L
+                        case 142: RES(ref RAM[HL], 1); return 15;               //RES 1,(HL)
+                        case 143: RES(ref A, 1); return 8;                      //RES 1,A
                         case 144: RES(ref B, 2); return 8;                      //RES 2,B
-                        case 150: RES(ref RAM[H * 256 + L], 2); return 15;      //RES 2,(HL)
+                        case 145: RES(ref C, 2); return 8;                      //RES 2,C
+                        case 146: RES(ref D, 2); return 8;                      //RES 2,D
+                        case 147: RES(ref E, 2); return 8;                      //RES 2,E
+                        case 148: RES(ref H, 2); return 8;                      //RES 2,H
+                        case 149: RES(ref L, 2); return 8;                      //RES 2,L
+                        case 150: RES(ref RAM[HL], 2); return 15;               //RES 2,(HL)
+                        case 151: RES(ref A, 2); return 8;                      //RES 2,A
                         case 152: RES(ref B, 3); return 8;                      //RES 3,B
-                        case 158: RES(ref RAM[H * 256 + L], 3); return 15;      //RES 3,(HL)
+                        case 153: RES(ref C, 3); return 8;                      //RES 3,C
+                        case 154: RES(ref D, 3); return 8;                      //RES 3,D
+                        case 155: RES(ref E, 3); return 8;                      //RES 3,E
+                        case 156: RES(ref H, 3); return 8;                      //RES 3,H
+                        case 157: RES(ref L, 3); return 8;                      //RES 3,L
+                        case 158: RES(ref RAM[HL], 3); return 15;               //RES 3,(HL)
+                        case 159: RES(ref A, 3); return 8;                      //RES 3,A
                         case 160: RES(ref B, 4); return 8;                      //RES 4,B
-                        case 174: RES(ref RAM[H * 256 + L], 5); return 15;      //RES 5,(HL)
+                        case 161: RES(ref C, 4); return 8;                      //RES 4,C
+                        case 162: RES(ref D, 4); return 8;                      //RES 4,D
+                        case 163: RES(ref E, 4); return 8;                      //RES 4,E
+                        case 164: RES(ref H, 4); return 8;                      //RES 4,H
+                        case 165: RES(ref L, 4); return 8;                      //RES 4,L
+                        case 166: RES(ref RAM[HL], 4); return 15;               //RES 4,(HL)
+                        case 167: RES(ref A, 4); return 8;                      //RES 4,A
+                        case 168: RES(ref B, 5); return 8;                      //RES 5,B
+                        case 169: RES(ref C, 5); return 8;                      //RES 5,C
+                        case 170: RES(ref D, 5); return 8;                      //RES 5,D
+                        case 171: RES(ref E, 5); return 8;                      //RES 5,E
+                        case 172: RES(ref H, 5); return 8;                      //RES 5,H
+                        case 173: RES(ref L, 5); return 8;                      //RES 5,L
+                        case 174: RES(ref RAM[HL], 5); return 15;               //RES 5,(HL)
+                        case 175: RES(ref A, 5); return 8;                      //RES 5,A
                         case 176: RES(ref B, 6); return 8;                      //RES 6,B
                         case 177: RES(ref C, 6); return 8;                      //RES 6,C
+                        case 178: RES(ref D, 6); return 8;                      //RES 6,D
+                        case 179: RES(ref E, 6); return 8;                      //RES 6,E
+                        case 180: RES(ref H, 6); return 8;                      //RES 6,H
+                        case 181: RES(ref L, 6); return 8;                      //RES 6,L
+                        case 182: RES(ref RAM[HL], 6); return 15;               //RES 6,(HL)
+                        case 183: RES(ref A, 6); return 8;                      //RES 6,A
                         case 184: RES(ref B, 7); return 8;                      //RES 7,B
+                        case 185: RES(ref C, 7); return 8;                      //RES 7,C
+                        case 186: RES(ref D, 7); return 8;                      //RES 7,D
+                        case 187: RES(ref E, 7); return 8;                      //RES 7,E
                         case 188: RES(ref H, 7); return 8;                      //RES 7,H
+                        case 189: RES(ref L, 7); return 8;                      //RES 7,L
+                        case 190: RES(ref RAM[HL], 7); return 15;               //RES 7,(HL)
                         case 191: RES(ref A, 7); return 8;                      //RES 7,A
+                        case 192: SET(ref B, 0); return 8;                      //SET 0,B
+                        case 193: SET(ref C, 0); return 8;                      //SET 0,C
                         case 194: SET(ref D, 0); return 8;                      //SET 0,D
-                        case 198: SET(ref RAM[H * 256 + L], 0); return 15;      //SET 0,(HL)
+                        case 195: SET(ref E, 0); return 8;                      //SET 0,E
+                        case 196: SET(ref H, 0); return 8;                      //SET 0,H
+                        case 197: SET(ref L, 0); return 8;                      //SET 0,L
+                        case 198: SET(ref RAM[HL], 0); return 15;               //SET 0,(HL)
+                        case 199: SET(ref A, 0); return 8;                      //SET 0,A
+                        case 200: SET(ref B, 1); return 8;                      //SET 1,B
+                        case 201: SET(ref C, 1); return 8;                      //SET 1,C
                         case 202: SET(ref D, 1); return 8;                      //SET 1,D
+                        case 203: SET(ref E, 1); return 8;                      //SET 1,E
+                        case 204: SET(ref H, 1); return 8;                      //SET 1,H
+                        case 205: SET(ref L, 1); return 8;                      //SET 1,L
+                        case 206: SET(ref RAM[HL], 1); return 15;               //SET 1,(HL)
+                        case 207: SET(ref A, 1); return 8;                      //SET 1,A
+                        case 208: SET(ref B, 2); return 8;                      //SET 2,B
+                        case 209: SET(ref C, 2); return 8;                      //SET 2,C
                         case 210: SET(ref D, 2); return 8;                      //SET 2,D
+                        case 211: SET(ref E, 2); return 8;                      //SET 2,E
+                        case 212: SET(ref H, 2); return 8;                      //SET 2,H
+                        case 213: SET(ref L, 2); return 8;                      //SET 2,L
+                        case 214: SET(ref RAM[HL], 2); return 15;               //SET 2,(HL)
+                        case 215: SET(ref A, 2); return 8;                      //SET 2,A
+                        case 216: SET(ref B, 3); return 8;                      //SET 3,B
+                        case 217: SET(ref C, 3); return 8;                      //SET 3,C
                         case 218: SET(ref D, 3); return 8;                      //SET 3,D
-                        case 222: SET(ref RAM[H * 256 + L], 3); return 15;      //SET 3,(HL)
+                        case 219: SET(ref E, 3); return 8;                      //SET 3,E
+                        case 220: SET(ref H, 3); return 8;                      //SET 3,H
+                        case 221: SET(ref L, 3); return 8;                      //SET 3,L
+                        case 222: SET(ref RAM[HL], 3); return 15;               //SET 3,(HL)
+                        case 223: SET(ref A, 3); return 8;                      //SET 3,A
+                        case 224: SET(ref B, 4); return 8;                      //SET 4,B
+                        case 225: SET(ref C, 4); return 8;                      //SET 4,C
                         case 226: SET(ref D, 4); return 8;                      //SET 4,D
+                        case 227: SET(ref E, 4); return 8;                      //SET 4,E
+                        case 228: SET(ref H, 4); return 8;                      //SET 4,H
+                        case 229: SET(ref L, 4); return 8;                      //SET 4,L
+                        case 230: SET(ref RAM[HL], 4); return 15;               //SET 4,(HL)
+                        case 231: SET(ref A, 4); return 8;                      //SET 4,A
                         case 232: SET(ref B, 5); return 8;                      //SET 5,B
                         case 233: SET(ref C, 5); return 8;                      //SET 5,C
-                        case 238: SET(ref RAM[H * 256 + L], 5); return 15;      //SET 5,(HL)
+                        case 234: SET(ref D, 5); return 8;                      //SET 5,D
+                        case 235: SET(ref E, 5); return 8;                      //SET 5,E
+                        case 236: SET(ref H, 5); return 8;                      //SET 5,H
+                        case 237: SET(ref L, 5); return 8;                      //SET 5,L
+                        case 238: SET(ref RAM[HL], 5); return 15;               //SET 5,(HL)
+                        case 239: SET(ref A, 5); return 8;                      //SET 5,A
+                        case 240: SET(ref B, 6); return 8;                      //SET 6,B
                         case 241: SET(ref C, 6); return 8;                      //SET 6,C
+                        case 242: SET(ref D, 6); return 8;                      //SET 6,D
+                        case 243: SET(ref E, 6); return 8;                      //SET 6,E
+                        case 244: SET(ref H, 6); return 8;                      //SET 6,H
+                        case 245: SET(ref L, 6); return 8;                      //SET 6,L
+                        case 246: SET(ref RAM[HL], 6); return 15;               //SET 6,(HL)
+                        case 247: SET(ref A, 6); return 8;                      //SET 6,A
                         case 248: SET(ref B, 7); return 8;                      //SET 7,B
+                        case 249: SET(ref C, 7); return 8;                      //SET 7,C
+                        case 250: SET(ref D, 7); return 8;                      //SET 7,D
+                        case 251: SET(ref E, 7); return 8;                      //SET 7,E
+                        case 252: SET(ref H, 7); return 8;                      //SET 7,H
                         case 253: SET(ref L, 7); return 8;                      //SET 7,L
-                        case 254: SET(ref RAM[H * 256 + L], 7); return 15;      //SET 7,(HL)
+                        case 254: SET(ref RAM[HL], 7); return 15;               //SET 7,(HL)
                         case 255: SET(ref A, 7); return 8;                      //SET 7,A
                     }
                     break;
@@ -344,13 +528,10 @@ namespace Spectrum
                 case 206: ADD(RAM[PC++], true); return 7;                       //ADC A,n
                 case 207: return RST(8);                                        //RST 8
                 case 208: return RET(!fC);                                      //RET NC
-                case 209:                                                       //POP DE
-                    E = RAM[SP++];
-                    D = RAM[SP++];
-                    return 10;
+                case 209: return POP(ref D, ref E);                             //POP DE
                 case 210: return JP(!fC);                                       //JP NC,nn
                 case 211: OUT(RAM[PC++], A); return 11;                         //OUT (n),A
-                case 212: return CALL(!fC);                                     //CALL NC, nn
+                case 212: return CALL(!fC);                                     //CALL NC,nn
                 case 213: return PUSH(D, E);                                    //PUSH DE
                 case 214: SUB(RAM[PC++], false); return 7;                      //SUB n
                 case 215: return RST(16);                                       //RST 10
@@ -358,105 +539,102 @@ namespace Spectrum
                 case 217: EXX(); return 4;                                      //EXX
                 case 218: return JP(fC);                                        //JP C,nn
                 case 219: A = IN[RAM[PC] + A * 256]; return 11;                 //IN A,(n)
-                case 220: return CALL(fC);                                      //CALL C, nn
+                case 220: return CALL(fC);                                      //CALL C,nn
+                case 221: return IndexOperation(ref IX);                        //-------------------- Префикс DD
+                case 222: SUB(RAM[PC++], false); return 7;                      //SBC A,n
                 case 223: return RST(24);                                       //RST 18
-                case 225: L = RAM[SP++]; H = RAM[SP++]; return 10;              //POP HL
-                case 227:                                                       //EX (SP),HL
-                    t = RAM[SP]; RAM[SP] = L; L = t;
-                    t = RAM[(ushort)(SP + 1)]; RAM[(ushort)(SP + 1)] = H; H = t;
-                    return 19;
+                case 224: return RET(!fV);                                      //RET PO
+                case 225: return POP(ref H, ref L);                             //POP HL
+                case 226: return JP(!fV);                                       //JP PO,nn
+                case 227: EX(ref RAM[SP + 1], ref RAM[SP], ref H, ref L); return 19;    //EX (SP),HL
                 case 228: return CALL(!fV);                                     //CALL PO,nn
                 case 229: return PUSH(H, L);                                    //PUSH HL
                 case 230: AND(RAM[PC++]); return 7;                             //AND n
                 case 231: return RST(32);                                       //RST 20
-                case 233: PC = (ushort)(H * 256 + L); return 4;                 //JP (HL)
-                case 235: t = D; D = H; H = t; t = E; E = L; L = t; return 4;   //EX DE,HL
+                case 232: return RET(fV);                                       //RET PE
+                case 233: PC = (ushort)(HL); return 4;                          //JP (HL)
+                case 234: return JP(fV);                                        //JP PE,nn
+                case 235: EX(ref D, ref E, ref H, ref L); return 4;             //EX DE,HL
+                case 236: return CALL(fV);                                      //CALL PE,nn
                 #region case 237 (Префикс ED)                                   
                 case 237:                                                       //-------------------- Префикс ED
                     R++;
                     if (R > 127) R = 0;
                     switch (RAM[PC++])
                     {
-                        case 66: SBC(B, C); return 15;                          //SBC HL,BC
-                        case 67: return POKE(B, C);                             //LD (nn),BC
-                        case 68:                                                //NEG
-                            A = (byte)(256 - A);
-                            fZ = A == 0;
-                            //флаги... остальные
-                            return 8;
+                        case 64: B = IN[BC]; return 12;                         //IN B,(C)
+                        case 65: OUT(BC, B); return 12;                         //OUT (C),B
+                        case 66: return SBC(BC);                                //SBC HL,BC
+                        case 67: return POKE(BC);                               //LD (nn),BC
+                        case 68: NEG(); return 8;                               //NEG
+                        //case 69:                                                //RETN
+                        case 70: IM = 0; return 8;                              //IM 0
                         case 71: I = A; return 9;                               //LD I,A
-                        case 74: ADDHL(B, C, true); return 8;                   //ADC HL, BC
-                        case 75: PEEK(ref B, ref C); return 20;                 //LD BC,(nn)
-                        case 82: SBC(D, E); return 15;                          //SBC HL,DE
-                        case 83: return POKE(D, E);                             //LD (nn),DE
+                        case 72: C = IN[BC]; return 12;                         //IN C,(C)
+                        case 73: OUT(BC, C); return 12;                         //OUT (C),C
+                        case 74: ADDHL(BC, true); return 8;                     //ADC HL,BC
+                        case 75: BC = PEEK(); return 20;                       //LD BC,(nn)
+                        //case 77:                                                //RETI
+                        case 79: R = A; return 9;                               //LD R,A
+                        case 80: D = IN[BC]; return 12;                         //IN D,(C)
+                        case 81: OUT(BC, D); return 12;                         //OUT (C),D
+                        case 82: return SBC(DE);                                //SBC HL,DE
+                        case 83: return POKE(DE);                               //LD (nn),DE
                         case 86: IM = 1; return 8;                              //IM 1
-                        case 90: ADDHL(D, E, true); return 8;                   //ADC HL,DE
-                        case 91: PEEK(ref D, ref E); return 20;                 //LD DE,(nn)
-                        case 98: SBC(H, L); return 15;                          //SBC HL,HL
-                        case 106: ADDHL(H, L, true); return 15;                 //ADC HL,HL
-                        case 114:                                               //SBC HL,SP
-                            SBC((byte)(SP / 256), (byte)(SP % 256));
-                            return 15;   
+                        case 87: A = I; return 9;                               //LD A,I        //Флаги!!!
+                        case 88: E = IN[BC]; return 12;                         //IN E,(C)
+                        case 89: OUT(BC, E); return 12;                         //OUT (C),E
+                        case 90: ADDHL(DE, true); return 8;                     //ADC HL,DE
+                        case 91: DE = PEEK(); return 20;                        //LD DE,(nn)
+                        case 94: IM = 2; return 8;                              //IM 2
+                        case 95: A = R; return 9;                               //LD A,R        //Флаги!!!
+                        case 96: H = IN[BC]; return 12;                         //IN H,(C)
+                        case 97: OUT(BC, H); return 12;                         //OUT (C),H
+                        case 98: return SBC(HL);                                //SBC HL,HL
+                        case 99: return POKE(HL);                               //LD (nn),HL
+                        //case 103:                                               //RRD
+                        case 104: L = IN[BC]; return 12;                        //IN L,(C)
+                        case 105: OUT(BC, L); return 12;                        //OUT (C),L
+                        case 106: ADDHL(HL, true); return 15;                   //ADC HL,HL
+                        case 107: HL = PEEK(); return 20;                       //LD HL,(nn)
+                        //case 111:                                               //RLD
+                        case 112: F = IN[BC]; return 12;                        //IN L,(C)
+                        case 114: return SBC(SP);                               //SBC HL,SP
                         case 115: return POKE(SP);                              //LD (nn),SP
-                        case 120: A = IN[B * 256 + C]; return 12;               //IN A,(C)
-                        case 121: OUT((ushort)(B * 256 + C), A); return 12;     //OUT (C),A
-                        case 122: ADDHL((byte)(SP / 256), (byte)(SP % 256), true); return 11;   //ADC HL, SP
-                        case 123:                                               //LD SP,(nn)
-                            tmp = (ushort)(RAM[PC++] + RAM[PC++] * 256);
-                            SP = (ushort)(RAM[tmp++] + RAM[tmp] * 256);
-                            return 20;
-                        case 176:                                               //LDIR - Копирование "снизу" (нормальное)
-                            RAM[D * 256 + E] = RAM[H * 256 + L];
-                            t = RAM[D * 256 + E];
-                            C--; if (C == 255) B--;
-                            E++; if (E == 0) D++;
-                            L++; if (L == 0) H++;
-                            if (B != 0 | C != 0) { PC -= 2; return 21; }
-                            else
-                            {
-                                //fY = ((t + A) & 1) != 0; //Опять врут в найденной документации :-(
-                                f5 = (t & 32) != 0;
-                                fH = false;
-                                //fX = ((t + A) & 8) != 0;
-                                f3 = (t & 8) != 0;
-                                fV = false;
-                                fN = false;
-                                return 16;
-                            }
-                        case 184:                                               //LDDR - Копирование "сверху"
-                            RAM[D * 256 + E] = RAM[H * 256 + L];
-                            t = RAM[D * 256 + E];
-                            C--; if (C == 255) B--;
-                            E--; if (E == 255) D--;
-                            L--; if (L == 255) H--;
-                            if (B != 0 | C != 0) { PC -= 2; return 21; }
-                            else
-                            {
-                                //fY = ((t + A) & 1) != 0;
-                                f5 = (t & 32) != 0;
-                                fH = false;
-                                //fX = ((t + A) & 8) != 0;
-                                f3 = (t & 8) != 0;
-                                fV = false;
-                                fN = false;
-                                return 16;
-                            }
+                        case 120: A = IN[BC]; return 12;                        //IN A,(C)
+                        case 121: OUT(BC, A); return 12;                        //OUT (C),A
+                        case 122: ADDHL(SP, true); return 11;                   //ADC HL,SP
+                        case 123: SP = PEEK(); return 20;                       //LD SP,(nn)
+                        case 168: return LDI(false, true);                      //LDD
+                        //case 169:                                               //CPD
+                        //case 170:                                               //IND
+                        //case 171:                                               //OUTD
+                        case 176: return LDI(true, false);                      //LDIR
+                        //case 177:                                               //CPIR
+                        //case 178:                                               //INIR
+                        //case 179:                                               //OTIR
+                        case 184: return LDI(true, true);                       //LDDR
+                        //case 169:                                               //CPDR
+                        //case 170:                                               //INDR
+                        //case 171:                                               //OTDR
                     }
                     break;
                 #endregion
-                case 238: XOR(RAM[PC++]); return 7;                             //XOR N
+                case 238: XOR(RAM[PC++]); return 7;                             //XOR n
                 case 239: return RST(40);                                       //RST 28
-                case 241: GetFlags(RAM[SP++]); A = RAM[SP++]; return 10;        //POP AF
+                case 240: return RET(!fS);                                      //RET P
+                case 241: F = RAM[SP++]; A = RAM[SP++]; return 10;              //POP AF
                 case 242: return JP(!fS);                                       //JP P,nn
                 case 243: IM = 0; return 40;                                    //DI
                 case 244: return CALL(!fS);                                     //CALL P,nn
-                case 245: return PUSH(A, F());                                  //PUSH AF
+                case 245: return PUSH(A, F);                                    //PUSH AF
                 case 246: OR(RAM[PC++]); return 7;                              //OR n
+                case 247: return RST(48);                                       //RST 30
                 case 248: return RET(fS);                                       //RET M
-                case 249: SP = (ushort)(H * 256 + L); return 6;                 //LD SP, HL
+                case 249: SP = (ushort)(HL); return 6;                          //LD SP, HL
                 case 250: return JP(fS);                                        //JP M, nn
                 case 251: IM = 1; return 4;                                     //EI
-                case 221: return IndexOperation(ref IX);                        //-------------------- Префикс DD
+                case 252: return CALL(fS);                                      //CALL M,nn
                 case 253: return IndexOperation(ref IY);                        //-------------------- Префикс FD
                 case 254: CP(RAM[PC++]); return 7;                              //CP n
                 case 255: return RST(56);                                       //RST 38
@@ -473,8 +651,8 @@ namespace Spectrum
             if (R > 127) R = 0;
             switch (RAM[PC++])
             {
-                case 9: ADD(ref II, B, C); return 15;                           //ADD II,BC
-                case 25: ADD(ref II, D, E); return 15;                          //ADD II,DE
+                case 9: ADD(ref II, BC); return 15;                           //ADD II,BC
+                case 25: ADD(ref II, DE); return 15;                          //ADD II,DE
                 case 33:                                                        //LD IY,nn
                     II = (ushort)(RAM[PC++] + RAM[PC++] * 256);
                     return 14;
@@ -532,7 +710,9 @@ namespace Spectrum
                     break;
                 case 182: OR(RAM[IplusS4(II)]); return 19;                      //OR (II+S)
                 case 190: CP(RAM[IplusS4(II)]); return 19;                      //CP (II+S)
-                case 225: II = POP(); return 14;                                //POP II
+                case 225: return POP(ref II);                                   //POP II
+
+
                 case 229: return PUSH(II);                                      //PUSH II
                 case 233: PC = II; return 8;                                    //JP (II)
             }
@@ -541,13 +721,6 @@ namespace Spectrum
             return 1;
         }
         #region IO
-        static int POKE(byte r1, byte r2)
-        {
-            ushort adr = (ushort)(RAM[PC++] + RAM[PC++] * 256);
-            RAM[adr++] = r2;
-            RAM[adr] = r1;
-            return 20;
-        }
         static int POKE(ushort Reg)
         {
             ushort adr = (ushort)(RAM[PC++] + RAM[PC++] * 256);
@@ -555,11 +728,30 @@ namespace Spectrum
             RAM[adr] = (byte)(Reg / 256);
             return 20;
         }
-        static void PEEK(ref byte r1, ref byte r2)
+        static ushort PEEK()
         {
             ushort adr = (ushort)(RAM[PC++] + RAM[PC++] * 256);
-            r2 = RAM[adr++];
-            r1 = RAM[adr];
+            return (ushort)(RAM[adr] + RAM[adr + 1] * 256);
+        }
+        static int LDI(bool Rep, bool Down)
+        {
+            RAM[DE] = RAM[HL];
+            t = RAM[DE];
+            C--; if (C == 255) B--;
+            if (!Down) { E++; if (E == 0) D++; L++; if (L == 0) H++; }
+            else { E--; if (E == 255) D--; L--; if (L == 255) H--; }
+            if (Rep & (B != 0 | C != 0)) { PC -= 2; return 21; }
+            else
+            {
+                //fY = ((t + A) & 1) != 0; //Опять врут в найденной документации :-(
+                f5 = (t & 32) != 0;
+                fH = false;
+                //fX = ((t + A) & 8) != 0;
+                f3 = (t & 8) != 0;
+                fV = false;
+                fN = false;
+                return 16;
+            }
         }
         #endregion
         #region Сложение и вычитание
@@ -617,12 +809,14 @@ namespace Spectrum
             fN = false;
             fC = a > (B + c);
         }
-        static void ADD(ref ushort ii, byte r1, byte r2) //Для IX, IY
+        static void ADD(ref ushort ii, ushort Reg) //Для IX, IY
         {
-            ii += (ushort)(r1 * 256 + r2);
+            ii += Reg;
         }
-        static void ADDHL(byte r1, byte r2, bool C)
+        static void ADDHL(ushort Reg, bool C)
         {
+            byte r1 = (byte)(Reg / 256);
+            byte r2 = (byte)(Reg % 256);
             byte h = H;
             byte c2 = (C & fC) ? (byte)1 : (byte)0;
             byte c1 = L + r2 + c2> 255 ? (byte)1 : (byte)0;
@@ -651,12 +845,14 @@ namespace Spectrum
             fN = true;
             fC = a - Reg - c < 0;
         }
-        static void SUB(ref ushort ii, byte r1, byte r2)
+        static void SUB(ref ushort ii, ushort Reg)
         {
-            ii -= (ushort)(r1 * 256 + r2);
+            ii -= Reg;
         }
-        static void SBC(byte r1, byte r2)
+        static int SBC(ushort Reg)
         {
+            byte r1 = (byte)(Reg / 256);
+            byte r2 = (byte)(Reg % 256);
             byte h = H;
             byte l = L;
             byte c2 = fC ? (byte)1 : (byte)0;
@@ -671,6 +867,7 @@ namespace Spectrum
             fV = ((h ^ r1) & (h ^ ((h - r1 - c1) & 255)) & 128) != 0;
             fN = true;
             fC = h - r1 - c1 < 0;
+            return 15;
         }
 
         #endregion
@@ -861,21 +1058,41 @@ namespace Spectrum
         #region Стэк
         static int PUSH(byte r1, byte r2) { RAM[--SP] = r1; RAM[--SP] = r2; return 11; }
         static int PUSH(ushort Reg) { RAM[--SP] = (byte)(Reg / 256); RAM[--SP] = (byte)(Reg % 256); return 15; }
-        static ushort POP() { return (ushort)(RAM[SP++] + RAM[SP++] * 256); }
+        static int POP(ref byte r1, ref byte r2) { r2 = RAM[SP++]; r1 = RAM[SP++]; return 10; }
+        static int POP(ref ushort Reg) { Reg = (ushort)(RAM[SP++] + RAM[SP++] * 256); return 14; }
+        //static 
         #endregion
         #region Разное
-        //EXX
+        static void CPL()
+        {
+            A ^= 255;
+            f5 = (A & 32) != 0;
+            fH = true;
+            f3 = (A & 8) != 0;
+            fN = true;
+        }
+        static void NEG()
+        {
+            byte a = A;
+            A = (byte)(256 - A);
+            fS = (A & 128) != 0;
+            fZ = A == 0;
+            f5 = (A & 32) != 0;
+            //fH = трудно посчитать... потом...
+            f3 = (A & 8) != 0;
+            fV = a == 80;
+            fN = true;
+            fC = a != 0;
+        }
+        static void EX(ref byte r1, ref byte r2, ref byte ra1, ref byte ra2)
+        {
+            byte t = r1; r1 = ra1; ra1 = t;
+            t = r2; r2 = ra2; ra2 = t;
+        }
         static void EXAF()
         {
-            t = A; A = Aa; Aa = t;
-            tb = fS; fS = fSa; fSa = tb;
-            tb = fZ; fZ = fZa; fZa = tb;
-            tb = f5; f5 = f5a; f5a = tb;
-            tb = fH; fH = fHa; fHa = tb;
-            tb = f3; f3 = f3a; f3a = tb;
-            tb = fV; fV = fVa; fVa = tb;
-            tb = fN; fN = fNa; fNa = tb;
-            tb = fC; fC = fCa; fCa = tb;
+            byte t = A; A = Aa; Aa = t;
+            t = F; F = Fa; Fa = t;
         }
         static void EXX()
         {
@@ -935,7 +1152,6 @@ namespace Spectrum
         }
         static void OUT(ushort port, byte Byte)
         {
-            //Z80.OUT[254] & 7
             if (port % 256 == 254) Screen.Border = Byte & 7;
         }
         #endregion
