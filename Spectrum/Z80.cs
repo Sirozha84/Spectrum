@@ -39,12 +39,9 @@ namespace Spectrum
                 fC = (value & 1) != 0;
             }
         }
-<<<<<<< HEAD
         static ushort BC { get { return (ushort)(B * 256 + C); } set { B = (byte)(value / 256); C = (byte)(value % 256); } }
         static ushort DE { get { return (ushort)(D * 256 + E); } set { D = (byte)(value / 256); E = (byte)(value % 256); } }
         static ushort HL { get { return (ushort)(H * 256 + L); } set { H = (byte)(value / 256); L = (byte)(value % 256); } }
-=======
->>>>>>> origin/master
         /// <summary>
         /// Сброс
         /// </summary>
@@ -546,28 +543,19 @@ namespace Spectrum
                 case 221: return IndexOperation(ref IX);                        //-------------------- Префикс DD
                 case 222: SUB(RAM[PC++], false); return 7;                      //SBC A,n
                 case 223: return RST(24);                                       //RST 18
-<<<<<<< HEAD
                 case 224: return RET(!fV);                                      //RET PO
                 case 225: return POP(ref H, ref L);                             //POP HL
                 case 226: return JP(!fV);                                       //JP PO,nn
-=======
-                case 225: return POP(ref H, ref L);                             //POP HL
->>>>>>> origin/master
                 case 227: EX(ref RAM[SP + 1], ref RAM[SP], ref H, ref L); return 19;    //EX (SP),HL
                 case 228: return CALL(!fV);                                     //CALL PO,nn
                 case 229: return PUSH(H, L);                                    //PUSH HL
                 case 230: AND(RAM[PC++]); return 7;                             //AND n
                 case 231: return RST(32);                                       //RST 20
-<<<<<<< HEAD
                 case 232: return RET(fV);                                       //RET PE
                 case 233: PC = (ushort)(HL); return 4;                          //JP (HL)
                 case 234: return JP(fV);                                        //JP PE,nn
                 case 235: EX(ref D, ref E, ref H, ref L); return 4;             //EX DE,HL
                 case 236: return CALL(fV);                                      //CALL PE,nn
-=======
-                case 233: PC = (ushort)(H * 256 + L); return 4;                 //JP (HL)
-                case 235: EX(ref D, ref E, ref H, ref L); return 4;
->>>>>>> origin/master
                 #region case 237 (Префикс ED)                                   
                 case 237:                                                       //-------------------- Префикс ED
                     R++;
@@ -613,7 +601,6 @@ namespace Spectrum
                         case 112: F = IN[BC]; return 12;                        //IN L,(C)
                         case 114: return SBC(SP);                               //SBC HL,SP
                         case 115: return POKE(SP);                              //LD (nn),SP
-<<<<<<< HEAD
                         case 120: A = IN[BC]; return 12;                        //IN A,(C)
                         case 121: OUT(BC, A); return 12;                        //OUT (C),A
                         case 122: ADDHL(SP, true); return 11;                   //ADC HL,SP
@@ -630,26 +617,12 @@ namespace Spectrum
                         //case 169:                                               //CPDR
                         //case 170:                                               //INDR
                         //case 171:                                               //OTDR
-=======
-                        case 120: A = IN[B * 256 + C]; return 12;               //IN A,(C)
-                        case 121: OUT((ushort)(B * 256 + C), A); return 12;     //OUT (C),A
-                        case 122: ADDHL((byte)(SP / 256), (byte)(SP % 256), true); return 11;   //ADC HL, SP
-                        case 123:                                               //LD SP,(nn)
-                            tmp = (ushort)(RAM[PC++] + RAM[PC++] * 256);
-                            SP = (ushort)(RAM[tmp++] + RAM[tmp] * 256);
-                            return 20;
-                        case 176: return LDI(true, false);                      //LDIR
-                        case 184: return LDI(true, true);                       //LDDR
->>>>>>> origin/master
                     }
                     break;
                 #endregion
                 case 238: XOR(RAM[PC++]); return 7;                             //XOR n
                 case 239: return RST(40);                                       //RST 28
-<<<<<<< HEAD
                 case 240: return RET(!fS);                                      //RET P
-=======
->>>>>>> origin/master
                 case 241: F = RAM[SP++]; A = RAM[SP++]; return 10;              //POP AF
                 case 242: return JP(!fS);                                       //JP P,nn
                 case 243: IM = 0; return 40;                                    //DI
@@ -764,26 +737,6 @@ namespace Spectrum
         {
             RAM[DE] = RAM[HL];
             t = RAM[DE];
-            C--; if (C == 255) B--;
-            if (!Down) { E++; if (E == 0) D++; L++; if (L == 0) H++; }
-            else { E--; if (E == 255) D--; L--; if (L == 255) H--; }
-            if (Rep & (B != 0 | C != 0)) { PC -= 2; return 21; }
-            else
-            {
-                //fY = ((t + A) & 1) != 0; //Опять врут в найденной документации :-(
-                f5 = (t & 32) != 0;
-                fH = false;
-                //fX = ((t + A) & 8) != 0;
-                f3 = (t & 8) != 0;
-                fV = false;
-                fN = false;
-                return 16;
-            }
-        }
-        static int LDI(bool Rep, bool Down)
-        {
-            RAM[D * 256 + E] = RAM[H * 256 + L];
-            t = RAM[D * 256 + E];
             C--; if (C == 255) B--;
             if (!Down) { E++; if (E == 0) D++; L++; if (L == 0) H++; }
             else { E--; if (E == 255) D--; L--; if (L == 255) H--; }
@@ -1110,7 +1063,6 @@ namespace Spectrum
         //static 
         #endregion
         #region Разное
-<<<<<<< HEAD
         static void CPL()
         {
             A ^= 255;
@@ -1132,8 +1084,6 @@ namespace Spectrum
             fN = true;
             fC = a != 0;
         }
-=======
->>>>>>> origin/master
         static void EX(ref byte r1, ref byte r2, ref byte ra1, ref byte ra2)
         {
             byte t = r1; r1 = ra1; ra1 = t;
@@ -1200,7 +1150,7 @@ namespace Spectrum
             fN = false;
             fC ^= true;
         }
-        static void OUT(ushort port, byte Byte)
+        public static void OUT(ushort port, byte Byte)
         {
             if (port % 256 == 254) Screen.Border = Byte & 7;
         }

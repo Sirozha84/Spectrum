@@ -24,8 +24,8 @@ namespace Spectrum
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.PreferredBackBufferWidth = 960; //640;
-            graphics.PreferredBackBufferHeight = 768; //512;
+            graphics.PreferredBackBufferWidth = 640; //640; 960
+            graphics.PreferredBackBufferHeight = 512; //512; 768
             ScreenSize = new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
             IsMouseVisible = true;
         }
@@ -182,6 +182,8 @@ namespace Spectrum
             Dysplay.SetData(Screen.Pixels, 0, 0);
             spriteBatch.Begin();
             spriteBatch.Draw(Dysplay, ScreenSize, DysplaySorce, Color.White);
+            spriteBatch.Draw(Dysplay, new Rectangle(-1, 0, 640, 512), DysplaySorce, Color.FromNonPremultiplied(255, 255, 255, 128));
+            spriteBatch.Draw(Dysplay, new Rectangle(1, 0, 640, 512), DysplaySorce, Color.FromNonPremultiplied(255, 255, 255, 128));
             spriteBatch.End();
             base.Draw(gameTime);
         }

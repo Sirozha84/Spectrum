@@ -595,11 +595,12 @@
             this.Controls.Add(this.buttonStep);
             this.Controls.Add(this.buttonPause);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Location = new System.Drawing.Point(800, 200);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Monitor";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Monitor";
             this.Load += new System.EventHandler(this.Monitor_Load);
             this.ResumeLayout(false);
