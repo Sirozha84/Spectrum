@@ -19,7 +19,7 @@ namespace Spectrum
             Z80.Reset();
             Mode = Modes.Normal;
 
-            LoadSNA(@"..\..\..\..\..\..\zexall.sna");
+            //LoadSNA(@"..\..\..\..\..\..\zexall.sna");
             //LoadSNA(@"..\..\..\..\..\..\Dizzy 6.SNA");
             //LoadSNA(@"..\..\..\..\..\..\Panama Joe.sna");
             //LoadSNA(@"..\..\..\..\..\..\Rick.sna");

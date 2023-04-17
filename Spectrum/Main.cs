@@ -179,7 +179,7 @@ namespace Spectrum
         protected override void Draw(GameTime gameTime)
         {
             graphics.GraphicsDevice.Clear(Color.Black);
-            Dysplay.SetData(Screen.Pixels, 0, 0);
+            Dysplay.SetData(Screen.Pixels);
             spriteBatch.Begin();
             spriteBatch.Draw(Dysplay, ScreenSize, DysplaySorce, Color.White);
             spriteBatch.Draw(Dysplay, new Rectangle(-1, 0, 640, 512), DysplaySorce, Color.FromNonPremultiplied(255, 255, 255, 128));
