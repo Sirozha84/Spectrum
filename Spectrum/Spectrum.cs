@@ -13,7 +13,7 @@ namespace Spectrum
         public static void Init()
         {
             //ROM = File.ReadAllBytes(@"c:\Users\sg\YandexDisk\test.rom");
-            ROM = File.ReadAllBytes("48.rom");
+            ROM = File.ReadAllBytes(@"..\..\..\..\..\Files\48.rom");
             for (int i = 0; i < 16384; i++)
                 Z80.RAM[i] = ROM[i];
             Z80.Reset();
