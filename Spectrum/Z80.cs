@@ -348,70 +348,70 @@ namespace Spectrum
                         case 61: SRL(ref L); return 8;                          //SRL L
                         case 62: SRL(ref RAM[HL]); return 8;                    //SRL (HL)
                         case 63: SRL(ref A); return 8;                          //SRL A
-                        case 64: BIT(B, 0); return 8;                           //BIT 0,B
-                        case 65: BIT(C, 0); return 8;                           //BIT 0,C
-                        case 66: BIT(D, 0); return 8;                           //BIT 0,D
-                        case 67: BIT(E, 0); return 8;                           //BIT 0,E
-                        case 68: BIT(H, 0); return 8;                           //BIT 0,H
-                        case 69: BIT(L, 0); return 8;                           //BIT 0,L
-                        case 70: BIT(RAM[HL], 0); return 8;                     //BIT 0,(HL)
+                        case 64: BIT(B, 1); return 8;                           //BIT 0,B
+                        case 65: BIT(C, 1); return 8;                           //BIT 0,C
+                        case 66: BIT(D, 1); return 8;                           //BIT 0,D
+                        case 67: BIT(E, 1); return 8;                           //BIT 0,E
+                        case 68: BIT(H, 1); return 8;                           //BIT 0,H
+                        case 69: BIT(L, 1); return 8;                           //BIT 0,L
+                        case 70: BIT(RAM[HL], 1); return 8;                     //BIT 0,(HL)
                         case 71: BIT(A, 1); return 8;                           //BIT 0,A
-                        case 72: BIT(B, 1); return 8;                           //BIT 1,B
-                        case 73: BIT(C, 1); return 8;                           //BIT 1,C
-                        case 74: BIT(D, 1); return 8;                           //BIT 1,D
-                        case 75: BIT(E, 1); return 8;                           //BIT 1,E
-                        case 76: BIT(H, 1); return 8;                           //BIT 1,H
-                        case 77: BIT(L, 1); return 8;                           //BIT 1,L
-                        case 78: BIT(RAM[HL], 1); return 8;                     //BIT 1,(HL)
-                        case 79: BIT(A, 1); return 8;                           //BIT 1,A
-                        case 80: BIT(B, 2); return 8;                           //BIT 2,B
-                        case 81: BIT(C, 2); return 8;                           //BIT 2,C
-                        case 82: BIT(D, 2); return 8;                           //BIT 2,D
-                        case 83: BIT(E, 2); return 8;                           //BIT 2,E
-                        case 84: BIT(H, 2); return 8;                           //BIT 2,H
-                        case 85: BIT(L, 2); return 8;                           //BIT 2,L
-                        case 86: BIT(RAM[HL], 2); return 8;                     //BIT 2,(HL)
-                        case 87: BIT(A, 2); return 8;                           //BIT 2,A
-                        case 88: BIT(B, 3); return 8;                           //BIT 3,B
-                        case 89: BIT(C, 3); return 8;                           //BIT 3,C
-                        case 90: BIT(D, 3); return 8;                           //BIT 3,D
-                        case 91: BIT(E, 3); return 8;                           //BIT 3,E
-                        case 92: BIT(H, 3); return 8;                           //BIT 3,H
-                        case 93: BIT(L, 3); return 8;                           //BIT 3,L
-                        case 94: BIT(RAM[HL], 3); return 8;                     //BIT 3,(HL)
-                        case 95: BIT(A, 3); return 8;                           //BIT 3,A
-                        case 96: BIT(B, 4); return 8;                           //BIT 4,B
-                        case 97: BIT(C, 4); return 8;                           //BIT 4,C
-                        case 98: BIT(D, 4); return 8;                           //BIT 4,D
-                        case 99: BIT(E, 4); return 8;                           //BIT 4,E
-                        case 100: BIT(H, 4); return 8;                          //BIT 4,H
-                        case 101: BIT(L, 4); return 8;                          //BIT 4,L
-                        case 102: BIT(RAM[HL], 4); return 8;                    //BIT 4,(HL)
-                        case 103: BIT(A, 4); return 8;                          //BIT 4,A
-                        case 104: BIT(B, 5); return 8;                          //BIT 5,B
-                        case 105: BIT(C, 5); return 8;                          //BIT 5,C
-                        case 106: BIT(D, 5); return 8;                          //BIT 5,D
-                        case 107: BIT(E, 5); return 8;                          //BIT 5,E
-                        case 108: BIT(H, 5); return 8;                          //BIT 5,H
-                        case 109: BIT(L, 5); return 8;                          //BIT 5,L
-                        case 110: BIT(RAM[HL], 5); return 8;                    //BIT 5,(HL)
-                        case 111: BIT(A, 5); return 8;                          //BIT 5,A
-                        case 112: BIT(B, 6); return 8;                          //BIT 6,B
-                        case 113: BIT(C, 6); return 8;                          //BIT 6,C
-                        case 114: BIT(D, 6); return 8;                          //BIT 6,D
-                        case 115: BIT(E, 6); return 8;                          //BIT 6,E
-                        case 116: BIT(H, 6); return 8;                          //BIT 6,H
-                        case 117: BIT(L, 6); return 8;                          //BIT 6,L
-                        case 118: BIT(RAM[HL], 6); return 8;                    //BIT 6,(HL)
-                        case 119: BIT(A, 6); return 8;                          //BIT 6,A
-                        case 120: BIT(B, 7); return 8;                          //BIT 7,B
-                        case 121: BIT(C, 7); return 8;                          //BIT 7,C
-                        case 122: BIT(D, 7); return 8;                          //BIT 7,D
-                        case 123: BIT(E, 7); return 8;                          //BIT 7,E
-                        case 124: BIT(H, 7); return 8;                          //BIT 7,H
-                        case 125: BIT(L, 7); return 8;                          //BIT 7,L
-                        case 126: BIT(RAM[HL], 7); return 8;                    //BIT 7,(HL)
-                        case 127: BIT(A, 7); return 8;                          //BIT 7,A
+                        case 72: BIT(B, 2); return 8;                           //BIT 1,B
+                        case 73: BIT(C, 2); return 8;                           //BIT 1,C
+                        case 74: BIT(D, 2); return 8;                           //BIT 1,D
+                        case 75: BIT(E, 2); return 8;                           //BIT 1,E
+                        case 76: BIT(H, 2); return 8;                           //BIT 1,H
+                        case 77: BIT(L, 2); return 8;                           //BIT 1,L
+                        case 78: BIT(RAM[HL], 2); return 8;                     //BIT 1,(HL)
+                        case 79: BIT(A, 2); return 8;                           //BIT 1,A
+                        case 80: BIT(B, 4); return 8;                           //BIT 2,B
+                        case 81: BIT(C, 4); return 8;                           //BIT 2,C
+                        case 82: BIT(D, 4); return 8;                           //BIT 2,D
+                        case 83: BIT(E, 4); return 8;                           //BIT 2,E
+                        case 84: BIT(H, 4); return 8;                           //BIT 2,H
+                        case 85: BIT(L, 4); return 8;                           //BIT 2,L
+                        case 86: BIT(RAM[HL], 4); return 8;                     //BIT 2,(HL)
+                        case 87: BIT(A, 4); return 8;                           //BIT 2,A
+                        case 88: BIT(B, 8); return 8;                           //BIT 3,B
+                        case 89: BIT(C, 8); return 8;                           //BIT 3,C
+                        case 90: BIT(D, 8); return 8;                           //BIT 3,D
+                        case 91: BIT(E, 8); return 8;                           //BIT 3,E
+                        case 92: BIT(H, 8); return 8;                           //BIT 3,H
+                        case 93: BIT(L, 8); return 8;                           //BIT 3,L
+                        case 94: BIT(RAM[HL], 8); return 8;                     //BIT 3,(HL)
+                        case 95: BIT(A, 8); return 8;                           //BIT 3,A
+                        case 96: BIT(B, 16); return 8;                          //BIT 4,B
+                        case 97: BIT(C, 16); return 8;                          //BIT 4,C
+                        case 98: BIT(D, 16); return 8;                          //BIT 4,D
+                        case 99: BIT(E, 16); return 8;                          //BIT 4,E
+                        case 100: BIT(H, 16); return 8;                         //BIT 4,H
+                        case 101: BIT(L, 16); return 8;                         //BIT 4,L
+                        case 102: BIT(RAM[HL], 16); return 8;                   //BIT 4,(HL)
+                        case 103: BIT(A, 16); return 8;                         //BIT 4,A
+                        case 104: BIT(B, 32); return 8;                         //BIT 5,B
+                        case 105: BIT(C, 32); return 8;                         //BIT 5,C
+                        case 106: BIT(D, 32); return 8;                         //BIT 5,D
+                        case 107: BIT(E, 32); return 8;                         //BIT 5,E
+                        case 108: BIT(H, 32); return 8;                         //BIT 5,H
+                        case 109: BIT(L, 32); return 8;                         //BIT 5,L
+                        case 110: BIT(RAM[HL], 32); return 8;                   //BIT 5,(HL)
+                        case 111: BIT(A, 32); return 8;                         //BIT 5,A
+                        case 112: BIT(B, 64); return 8;                         //BIT 6,B
+                        case 113: BIT(C, 64); return 8;                         //BIT 6,C
+                        case 114: BIT(D, 64); return 8;                         //BIT 6,D
+                        case 115: BIT(E, 64); return 8;                         //BIT 6,E
+                        case 116: BIT(H, 64); return 8;                         //BIT 6,H
+                        case 117: BIT(L, 64); return 8;                         //BIT 6,L
+                        case 118: BIT(RAM[HL], 64); return 8;                   //BIT 6,(HL)
+                        case 119: BIT(A, 64); return 8;                         //BIT 6,A
+                        case 120: BIT(B, 128); return 8;                        //BIT 7,B
+                        case 121: BIT(C, 128); return 8;                        //BIT 7,C
+                        case 122: BIT(D, 128); return 8;                        //BIT 7,D
+                        case 123: BIT(E, 128); return 8;                        //BIT 7,E
+                        case 124: BIT(H, 128); return 8;                        //BIT 7,H
+                        case 125: BIT(L, 128); return 8;                        //BIT 7,L
+                        case 126: BIT(RAM[HL], 128); return 8;                  //BIT 7,(HL)
+                        case 127: BIT(A, 128); return 8;                        //BIT 7,A
                         case 128: RES(ref B, 0); return 8;                      //RES 0,B
                         case 129: RES(ref C, 0); return 8;                      //RES 0,C
                         case 130: RES(ref D, 0); return 8;                      //RES 0,D
@@ -698,6 +698,10 @@ namespace Spectrum
                 case 126: A = RAM[IplusS(II)]; return 19;                       //LD A,(II+S)
                 case 134: ADD(RAM[IplusS(II)]); return 19;                      //ADD A,(II+S)
                 case 150: SUB(RAM[IplusS(II)]); return 19;                      //SUB (II+S)
+                case 166: AND(RAM[IplusS4(II)]); return 19;                     //AND (II+S)
+                case 174: XOR(RAM[IplusS4(II)]); return 19;                     //XOR (II+S)
+                case 182: OR(RAM[IplusS4(II)]); return 19;                      //OR (II+S)
+                case 190: CP(RAM[IplusS4(II)]); return 19;                      //CP (II+S)
                 case 203:
                     PC++;
                     switch (RAM[PC])
@@ -706,20 +710,21 @@ namespace Spectrum
                         case 38: SRA(ref RAM[IplusS4(II)]; return 23;           //SRA (II+S)
                         case 46: SRA(ref RAM[IplusS4(II)]; return 23;           //SRA (II+S)
                         case 62: SRL(ref RAM[IplusS4(II)]; return 23;           //SRL (II+S)*/
-                        case 70: BIT(RAM[IplusS4(II)], 0); return 23;           //BIT 0,(II+S)
-                        case 78: BIT(RAM[IplusS4(II)], 1); return 23;           //BIT 1,(II+S)
-                        case 86: BIT(RAM[IplusS4(II)], 2); return 23;           //BIT 2,(II+S)
-                        case 94: BIT(RAM[IplusS4(II)], 3); return 23;           //BIT 3,(II+S)
-                        case 102: BIT(RAM[IplusS4(II)], 4); return 23;          //BIT 4,(II+S)
-                        case 110: BIT(RAM[IplusS4(II)], 5); return 23;          //BIT 5,(II+S)
-                        case 118: BIT(RAM[IplusS4(II)], 6); return 23;          //BIT 6,(II+S)
-                        case 126: BIT(RAM[IplusS4(II)], 7); return 23;          //BIT 7,(II+S)
+                        case 70: BIT(RAM[IplusS4(II)], 1); return 23;           //BIT 0,(II+S)
+                        case 78: BIT(RAM[IplusS4(II)], 2); return 23;           //BIT 1,(II+S)
+                        case 86: BIT(RAM[IplusS4(II)], 4); return 23;           //BIT 2,(II+S)
+                        case 94: BIT(RAM[IplusS4(II)], 8); return 23;           //BIT 3,(II+S)
+                        case 102: BIT(RAM[IplusS4(II)], 16); return 23;         //BIT 4,(II+S)
+                        case 110: BIT(RAM[IplusS4(II)], 32); return 23;         //BIT 5,(II+S)
+                        case 118: BIT(RAM[IplusS4(II)], 64); return 23;         //BIT 6,(II+S)
+                        case 126: BIT(RAM[IplusS4(II)], 128); return 23;        //BIT 7,(II+S)
                         case 134: RES(ref RAM[IplusS4(II)], 0); return 23;      //RES 0,(II+S)
                         case 142: RES(ref RAM[IplusS4(II)], 1); return 23;      //RES 1,(II+S)
                         case 150: RES(ref RAM[IplusS4(II)], 2); return 23;      //RES 2,(II+S)
                         case 158: RES(ref RAM[IplusS4(II)], 3); return 23;      //RES 3,(II+S)
                         case 166: RES(ref RAM[IplusS4(II)], 4); return 23;      //RES 4,(II+S)
                         case 174: RES(ref RAM[IplusS4(II)], 5); return 23;      //RES 5,(II+S)
+                        case 182: RES(ref RAM[IplusS4(II)], 6); return 23;      //RES 6,(II+S)
                         case 190: RES(ref RAM[IplusS4(II)], 7); return 23;      //RES 7,(II+S)
                         case 198: SET(ref RAM[IplusS4(II)], 0); return 23;      //SET 0,(II+S)
                         case 206: SET(ref RAM[IplusS4(II)], 1); return 23;      //SET 1,(II+S)
@@ -732,8 +737,6 @@ namespace Spectrum
                     }
                     PC--;
                     break;
-                case 182: OR(RAM[IplusS4(II)]); return 19;                      //OR (II+S)
-                case 190: CP(RAM[IplusS4(II)]); return 19;                      //CP (II+S)
                 case 225: return POP(ref II);                                   //POP II
 
 
@@ -748,6 +751,7 @@ namespace Spectrum
         static void POKE(ushort Reg)
         {
             ushort adr = (ushort)(RAM[PC++] + RAM[PC++] * 256);
+            if (adr < 16384) return;
             RAM[adr++] = (byte)(Reg % 256);
             RAM[adr] = (byte)(Reg / 256);
         }
@@ -921,7 +925,7 @@ namespace Spectrum
         }
 
         #endregion
-        #region Вращение/сдвиг битов
+        #region Вращение/сдвиг битов (протестировано)
         static void RL(ref byte b)
         {
             int c = fC ? 1 : 0;         //Сначала делаем сдвиг
@@ -934,7 +938,6 @@ namespace Spectrum
             f3 = (b & m3) != 0;
             fV = Parity(b);
             fN = false;
-            //Протестировано
         }
         static void RLA()
         {
@@ -945,7 +948,6 @@ namespace Spectrum
             fH = false;
             f3 = (A & m3) != 0;
             fN = false;
-            //Протестировано
         }
 
         static void RLC(ref byte b)
@@ -960,7 +962,6 @@ namespace Spectrum
             f3 = (b & m3) != 0;
             fV = Parity(b);
             fN = false;
-            //Протестировано
         }
 
         static void RLCA()
@@ -972,7 +973,6 @@ namespace Spectrum
             fH = false;
             f3 = (A & m3) != 0;
             fN = false;
-            //Протестировано
         }
 
         static void RR(ref byte b)
@@ -987,7 +987,6 @@ namespace Spectrum
             f3 = (b & m3) != 0;
             fV = Parity(b);
             fN = false;
-            //Протестировано
         }
         static void RRA()
         {
@@ -998,7 +997,6 @@ namespace Spectrum
             fH = false;
             f3 = (A & m3) != 0;
             fN = false;
-            //Протестировано
         }
 
         static void RRC(ref byte b)
@@ -1013,7 +1011,6 @@ namespace Spectrum
             f3 = (b & m3) != 0;
             fV = Parity(b);
             fN = false;
-            //Протестировано
         }
 
         static void RRCA()
@@ -1025,7 +1022,6 @@ namespace Spectrum
             fH = false;
             f3 = (A & m3) != 0;
             fN = false;
-            //Протестировано
         }
 
         static void SLA(ref byte b)
@@ -1039,7 +1035,6 @@ namespace Spectrum
             f3 = (b & m3) != 0;
             fV = Parity(b);
             fN = false;
-            //Протестировано
         }
 
         static void SLS(ref byte b)
@@ -1058,7 +1053,6 @@ namespace Spectrum
             f3 = (b & m3) != 0;
             fV = Parity(b);
             fN = false;
-            //Протестировано
         }
 
         static void SRL(ref byte b)
@@ -1072,20 +1066,19 @@ namespace Spectrum
             f3 = (b & m3) != 0;
             fV = Parity(b);
             fN = false;
-            //Протестировано ?
         }
 
         #endregion
-        #region Логика
+        #region Логика (протестировано)
         //AND
         static void AND(byte Reg)
         {
             A &= Reg;
-            fS = (A & 128) != 0;
+            fS = (A & mS) != 0;
             fZ = A == 0;
-            f5 = (A & 32) != 0;
+            f5 = (A & m5) != 0;
             fH = true;
-            f3 = (A & 8) != 0;
+            f3 = (A & m3) != 0;
             fV = Parity(A);
             fN = false;
             fC = false;
@@ -1094,11 +1087,11 @@ namespace Spectrum
         static void OR(byte Reg)
         {
             A |= Reg;
-            fS = (A & 128) != 0;
+            fS = (A & mS) != 0;
             fZ = A == 0;
-            f5 = (A & 32) != 0;
+            f5 = (A & m5) != 0;
             fH = false;
-            f3 = (A & 8) != 0;
+            f3 = (A & m3) != 0;
             fV = Parity(A);
             fN = false;
             fC = false;
@@ -1107,11 +1100,11 @@ namespace Spectrum
         static void XOR(byte Reg)
         {
             A ^= Reg;
-            fS = (A & 128) != 0;
+            fS = (A & mS) != 0;
             fZ = A == 0;
-            f5 = (A & 32) != 0;
+            f5 = (A & m5) != 0;
             fH = false;
-            f3 = (A & 8) != 0;
+            f3 = (A & m3) != 0;
             fV = Parity(A);
             fN = false;
             fC = false;
@@ -1130,7 +1123,7 @@ namespace Spectrum
             fC = (a & 256) != 0;
         }
         #endregion
-        #region Побитовые операции
+        #region Побитовые операции (протестировано)
         //SET
         static void SET(ref byte Byte, byte bit)
         {
@@ -1156,22 +1149,14 @@ namespace Spectrum
             if (bit == 7) Byte &= 127; //01111111
         }
         //BIT
-        static void BIT(byte Byte, byte bit)
+        static void BIT(byte b, byte bit)
         {
-            if (bit == 0) fZ = (Byte & 1) == 0;
-            if (bit == 1) fZ = (Byte & 2) == 0;
-            if (bit == 2) fZ = (Byte & 4) == 0;
-            if (bit == 3) fZ = (Byte & 8) == 0;
-            if (bit == 4) fZ = (Byte & 16) == 0;
-            if (bit == 5) fZ = (Byte & 32) == 0;
-            if (bit == 6) fZ = (Byte & 64) == 0;
-            if (bit == 7) fZ = (Byte & 128) == 0;
-            fS = (bit == 7) & !fZ;
-            f5 = (bit == 5) & !fZ;
+            bool ans = (b & bit) != 0;
+            fS = ans & (bit == mS);
+            fZ = !ans;
+            f5 = (b & m5) != 0;
             fH = true;
-            //fX = (bit == 4) & !fZ; //По документам должно быть именно так, но почему-то нет...
-            f3 = true;
-            //http://www.emuverse.ru/wiki/Zilog_Z80/%D0%A1%D0%B8%D1%81%D1%82%D0%B5%D0%BC%D0%B0_%D0%BA%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4/BIT
+            f3 = (b & m3) != 0;
             fV = fZ;
             fN = false;
         }
