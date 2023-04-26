@@ -25,9 +25,9 @@ namespace Spectrum
             //BreakPoint = 11962;
             //View = 23722;
             //LoadSNA(@"..\..\..\..\..\Files\TEST.asm.sna");  BreakPoint = 30000;
-            LoadSNA(@"..\..\..\..\..\Files\TEST.sna");      BreakPoint = 32768;
+            LoadSNA(@"..\..\..\..\..\Files\19.sna"); //BreakPoint = 33525;
             //BreakPoint = Z80.PC;
-            
+
         }
 
     public static void LoadSNA(string FileName)

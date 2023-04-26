@@ -51,9 +51,9 @@ namespace Spectrum
                 fC = (value & 1) != 0;
             }
         }
-        static ushort BC { get { return (ushort)(B * 256 + C); } set { B = (byte)(value / 256); C = (byte)(value % 256); } }
-        static ushort DE { get { return (ushort)(D * 256 + E); } set { D = (byte)(value / 256); E = (byte)(value % 256); } }
-        static ushort HL { get { return (ushort)(H * 256 + L); } set { H = (byte)(value / 256); L = (byte)(value % 256); } }
+        static ushort BC { get { return (ushort)(B * 256 + C); } set { B = (byte)(value / 256); C = (byte)value; } }
+        static ushort DE { get { return (ushort)(D * 256 + E); } set { D = (byte)(value / 256); E = (byte)value; } }
+        static ushort HL { get { return (ushort)(H * 256 + L); } set { H = (byte)(value / 256); L = (byte)value; } }
         /// <summary>
         /// Сброс
         /// </summary>
@@ -595,18 +595,21 @@ namespace Spectrum
                         case 73: OUT(BC, C); return 12;                         //OUT (C),C
                         case 74: ADC(BC); return 8;                             //ADC HL,BC
                         case 75: BC = PEEK(); return 20;                        //LD BC,(nn)
+                        case 76: NEG(); return 8;                               //NEG
                         //case 77:                                              //RETI
                         case 79: R = A; return 9;                               //LD R,A
                         case 80: D = IN[BC]; return 12;                         //IN D,(C)
                         case 81: OUT(BC, D); return 12;                         //OUT (C),D
                         case 82: SBC(DE); return 15;                            //SBC HL,DE
                         case 83: POKE(DE); return 20;                           //LD (nn),DE
+                        case 84: NEG(); return 8;                               //NEG
                         case 86: IM = 1; return 8;                              //IM 1
                         case 87: A = I; return 9;                               //LD A,I        //Флаги!!!
                         case 88: E = IN[BC]; return 12;                         //IN E,(C)
                         case 89: OUT(BC, E); return 12;                         //OUT (C),E
                         case 90: ADC(DE); return 8;                             //ADC HL,DE
                         case 91: DE = PEEK(); return 20;                        //LD DE,(nn)
+                        case 92: NEG(); return 8;                               //NEG
                         case 94: IM = 2; return 8;                              //IM 2
                         case 95: A = R; return 9;                               //LD A,R        //Флаги!!!
                         case 96: H = IN[BC]; return 12;                         //IN H,(C)
@@ -614,18 +617,22 @@ namespace Spectrum
                         case 98: SBC(HL); return 15;                            //SBC HL,HL
                         case 99: POKE(HL); return 20;                           //LD (nn),HL
                         //case 103: RRD(); return 18;                             //RRD
+                        case 100: NEG(); return 8;                              //NEG
                         case 104: L = IN[BC]; return 12;                        //IN L,(C)
                         case 105: OUT(BC, L); return 12;                        //OUT (C),L
                         case 106: ADC(HL); return 15;                           //ADC HL,HL
                         case 107: HL = PEEK(); return 20;                       //LD HL,(nn)
+                        case 108: NEG(); return 8;                              //NEG
                         case 111: RLD(); return 18;                             //RLD
                         case 112: F = IN[BC]; return 12;                        //IN L,(C)
                         case 114: SBC(SP); return 15;                           //SBC HL,SP
                         case 115: POKE(SP); return 20;                          //LD (nn),SP
+                        case 116: NEG(); return 8;                              //NEG
                         case 120: A = IN[BC]; return 12;                        //IN A,(C)
                         case 121: OUT(BC, A); return 12;                        //OUT (C),A
                         case 122: ADC(SP); return 11;                           //ADC HL,SP
                         case 123: SP = PEEK(); return 20;                       //LD SP,(nn)
+                        case 124: NEG(); return 8;                              //NEG
                         case 168: return LDI(false, true);                      //LDD
                         //case 169:                                             //CPD
                         //case 170:                                             //IND
@@ -697,12 +704,30 @@ namespace Spectrum
                 case 117: RAM[IplusS(II)] = L; return 19;                       //LD (II+S),L
                 case 119: RAM[IplusS(II)] = A; return 19;                       //LD (II+S),A
                 case 126: A = RAM[IplusS(II)]; return 19;                       //LD A,(II+S)
+                case 132: ADD((byte)(II / 256)); return 8;                      //ADD IIH
+                case 133: ADD((byte)II); return 8;                              //ADD IIL
                 case 134: ADD(RAM[IplusS(II)]); return 19;                      //ADD A,(II+S)
+                case 140: ADC((byte)(II / 256)); return 8;                      //ADC IIH
+                case 141: ADC((byte)II); return 8;                              //ADC IIL
+                case 142: ADC(RAM[IplusS(II)]); return 19;                      //ADC A,(II+S)
+                case 148: SUB((byte)(II / 256)); return 8;                      //SUB IIH
+                case 149: SUB((byte)II); return 8;                              //SUB IIL
                 case 150: SUB(RAM[IplusS(II)]); return 19;                      //SUB (II+S)
-                case 166: AND(RAM[IplusS4(II)]); return 19;                     //AND (II+S)
-                case 174: XOR(RAM[IplusS4(II)]); return 19;                     //XOR (II+S)
-                case 182: OR(RAM[IplusS4(II)]); return 19;                      //OR (II+S)
-                case 190: CP(RAM[IplusS4(II)]); return 19;                      //CP (II+S)
+                case 156: SBC((byte)(II / 256)); return 8;                      //SBC IIH
+                case 157: SBC((byte)II); return 8;                              //SBC IIL
+                case 158: SBC(RAM[IplusS(II)]); return 19;                      //SBC (II+S)
+                case 164: AND((byte)(II / 256)); return 8;                      //AND IIH
+                case 165: AND((byte)II); return 8;                              //AND IIL
+                case 166: AND(RAM[IplusS(II)]); return 19;                      //AND (II+S)
+                case 172: XOR((byte)(II / 256)); return 8;                      //XOR IIH
+                case 173: XOR((byte)II); return 8;                              //XOR IIL
+                case 174: XOR(RAM[IplusS(II)]); return 19;                      //XOR (II+S)
+                case 180: OR((byte)(II / 256)); return 8;                       //OR IIH
+                case 181: OR((byte)II); return 8;                               //OR IIL
+                case 182: OR(RAM[IplusS(II)]); return 19;                       //OR (II+S)
+                case 188: CP((byte)(II/256)); return 8;                         //CP IIH
+                case 189: CP((byte)II); return 8;                               //CP IIL
+                case 190: CP(RAM[IplusS(II)]); return 19;                       //CP (II+S)
                 case 203:
                     PC++;
                     switch (RAM[PC])
@@ -1315,14 +1340,14 @@ namespace Spectrum
         static ushort IplusS(ushort IReg)
         {
             byte t = RAM[PC++];
-            ushort tmp = (ushort)(IY + t);
+            ushort tmp = (ushort)(IReg + t);
             if (t > 127) tmp -= 256;
             return tmp;
         }
         static ushort IplusS4(ushort IReg) //Тоже самое, но для тупых 4-х байтных команд где сначала S, потом код команды
         {
             byte t = RAM[PC++ - 1];
-            ushort tmp = (ushort)(IY + t);
+            ushort tmp = (ushort)(IReg + t);
             if (t > 127) tmp -= 256;
             return tmp;
         }
@@ -1342,17 +1367,17 @@ namespace Spectrum
         }
         static void SCF()
         {
-            f5 = (A & 32) != 0;
+            f5 = (A & m5) != 0;
             fH = false;
-            f3 = (A & 8) != 0;
+            f3 = (A & m5) != 0;
             fN = false;
             fC = true;
         }
         static void CCF()
         {
-            f5 = (A & 32) != 0;
+            f5 = (A & m5) != 0;
             fH = fC;
-            f3 = (A & 8) != 0;
+            f3 = (A & m3) != 0;
             fN = false;
             fC ^= true;
         }
