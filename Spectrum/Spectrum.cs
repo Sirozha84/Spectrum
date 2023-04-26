@@ -19,7 +19,7 @@ namespace Spectrum
             Z80.Reset();
             Mode = Modes.Normal;
 
-            //return;
+            return;
             //BreakPoint = 11916;
             //BreakPoint = 11924;
             //BreakPoint = 11962;
