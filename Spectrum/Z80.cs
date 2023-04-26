@@ -22,6 +22,7 @@ namespace Spectrum
         public static UInt16 PC, SP, IX, IY;
         public static bool fS, fZ, f5, fH, f3, fV, fN, fC;
         public static byte IM;
+        public static bool intIFF2;
         public static byte[] IN = new byte[65536];
         public static byte F
         {
@@ -121,7 +122,7 @@ namespace Spectrum
                 case 36: INC(ref H); return 4;                                  //INC H
                 case 37: DEC(ref H); return 4;                                  //DEC H
                 case 38: H = RAM[PC++]; return 7;                               //LD H,n
-                //case 39:                                                      //DAA
+                case 39: DAA(); return 4;                                       //DAA
                 case 40: return JR(fZ);                                         //JR Z,s
                 case 41: HL = ADD(HL, HL); return 11;                           //ADD HL,HL
                 case 42: HL = PEEK(); return 16;                                //LD HL,(nn)
@@ -612,12 +613,12 @@ namespace Spectrum
                         case 97: OUT(BC, H); return 12;                         //OUT (C),H
                         case 98: SBC(HL); return 15;                            //SBC HL,HL
                         case 99: POKE(HL); return 20;                           //LD (nn),HL
-                        //case 103:                                             //RRD
+                        //case 103: RRD(); return 18;                             //RRD
                         case 104: L = IN[BC]; return 12;                        //IN L,(C)
                         case 105: OUT(BC, L); return 12;                        //OUT (C),L
                         case 106: ADC(HL); return 15;                           //ADC HL,HL
                         case 107: HL = PEEK(); return 20;                       //LD HL,(nn)
-                        //case 111:                                             //RLD
+                        case 111: RLD(); return 18;                             //RLD
                         case 112: F = IN[BC]; return 12;                        //IN L,(C)
                         case 114: SBC(SP); return 15;                           //SBC HL,SP
                         case 115: POKE(SP); return 20;                          //LD (nn),SP
@@ -748,18 +749,28 @@ namespace Spectrum
         }
 
         #region IO
-        static void POKE(ushort Reg)
+        static void POKE(ushort Reg)        //Без указания регистра адрес берётся из команды, например для LD A,(NN)
         {
             ushort adr = (ushort)(RAM[PC++] + RAM[PC++] * 256);
             if (adr < 16384) return;
             RAM[adr++] = (byte)(Reg % 256);
             RAM[adr] = (byte)(Reg / 256);
         }
+
+        static void POKE(ushort adr, byte b)
+        {
+            if (adr < 16384) return;
+            RAM[adr++] = (byte)(b % 256);
+            RAM[adr] = (byte)(b / 256);
+        }
+
         static ushort PEEK()
         {
             ushort adr = (ushort)(RAM[PC++] + RAM[PC++] * 256);
             return (ushort)(RAM[adr] + RAM[adr + 1] * 256);
         }
+
+
         static int LDI(bool Rep, bool Down)
         {
             RAM[DE] = RAM[HL];
@@ -770,11 +781,9 @@ namespace Spectrum
             if (Rep & (B != 0 | C != 0)) { PC -= 2; return 21; }
             else
             {
-                //fY = ((t + A) & 1) != 0; //Опять врут в найденной документации :-(
-                f5 = (t & 32) != 0;
+                f5 = (t & m5) != 0;
                 fH = false;
-                //fX = ((t + A) & 8) != 0;
-                f3 = (t & 8) != 0;
+                f3 = (t & m3) != 0;
                 fV = false;
                 fN = false;
                 return 16;
@@ -1069,6 +1078,30 @@ namespace Spectrum
         }
 
         #endregion
+        #region Ротация полубайтов
+
+        static void RRD()
+        {
+
+        }
+        static void RLD()
+        {
+            byte t = RAM[HL];
+            byte q = t;
+            t = (byte)(((t * 16) | (A & mF)) & mFF);
+            A = (byte)((A & 240) | (q / 16));
+            POKE(HL, t);
+            fS = (A & mS) != 0;
+            fZ = A == 0;
+            f5 = (A & m5) != 0;
+            fH = false;
+            f3 = (A & m3) != 0;
+            fV = intIFF2;
+            fN = false;
+            //Протестировано... почти
+        }
+
+        #endregion
         #region Логика (протестировано)
         //AND
         static void AND(byte Reg)
@@ -1217,6 +1250,31 @@ namespace Spectrum
         //static 
         #endregion
         #region Разное
+        static void DAA()
+        {
+            int incr = 0;
+            if (fH | ((A & mF) > 9)) incr |= 6;
+            if (fC | (A > 159)) incr |= 96;
+            if ((A > 143) & ((A & mF) > 9)) incr |= 96;
+            if (A > 153) fC = true;
+            if (fN)
+            {
+                fH = (((A & 15) - (incr & 15)) & mH) != 0;
+                A = (byte)((A - incr) & mFF);
+            }
+            else
+            {
+                fH = (((A & 15) + (incr & 15)) & mH) != 0;
+                A = (byte)((A + incr) & mFF);
+            }
+            fS = (A & mS) != 0;
+            fZ = A == 0;
+            f5 = (A & m5) != 0;
+            f3 = (A & m3) != 0;
+            fV = Parity(A);
+            //Протестировано, но не полностью
+        }
+
         static void CPL()
         {
             A ^= 255;
@@ -1227,16 +1285,10 @@ namespace Spectrum
         }
         static void NEG()
         {
-            byte a = A;
-            A = (byte)(256 - A);
-            fS = (A & 128) != 0;
-            fZ = A == 0;
-            f5 = (A & 32) != 0;
-            //fH = трудно посчитать... потом...
-            f3 = (A & 8) != 0;
-            fV = a == 80;
-            fN = true;
-            fC = a != 0;
+            byte t = A;
+            A = 0;
+            SUB(t);
+            //Протестировано
         }
         static void EX(ref byte r1, ref byte r2, ref byte ra1, ref byte ra2)
         {

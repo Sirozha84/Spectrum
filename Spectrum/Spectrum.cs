@@ -8,7 +8,7 @@ namespace Spectrum
         public static int Strings = 312;//Количество строк 
         public enum Modes { Normal, Stop, Step, Frame };
         public static Modes Mode;
-        public static int View = 40000;
+        public static int View = 30020;
         public static int BreakPoint = -1;
         public static void Init()
         {
@@ -19,11 +19,15 @@ namespace Spectrum
             Z80.Reset();
             Mode = Modes.Normal;
 
-
-            return;
-            LoadSNA(@"..\..\..\..\..\Files\TEST.asm.sna");
-            BreakPoint = Z80.PC;
-            BreakPoint = 30000;
+            //return;
+            //BreakPoint = 11916;
+            //BreakPoint = 11924;
+            //BreakPoint = 11962;
+            //View = 23722;
+            //LoadSNA(@"..\..\..\..\..\Files\TEST.asm.sna");  BreakPoint = 30000;
+            LoadSNA(@"..\..\..\..\..\Files\TEST.sna");      BreakPoint = 32768;
+            //BreakPoint = Z80.PC;
+            
         }
 
     public static void LoadSNA(string FileName)
