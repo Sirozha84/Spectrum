@@ -47,12 +47,12 @@ namespace Spectrum
 
         static Random rnd = new Random();
         public static int Border = 0;
-        static bool flash;
-        static int flashtimer;
+        public static bool flash;
         static int Byte;
         static int Attr;
         static int Ink;
         static int Paper;
+        
         /// <summary>
         /// Рисование текущей строки телевизора
         /// </summary>
@@ -101,12 +101,6 @@ namespace Spectrum
                     }
                 }
             }
-            flashtimer++;
-            if (flashtimer > 5000)
-            {
-                flashtimer = 0;
-                flash ^= true;
-            }
         }
 
         static void SetPixel(int x, int y, int c)
@@ -115,7 +109,7 @@ namespace Spectrum
             Pixels[a] = Palette[c];
             Pixels[a + 1] = Palette[c];
             Pixels[a + 640] = Palette2[c];
-            Pixels[a + 641] = Palette2[c]; //(uint)(Palette2[c] / (rnd.Next(2)+1));
+            Pixels[a + 641] = Palette2[c];
         }
     }
 }

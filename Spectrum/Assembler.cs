@@ -311,6 +311,14 @@
                         case 45: C = "SRA L"; break;
                         case 46: C = "SRA (HL)"; break;
                         case 47: C = "SRA A"; break;
+                        case 48: C = "SLS B"; break;
+                        case 49: C = "SLS C"; break;
+                        case 50: C = "SLS D"; break;
+                        case 51: C = "SLS E"; break;
+                        case 52: C = "SLS H"; break;
+                        case 53: C = "SLS L"; break;
+                        case 54: C = "SLS (HL)"; break;
+                        case 55: C = "SLS A"; break;
                         case 56: C = "SRL B"; break;
                         case 57: C = "SRL C"; break;
                         case 58: C = "SRL D"; break;
@@ -654,7 +662,16 @@
                             if (B2 == 30) C = "RR (" + I + SByte(++adr) + ")";
                             if (B2 == 38) C = "SLA (" + I + SByte(++adr) + ")";
                             if (B2 == 46) C = "SRA (" + I + SByte(++adr) + ")";
+                            if (B2 == 54) C = "SLL (" + I + SByte(++adr) + ")";         //в спектакуляторе это SLL
+                            if (B2 == 55) C = "LD A, SLL (" + I + SByte(++adr) + ")";
+                            if (B2 == 56) C = "LD B, SRL (" + I + SByte(++adr) + ")";
+                            if (B2 == 57) C = "LD C, SRL (" + I + SByte(++adr) + ")";
+                            if (B2 == 58) C = "LD D, SRL (" + I + SByte(++adr) + ")";
+                            if (B2 == 59) C = "LD E, SRL (" + I + SByte(++adr) + ")";
+                            if (B2 == 60) C = "LD H, SRL (" + I + SByte(++adr) + ")";
+                            if (B2 == 61) C = "LD L, SRL (" + I + SByte(++adr) + ")";
                             if (B2 == 62) C = "SRL (" + I + SByte(++adr) + ")";
+                            if (B2 == 63) C = "LD A, SRL (" + I + SByte(++adr) + ")";
                             if (B2 == 70) C = "BIT 0, (" + I + SByte(++adr) + ")";
                             if (B2 == 78) C = "BIT 1, (" + I + SByte(++adr) + ")";
                             if (B2 == 86) C = "BIT 2, (" + I + SByte(++adr) + ")";
