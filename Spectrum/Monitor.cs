@@ -23,9 +23,7 @@ namespace Spectrum
             listBox1.Items.Clear();
             do
             {
-                
-                string b = Z80.Be[adr] ? "|" : " ";
-                string com = adr.ToString("00000" + b + "- ");
+                string com = adr.ToString("00000 - ");
                 ushort startadr = adr;
                 string asm = Assembler.GetCommand(ref adr);
                 while (asm.Length < 15) asm += " ";

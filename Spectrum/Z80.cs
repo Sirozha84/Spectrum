@@ -16,13 +16,13 @@ namespace Spectrum
         const int mFFFF = 65535;
 
         public static byte[] RAM = new byte[65536];
-        public static bool[] Be = new bool[65536];
-        public static byte A, B, C, D, E, H, L, I, R;
+        //public static bool[] Be = new bool[65536];
+        public static byte A, B, C, D, E, H, L;
         public static byte Aa, Fa, Ba, Ca, Da, Ea, Ha, La;
         public static UInt16 PC, SP, IX, IY;
         public static bool fS, fZ, f5, fH, f3, fV, fN, fC;
-        public static byte IM;
-        public static bool intIFF2;
+        public static byte I, R, IM;
+        public static bool IFF1, IFF2;
         public static byte[] IN = new byte[65536];
         public static byte F
         {
@@ -62,6 +62,8 @@ namespace Spectrum
             A = 0; F = 0; B = 0; C = 0; D = 0; E = 0; H = 0; L = 0;
             Aa = 0; Fa = 0; Ba = 0; Ca = 0; Da = 0; Ea = 0; Ha = 0; La = 0;
             PC = 0; SP = 0; IX = 0; IY = 0; I = 0; R = 0;
+            IFF1 = false;
+            IFF2 = false;
             IN[65278] = 255;
             IN[65022] = 255;
             IN[64510] = 255;
@@ -76,9 +78,9 @@ namespace Spectrum
 
         public static int Run()
         {
-            Be[PC] = true;
-            ushort pc = PC;
-            ushort tmp;
+            //Be[PC] = true;
+            //ushort pc = PC;
+            //ushort tmp;
             R++;
             if (R > 127) R = 0;
             switch (RAM[PC++])
@@ -588,7 +590,7 @@ namespace Spectrum
                         case 66: SBC(BC); return 15;                            //SBC HL,BC
                         case 67: POKE(BC); return 20;                           //LD (nn),BC
                         case 68: NEG(); return 8;                               //NEG
-                        //case 69:                                              //RETN
+                        case 69: POP(ref PC); IFF1 = IFF2; return 14;           //RETN
                         case 70: IM = 0; return 8;                              //IM 0
                         case 71: I = A; return 9;                               //LD I,A
                         case 72: C = IN[BC]; return 12;                         //IN C,(C)
@@ -596,13 +598,14 @@ namespace Spectrum
                         case 74: ADC(BC); return 8;                             //ADC HL,BC
                         case 75: BC = PEEK(); return 20;                        //LD BC,(nn)
                         case 76: NEG(); return 8;                               //NEG
-                        //case 77:                                              //RETI
+                        case 77: POP(ref PC); IFF1 = IFF2; return 14;           //RETI
                         case 79: R = A; return 9;                               //LD R,A
                         case 80: D = IN[BC]; return 12;                         //IN D,(C)
                         case 81: OUT(BC, D); return 12;                         //OUT (C),D
                         case 82: SBC(DE); return 15;                            //SBC HL,DE
                         case 83: POKE(DE); return 20;                           //LD (nn),DE
                         case 84: NEG(); return 8;                               //NEG
+                        case 85: POP(ref PC); IFF1 = IFF2; return 14;           //RETN
                         case 86: IM = 1; return 8;                              //IM 1
                         case 87: A = I; return 9;                               //LD A,I        //Флаги!!!
                         case 88: E = IN[BC]; return 12;                         //IN E,(C)
@@ -610,6 +613,7 @@ namespace Spectrum
                         case 90: ADC(DE); return 8;                             //ADC HL,DE
                         case 91: DE = PEEK(); return 20;                        //LD DE,(nn)
                         case 92: NEG(); return 8;                               //NEG
+                        case 93: POP(ref PC); IFF1 = IFF2; return 14;           //RETI
                         case 94: IM = 2; return 8;                              //IM 2
                         case 95: A = R; return 9;                               //LD A,R        //Флаги!!!
                         case 96: H = IN[BC]; return 12;                         //IN H,(C)
@@ -618,21 +622,25 @@ namespace Spectrum
                         case 99: POKE(HL); return 20;                           //LD (nn),HL
                         //case 103: RRD(); return 18;                             //RRD
                         case 100: NEG(); return 8;                              //NEG
+                        case 101: POP(ref PC); IFF1 = IFF2; return 14;          //RETN
                         case 104: L = IN[BC]; return 12;                        //IN L,(C)
                         case 105: OUT(BC, L); return 12;                        //OUT (C),L
                         case 106: ADC(HL); return 15;                           //ADC HL,HL
                         case 107: HL = PEEK(); return 20;                       //LD HL,(nn)
                         case 108: NEG(); return 8;                              //NEG
+                        case 109: POP(ref PC); IFF1 = IFF2; return 14;          //RETI
                         case 111: RLD(); return 18;                             //RLD
                         case 112: F = IN[BC]; return 12;                        //IN L,(C)
                         case 114: SBC(SP); return 15;                           //SBC HL,SP
                         case 115: POKE(SP); return 20;                          //LD (nn),SP
                         case 116: NEG(); return 8;                              //NEG
+                        case 117: POP(ref PC); IFF1 = IFF2; return 14;          //RETN
                         case 120: A = IN[BC]; return 12;                        //IN A,(C)
                         case 121: OUT(BC, A); return 12;                        //OUT (C),A
                         case 122: ADC(SP); return 11;                           //ADC HL,SP
                         case 123: SP = PEEK(); return 20;                       //LD SP,(nn)
                         case 124: NEG(); return 8;                              //NEG
+                        case 125: POP(ref PC); IFF1 = IFF2; return 14;          //RETI
                         case 168: return LDI(false, true);                      //LDD
                         //case 169:                                             //CPD
                         //case 170:                                             //IND
@@ -653,22 +661,22 @@ namespace Spectrum
                 case 240: return RET(!fS);                                      //RET P
                 case 241: F = RAM[SP++]; A = RAM[SP++]; return 10;              //POP AF
                 case 242: return JP(!fS);                                       //JP P,nn
-                case 243: IM = 0; return 40;                                    //DI
+                case 243: IFF1 = false; IFF2 = false; IM = 0; return 40;        //DI
                 case 244: return CALL(!fS);                                     //CALL P,nn
                 case 245: return PUSH(A, F);                                    //PUSH AF
                 case 246: OR(RAM[PC++]); return 7;                              //OR n
                 case 247: return RST(48);                                       //RST 30
                 case 248: return RET(fS);                                       //RET M
-                case 249: SP = (ushort)(HL); return 6;                          //LD SP, HL
+                case 249: SP = HL; return 6;                                    //LD SP, HL
                 case 250: return JP(fS);                                        //JP M, nn
-                case 251: IM = 1; return 4;                                     //EI
+                case 251: IFF1 = true; IFF2 = true; /*IM = 1*/; return 4;                   //EI            IM = 1; - было
                 case 252: return CALL(fS);                                      //CALL M,nn
                 case 253: return IndexOperation(ref IY);                        //-------------------- Префикс FD
                 case 254: CP(RAM[PC++]); return 7;                              //CP n
                 case 255: return RST(56);                                       //RST 38
             }
-            PC = pc;
-            IM = 0; //Для тестов, потом убрать
+            //PC = pc;
+            //IM = 0; //Для тестов, потом убрать
             return 1;
         }
 
@@ -792,6 +800,11 @@ namespace Spectrum
         static ushort PEEK()
         {
             ushort adr = (ushort)(RAM[PC++] + RAM[PC++] * 256);
+            return (ushort)(RAM[adr] + RAM[adr + 1] * 256);
+        }
+
+        static ushort PEEK(ushort adr)
+        {
             return (ushort)(RAM[adr] + RAM[adr + 1] * 256);
         }
 
@@ -1121,7 +1134,7 @@ namespace Spectrum
             f5 = (A & m5) != 0;
             fH = false;
             f3 = (A & m3) != 0;
-            fV = intIFF2;
+            fV = IFF2;
             fN = false;
             //Протестировано... почти
         }
@@ -1255,21 +1268,41 @@ namespace Spectrum
         }
         static int RST(ushort Adr)
         {
-            RAM[--SP] = (byte)((PC) / 256);
-            RAM[--SP] = (byte)((PC) % 256);
+            RAM[--SP] = (byte)(PC / 256);
+            RAM[--SP] = (byte)PC;
             PC = Adr;
             return 11;
         }
         public static int Interrupt()
         {
-            if (RAM[PC] == 118) PC++;
-            if (IM == 1) return RST(56);
-            else return 0;
+            if (RAM[PC] == 118) PC++;         //Перескок через HALT... без этого почему-то зависает после любой команды
+
+            int t = 0;
+
+            if (IFF1)
+            {
+                if (IM == 0 | IM == 1)
+                {
+                    IFF1 = false;
+                    IFF2 = false;
+                    t = RST(56);
+                }
+                if (IM == 2)
+                {
+                    PUSH(PC);
+                    IFF1 = false;
+                    IFF2 = false;
+                    PC = PEEK((ushort)(I*256 | mFF));
+                    t = 19;
+                }
+            }
+
+            return t;
         }
         #endregion
         #region Стэк
         static int PUSH(byte r1, byte r2) { RAM[--SP] = r1; RAM[--SP] = r2; return 11; }
-        static int PUSH(ushort Reg) { RAM[--SP] = (byte)(Reg / 256); RAM[--SP] = (byte)(Reg % 256); return 15; }
+        static int PUSH(ushort Reg) { RAM[--SP] = (byte)(Reg / 256); RAM[--SP] = (byte)Reg; return 15; }
         static int POP(ref byte r1, ref byte r2) { r2 = RAM[SP++]; r1 = RAM[SP++]; return 10; }
         static int POP(ref ushort Reg) { Reg = (ushort)(RAM[SP++] + RAM[SP++] * 256); return 14; }
         //static 

@@ -94,6 +94,8 @@ namespace Spectrum
             Z80.IN[57342] = 255;
             Z80.IN[49150] = 255;
             Z80.IN[32766] = 255;
+            
+            //Стандартные 40 клавишь
             if (Keyboard.GetState().IsKeyDown(Keys.D1)) { Z80.IN[63486] &= 254; }
             if (Keyboard.GetState().IsKeyDown(Keys.D2)) { Z80.IN[63486] &= 253; }
             if (Keyboard.GetState().IsKeyDown(Keys.D3)) { Z80.IN[63486] &= 251; }
@@ -135,12 +137,14 @@ namespace Spectrum
             if (Keyboard.GetState().IsKeyDown(Keys.RightShift)) { Z80.IN[32766] &= 253; }
             if (Keyboard.GetState().IsKeyDown(Keys.Space)) { Z80.IN[32766] &= 254; }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Back)) { Z80.IN[65278] &= 254; Z80.IN[61438] &= 254; }
+            //Клавиши управления
+            if (Keyboard.GetState().IsKeyDown(Keys.Back)) { Z80.IN[65278] &= 254; Z80.IN[61438] &= 254; }               // BackSpace
             if (Keyboard.GetState().IsKeyDown(Keys.Left)) { Z80.IN[65278] &= 254; Z80.IN[63486] &= 239; }
             if (Keyboard.GetState().IsKeyDown(Keys.Down)) { Z80.IN[65278] &= 254; Z80.IN[61438] &= 239; }
             if (Keyboard.GetState().IsKeyDown(Keys.Up)) { Z80.IN[65278] &= 254; Z80.IN[61438] &= 247; }
             if (Keyboard.GetState().IsKeyDown(Keys.Right)) { Z80.IN[65278] &= 254; Z80.IN[61438] &= 251; }
 
+            //Нампад
             if (Keyboard.GetState().IsKeyDown(Keys.NumPad1)) { Z80.IN[63486] &= 254; }
             if (Keyboard.GetState().IsKeyDown(Keys.NumPad2)) { Z80.IN[63486] &= 253; }
             if (Keyboard.GetState().IsKeyDown(Keys.NumPad3)) { Z80.IN[63486] &= 251; }
@@ -151,12 +155,17 @@ namespace Spectrum
             if (Keyboard.GetState().IsKeyDown(Keys.NumPad8)) { Z80.IN[61438] &= 251; }
             if (Keyboard.GetState().IsKeyDown(Keys.NumPad9)) { Z80.IN[61438] &= 253; }
             if (Keyboard.GetState().IsKeyDown(Keys.NumPad0)) { Z80.IN[61438] &= 254; }
-            if (Keyboard.GetState().IsKeyUp(Keys.LeftShift) & Keyboard.GetState().IsKeyUp(Keys.RightShift))
+
+            //Удобные клавиши в расширенной клавиатуре
+            if (Keyboard.GetState().IsKeyUp(Keys.LeftShift) & Keyboard.GetState().IsKeyUp(Keys.RightShift))             
             {
                 if (Keyboard.GetState().IsKeyDown(Keys.OemPeriod)) { Z80.IN[32766] &= 253; Z80.IN[32766] &= 251; }      // .
                 if (Keyboard.GetState().IsKeyDown(Keys.OemComma)) { Z80.IN[32766] &= 253; Z80.IN[32766] &= 247; }       // ,
                 if (Keyboard.GetState().IsKeyDown(Keys.OemMinus)) { Z80.IN[32766] &= 253; Z80.IN[49150] &= 247; }       // -
                 if (Keyboard.GetState().IsKeyDown(Keys.OemPlus)) { Z80.IN[32766] &= 253; Z80.IN[49150] &= 253; }        // =
+                if (Keyboard.GetState().IsKeyDown(Keys.OemQuestion)) { Z80.IN[32766] &= 253; Z80.IN[65278] &= 239; }    // /
+                if (Keyboard.GetState().IsKeyDown(Keys.OemSemicolon)) { Z80.IN[32766] &= 253; Z80.IN[57342] &= 253; }   // ;
+                if (Keyboard.GetState().IsKeyDown(Keys.OemQuotes)) { Z80.IN[32766] &= 253; Z80.IN[61438] &= 247; }      // '
             }
             else
             {
@@ -164,7 +173,15 @@ namespace Spectrum
                 if (Keyboard.GetState().IsKeyDown(Keys.OemComma)) { Z80.IN[32766] &= 253; Z80.IN[64510] &= 247; }       // >
                 if (Keyboard.GetState().IsKeyDown(Keys.OemMinus)) { Z80.IN[32766] &= 253; Z80.IN[61438] &= 254; }       // _
                 if (Keyboard.GetState().IsKeyDown(Keys.OemPlus)) { Z80.IN[32766] &= 253; Z80.IN[49150] &= 251; }        // +
+                if (Keyboard.GetState().IsKeyDown(Keys.OemQuestion)) { Z80.IN[32766] &= 253; Z80.IN[65278] &= 247; }    // ?
+                if (Keyboard.GetState().IsKeyDown(Keys.OemSemicolon)) { Z80.IN[32766] &= 253; Z80.IN[65278] &= 253; }   // :
+                if (Keyboard.GetState().IsKeyDown(Keys.OemQuotes)) { Z80.IN[32766] &= 253; Z80.IN[57342] &= 254; }      // "
             }
+
+            //Клавиши управления как на "Русском Спектруме"
+            if (Keyboard.GetState().IsKeyDown(Keys.OemTilde)) { Z80.IN[65278] &= 254; Z80.IN[32766] &= 253; }           // [E]
+            if (Keyboard.GetState().IsKeyDown(Keys.Tab)) { Z80.IN[65278] &= 254; Z80.IN[61438] &= 253; }                // [G]
+            //if (Keyboard.GetState().IsKeyDown(Keys.CapsLock)) { Z80.IN[65278] &= 254; Z80.IN[61438] &= 253; }           // EDIT
 
             if (Spectrum.Mode == Spectrum.Modes.Normal | Spectrum.Mode == Spectrum.Modes.Frame)
             {
