@@ -294,61 +294,61 @@ namespace Spectrum
                     if (R > 127) R = 0;
                     switch (RAM[PC++])
                     {
-                        case 0: RLC(ref B); return 8;                           //RLC B
-                        case 1: RLC(ref C); return 8;                           //RLC C
-                        case 2: RLC(ref D); return 8;                           //RLC D
-                        case 3: RLC(ref E); return 8;                           //RLC E
-                        case 4: RLC(ref H); return 8;                           //RLC H
-                        case 5: RLC(ref L); return 8;                           //RLC L
-                        case 6: RLC(ref RAM[HL]); return 8;                     //RLC (HL)
-                        case 7: RLC(ref A); return 8;                           //RLC A
-                        case 8: RRC(ref B); return 8;                           //RRC B
-                        case 9: RRC(ref C); return 8;                           //RRC C
-                        case 10: RRC(ref D); return 8;                          //RRC D
-                        case 11: RRC(ref E); return 8;                          //RRC E
-                        case 12: RRC(ref H); return 8;                          //RRC H
-                        case 13: RRC(ref L); return 8;                          //RRC L
-                        case 14: RRC(ref RAM[HL]); return 8;                    //RRC (HL)
-                        case 15: RRC(ref A); return 8;                          //RRC A
-                        case 16: RL(ref B); return 8;                           //RL B
-                        case 17: RL(ref C); return 8;                           //RL C
-                        case 18: RL(ref D); return 8;                           //RL D
-                        case 19: RL(ref E); return 8;                           //RL E
-                        case 20: RL(ref H); return 8;                           //RL H
-                        case 21: RL(ref L); return 8;                           //RL L
-                        case 22: RL(ref RAM[HL]); return 15;                    //RL (HL)
-                        case 23: RL(ref A); return 8;                           //RL A
-                        case 24: RR(ref B); return 8;                           //RR B
-                        case 25: RR(ref C); return 8;                           //RR C
-                        case 26: RR(ref D); return 8;                           //RR D
-                        case 27: RR(ref E); return 8;                           //RR E
-                        case 28: RR(ref H); return 8;                           //RR H
-                        case 29: RR(ref L); return 8;                           //RR L
-                        case 30: RR(ref RAM[HL]); return 8;                     //RR (HL)
-                        case 31: RR(ref A); return 8;                           //RR A
-                        case 32: SLA(ref B); return 8;                          //SLA B
-                        case 33: SLA(ref C); return 8;                          //SLA C
-                        case 34: SLA(ref D); return 8;                          //SLA D
-                        case 35: SLA(ref E); return 8;                          //SLA E
-                        case 36: SLA(ref H); return 8;                          //SLA H
-                        case 37: SLA(ref L); return 8;                          //SLA L
-                        case 38: SLA(ref RAM[HL]); return 8;                    //SLA (HL)
-                        case 39: SLA(ref A); return 8;                          //SLA A
-                        case 40: SRA(ref B); return 8;                          //SRA B
-                        case 41: SRA(ref C); return 8;                          //SRA C
-                        case 42: SRA(ref D); return 8;                          //SRA D
-                        case 43: SRA(ref E); return 8;                          //SRA E
-                        case 44: SRA(ref H); return 8;                          //SRA H
-                        case 45: SRA(ref L); return 8;                          //SRA L
-                        case 46: SRA(ref RAM[HL]); return 8;                    //SRA (HL)
-                        case 47: SRA(ref A); return 8;                          //SRA A
+                        case 0: B = RLC(B); return 8;                           //RLC B
+                        case 1: C = RLC(C); return 8;                           //RLC C
+                        case 2: D = RLC(D); return 8;                           //RLC D
+                        case 3: E = RLC(E); return 8;                           //RLC E
+                        case 4: H = RLC(H); return 8;                           //RLC H
+                        case 5: L = RLC(L); return 8;                           //RLC L
+                        case 6: RAM[HL] = RLC(RAM[HL]); return 15;               //RLC (HL)
+                        case 7: A = RLC(A); return 8;                           //RLC A
+                        case 8: B = RRC(B); return 8;                           //RRC B
+                        case 9: C = RRC(C); return 8;                           //RRC C
+                        case 10: D = RRC(D); return 8;                          //RRC D
+                        case 11: E = RRC(E); return 8;                          //RRC E
+                        case 12: H = RRC(H); return 8;                          //RRC H
+                        case 13: L = RRC(L); return 8;                          //RRC L
+                        case 14: RAM[HL] = RRC(RAM[HL]); return 15;              //RRC (HL)
+                        case 15: A = RRC(A); return 8;                          //RRC A
+                        case 16: B = RL(B); return 8;                           //RL B
+                        case 17: C = RL(C); return 8;                           //RL C
+                        case 18: D = RL(D); return 8;                           //RL D
+                        case 19: E = RL(E); return 8;                           //RL E
+                        case 20: H = RL(H); return 8;                           //RL H
+                        case 21: L = RL(L); return 8;                           //RL L
+                        case 22: RAM[HL] = RL(RAM[HL]); return 15;              //RL (HL)
+                        case 23: A = RL(A); return 8;                           //RL A
+                        case 24: B = RR(B); return 8;                           //RR B
+                        case 25: C = RR(C); return 8;                           //RR C
+                        case 26: D = RR(D); return 8;                           //RR D
+                        case 27: E = RR(E); return 8;                           //RR E
+                        case 28: H = RR(H); return 8;                           //RR H
+                        case 29: L = RR(L); return 8;                           //RR L
+                        case 30: RAM[HL] = RR(RAM[HL]); return 15;              //RR (HL)
+                        case 31: A = RR(A); return 8;                           //RR A
+                        case 32: B = SLA(B); return 8;                          //SLA B
+                        case 33: C = SLA(C); return 8;                          //SLA C
+                        case 34: D = SLA(D); return 8;                          //SLA D
+                        case 35: E = SLA(E); return 8;                          //SLA E
+                        case 36: H = SLA(H); return 8;                          //SLA H
+                        case 37: L = SLA(L); return 8;                          //SLA L
+                        case 38: RAM[HL] = SLA(RAM[HL]); return 15;             //SLA (HL)
+                        case 39: A = SLA(A); return 8;                          //SLA A
+                        case 40: B = SRA(B); return 8;                          //SRA B
+                        case 41: C = SRA(C); return 8;                          //SRA C
+                        case 42: D = SRA(D); return 8;                          //SRA D
+                        case 43: E = SRA(E); return 8;                          //SRA E
+                        case 44: H = SRA(H); return 8;                          //SRA H
+                        case 45: L = SRA(L); return 8;                          //SRA L
+                        case 46: RAM[HL] = SRA(RAM[HL]); return 15;             //SRA (HL)
+                        case 47: A = SRA(A); return 8;                          //SRA A
                         case 48: B = SLL(B); return 8;                          //SLS B
                         case 49: C = SLL(C); return 8;                          //SLS C
                         case 50: D = SLL(D); return 8;                          //SLS D
                         case 51: E = SLL(E); return 8;                          //SLS E
                         case 52: H = SLL(H); return 8;                          //SLS H
                         case 53: L = SLL(L); return 8;                          //SLS L
-                        case 54: RAM[HL] = SLL(RAM[HL]); return 8;              //SLS (HL)
+                        case 54: RAM[HL] = SLL(RAM[HL]); return 15;             //SLS (HL)
                         case 55: A = SLL(A); return 8;                          //SLS A
                         case 56: B = SRL(B); return 8;                          //SRL B
                         case 57: C =SRL(C); return 8;                           //SRL C
@@ -356,7 +356,7 @@ namespace Spectrum
                         case 59: E = SRL(E); return 8;                          //SRL E
                         case 60: H = SRL(H); return 8;                          //SRL H
                         case 61: L = SRL(L); return 8;                          //SRL L
-                        case 62: RAM[HL] = SRL(RAM[HL]); return 8;              //SRL (HL)
+                        case 62: RAM[HL] = SRL(RAM[HL]); return 15;             //SRL (HL)
                         case 63: A = SRL(A); return 8;                          //SRL A
                         case 64: BIT(B, 1); return 8;                           //BIT 0,B
                         case 65: BIT(C, 1); return 8;                           //BIT 0,C
@@ -748,15 +748,62 @@ namespace Spectrum
                     PC++;
                     switch (RAM[PC++])
                     {
-                        case 6: RLC(ref r); return 23;                          //RLC (II+S)
-                        case 14: RRC(ref r); return 23;                         //RRC (II+S)
-                        case 22: RL(ref r); return 23;                          //RL (II+S)
-                        case 30: RR(ref r); return 23;                          //RR (II+S)
-                        case 38: SLA(ref r); return 23;                         //SLA (II+S)
-                        case 46: SRA(ref r); return 23;                         //SRA (II+S)
+                        case 0: B = RLC(r); return 23;                          //LD B, RLC (II+S)      //время выполнения точно не известно
+                        case 1: C = RLC(r); return 23;                          //LD C, RLC (II+S)      //время выполнения точно не известно
+                        case 2: D = RLC(r); return 23;                          //LD D, RLC (II+S)      //время выполнения точно не известно
+                        case 3: E = RLC(r); return 23;                          //LD E, RLC (II+S)      //время выполнения точно не известно
+                        case 4: H = RLC(r); return 23;                          //LD H, RLC (II+S)      //время выполнения точно не известно
+                        case 5: L = RLC(r); return 23;                          //LD L, RLC (II+S)      //время выполнения точно не известно
+                        case 6: r = RLC(r); return 23;                          //RLC (II+S)
+                        case 7: A = RLC(r); return 23;                          //LD A, RLC (II+S)      //время выполнения точно не известно
+                        case 8: B = RRC(r); return 23;                          //LD B, RRC (II+S)      //время выполнения точно не известно
+                        case 9: C = RRC(r); return 23;                          //LD C, RRC (II+S)      //время выполнения точно не известно
+                        case 10: D = RRC(r); return 23;                         //LD D, RRC (II+S)      //время выполнения точно не известно
+                        case 11: E = RRC(r); return 23;                         //LD E, RRC (II+S)      //время выполнения точно не известно
+                        case 12: H = RRC(r); return 23;                         //LD H, RRC (II+S)      //время выполнения точно не известно
+                        case 13: L = RRC(r); return 23;                         //LD L, RRC (II+S)      //время выполнения точно не известно
+                        case 14: r = RRC(r); return 23;                         //RRC (II+S)
+                        case 15: A = RRC(r); return 23;                         //LD A, RRC (II+S)      //время выполнения точно не известно
+                        case 16: B = RL(r); return 23;                          //LD B, RL (II+S)      //время выполнения точно не известно
+                        case 17: C = RL(r); return 23;                          //LD C, RL (II+S)      //время выполнения точно не известно
+                        case 18: D = RL(r); return 23;                          //LD D, RL (II+S)      //время выполнения точно не известно
+                        case 19: E = RL(r); return 23;                          //LD E, RL (II+S)      //время выполнения точно не известно
+                        case 20: H = RL(r); return 23;                          //LD H, RL (II+S)      //время выполнения точно не известно
+                        case 21: L = RL(r); return 23;                          //LD L, RL (II+S)      //время выполнения точно не известно
+                        case 22: r = RL(r); return 23;                          //RL (II+S)
+                        case 23: A = RL(r); return 23;                          //LD A, RL (II+S)      //время выполнения точно не известно
+                        case 24: B = RR(r); return 23;                          //LD B, RR (II+S)      //время выполнения точно не известно
+                        case 25: C = RR(r); return 23;                          //LD C, RR (II+S)      //время выполнения точно не известно
+                        case 26: D = RR(r); return 23;                          //LD D, RR (II+S)      //время выполнения точно не известно
+                        case 27: E = RR(r); return 23;                          //LD E, RR (II+S)      //время выполнения точно не известно
+                        case 28: H = RR(r); return 23;                          //LD H, RR (II+S)      //время выполнения точно не известно
+                        case 29: L = RR(r); return 23;                          //LD L, RR (II+S)      //время выполнения точно не известно
+                        case 30: r = RR(r); return 23;                          //RR (II+S)
+                        case 31: A = RR(r); return 23;                          //LD A, RR (II+S)      //время выполнения точно не известно
+                        case 32: B = SLA(r); return 23;                         //LD B, SLA (II+S)      //время выполнения точно не известно
+                        case 33: C = SLA(r); return 23;                         //LD C, SLA (II+S)      //время выполнения точно не известно
+                        case 34: D = SLA(r); return 23;                         //LD D, SLA (II+S)      //время выполнения точно не известно
+                        case 35: E = SLA(r); return 23;                         //LD E, SLA (II+S)      //время выполнения точно не известно
+                        case 36: H = SLA(r); return 23;                         //LD H, SLA (II+S)      //время выполнения точно не известно
+                        case 37: L = SLA(r); return 23;                         //LD L, SLA (II+S)      //время выполнения точно не известно
+                        case 38: r = SLA(r); return 23;                         //SLA (II+S)
+                        case 39: A = SLA(r); return 23;                         //LD A, SLA (II+S)      //время выполнения точно не известно
+                        case 40: B = SRA(r); return 23;                         //LD B, SRA (II+S)      //время выполнения точно не известно
+                        case 41: C = SRA(r); return 23;                         //LD C, SRA (II+S)      //время выполнения точно не известно
+                        case 42: D = SRA(r); return 23;                         //LD D, SRA (II+S)      //время выполнения точно не известно
+                        case 43: E = SRA(r); return 23;                         //LD E, SRA (II+S)      //время выполнения точно не известно
+                        case 44: H = SRA(r); return 23;                         //LD H, SRA (II+S)      //время выполнения точно не известно
+                        case 45: L = SRA(r); return 23;                         //LD L, SRA (II+S)      //время выполнения точно не известно
+                        case 46: r = SRA(r); return 23;                         //SRA (II+S)
+                        case 47: A = SRA(r); return 23;                         //LD A, SRA (II+S)      //время выполнения точно не известно
+                        case 48: B = SLL(r); return 23;                         //LD B, SLL (II+S)      //время выполнения точно не известно
+                        case 49: C = SLL(r); return 23;                         //LD C, SLL (II+S)      //время выполнения точно не известно
+                        case 50: D = SLL(r); return 23;                         //LD D, SLL (II+S)      //время выполнения точно не известно
+                        case 51: E = SLL(r); return 23;                         //LD E, SLL (II+S)      //время выполнения точно не известно
+                        case 52: H = SLL(r); return 23;                         //LD H, SLL (II+S)      //время выполнения точно не известно
                         case 53: L = SLL(r); return 23;                         //LD L, SLL (II+S)      //время выполнения точно не известно
                         case 54: r = SLL(r); return 23;                         //SLL (II+S)
-                        case 55: B = SRL(r); return 23;                         //LD A, SRL (II+S)      //время выполнения точно не известно
+                        case 55: A = SLL(r); return 23;                         //LD A, SLL (II+S)      //время выполнения точно не известно
                         case 56: B = SRL(r); return 23;                         //LD B, SRL (II+S)      //время выполнения точно не известно
                         case 57: C = SRL(r); return 23;                         //LD C, SRL (II+S)      //время выполнения точно не известно
                         case 58: D = SRL(r); return 23;                         //LD D, SRL (II+S)      //время выполнения точно не известно
@@ -994,31 +1041,7 @@ namespace Spectrum
 
         #endregion
         #region Вращение/сдвиг битов
-        static void RL(ref byte b)
-        {
-            int c = fC ? 1 : 0;         //Сначала делаем сдвиг
-            fC = (b & 128) != 0;        //Потом проверяем знак переноса
-            b = (byte)((b * 2) | c);
-            fS = (b & mS) != 0;
-            fZ = b == 0;
-            f5 = (b & m5) != 0;
-            fH = false;
-            f3 = (b & m3) != 0;
-            fV = Parity(b);
-            fN = false;
-        }
-        static void RLA()
-        {
-            int c = fC ? 1 : 0;         //Сначала делаем сдвиг
-            fC = (A & 128) != 0;        //Потом проверяем знак переноса
-            A = (byte)((A * 2) | c);
-            f5 = (A & m5) != 0;
-            fH = false;
-            f3 = (A & m3) != 0;
-            fN = false;
-        }
-
-        static void RLC(ref byte b)
+        static byte RLC(byte b)
         {
             fC = (b & 128) != 0;        //Сначала проверяем флаг переноса
             int c = fC ? 1 : 0;         //Потом делаем сдвиг
@@ -1030,6 +1053,7 @@ namespace Spectrum
             f3 = (b & m3) != 0;
             fV = Parity(b);
             fN = false;
+            return b;
         }
 
         static void RLCA()
@@ -1043,31 +1067,7 @@ namespace Spectrum
             fN = false;
         }
 
-        static void RR(ref byte b)
-        {
-            int c = fC ? 1 : 0;         //Сначала делаем сдвиг
-            fC = (b & 1) != 0;          //Потом проверяем знак переноса
-            b = (byte)((b / 2) | (c * 128));
-            fS = (b & mS) != 0;
-            fZ = b == 0;
-            f5 = (b & m5) != 0;
-            fH = false;
-            f3 = (b & m3) != 0;
-            fV = Parity(b);
-            fN = false;
-        }
-        static void RRA()
-        {
-            int c = fC ? 1 : 0;         //Сначала делаем сдвиг
-            fC = (A & 1) != 0;          //Потом проверяем знак переноса
-            A = (byte)((A / 2) | (c * 128));
-            f5 = (A & m5) != 0;
-            fH = false;
-            f3 = (A & m3) != 0;
-            fN = false;
-        }
-
-        static void RRC(ref byte b)
+        static byte RRC(byte b)
         {
             fC = (b & 1) != 0;          //Сначала проверяем флаг переноса
             int c = fC ? 1 : 0;         //Потом делаем сдвиг
@@ -1079,6 +1079,7 @@ namespace Spectrum
             f3 = (b & m3) != 0;
             fV = Parity(b);
             fN = false;
+            return b;
         }
 
         static void RRCA()
@@ -1092,7 +1093,59 @@ namespace Spectrum
             fN = false;
         }
 
-        static void SLA(ref byte b)
+
+        static byte RL(byte b)
+        {
+            int c = fC ? 1 : 0;         //Сначала делаем сдвиг
+            fC = (b & 128) != 0;        //Потом проверяем знак переноса
+            b = (byte)((b * 2) | c);
+            fS = (b & mS) != 0;
+            fZ = b == 0;
+            f5 = (b & m5) != 0;
+            fH = false;
+            f3 = (b & m3) != 0;
+            fV = Parity(b);
+            fN = false;
+            return b;
+        }
+        static void RLA()
+        {
+            int c = fC ? 1 : 0;         //Сначала делаем сдвиг
+            fC = (A & 128) != 0;        //Потом проверяем знак переноса
+            A = (byte)((A * 2) | c);
+            f5 = (A & m5) != 0;
+            fH = false;
+            f3 = (A & m3) != 0;
+            fN = false;
+        }
+
+
+        static byte RR(byte b)
+        {
+            int c = fC ? 1 : 0;         //Сначала делаем сдвиг
+            fC = (b & 1) != 0;          //Потом проверяем знак переноса
+            b = (byte)((b / 2) | (c * 128));
+            fS = (b & mS) != 0;
+            fZ = b == 0;
+            f5 = (b & m5) != 0;
+            fH = false;
+            f3 = (b & m3) != 0;
+            fV = Parity(b);
+            fN = false;
+            return b;
+        }
+        static void RRA()
+        {
+            int c = fC ? 1 : 0;         //Сначала делаем сдвиг
+            fC = (A & 1) != 0;          //Потом проверяем знак переноса
+            A = (byte)((A / 2) | (c * 128));
+            f5 = (A & m5) != 0;
+            fH = false;
+            f3 = (A & m3) != 0;
+            fN = false;
+        }
+
+        static byte SLA(byte b)
         {
             fC = (b & 128) != 0;
             b = (byte)(b * 2);
@@ -1103,6 +1156,21 @@ namespace Spectrum
             f3 = (b & m3) != 0;
             fV = Parity(b);
             fN = false;
+            return b;
+        }
+
+        static byte SRA(byte b)
+        {
+            fC = (b & 1) != 0;
+            b = (byte)((b / 2) | (b & 128));
+            fS = (b & mS) != 0;
+            fZ = b == 0;
+            f5 = (b & m5) != 0;
+            fH = false;
+            f3 = (b & m3) != 0;
+            fV = Parity(b);
+            fN = false;
+            return b;
         }
 
         static byte SLL(byte b) //Не протестировано
@@ -1119,18 +1187,6 @@ namespace Spectrum
             return b;
         }
 
-        static void SRA(ref byte b)
-        {
-            fC = (b & 1) != 0;
-            b = (byte)((b / 2) | (b & 128));
-            fS = (b & mS) != 0;
-            fZ = b == 0;
-            f5 = (b & m5) != 0;
-            fH = false;
-            f3 = (b & m3) != 0;
-            fV = Parity(b);
-            fN = false;
-        }
 
         static byte SRL(byte b)
         {
@@ -1144,19 +1200,6 @@ namespace Spectrum
             fV = Parity(b);
             fN = false;
             return b;
-        }
-        static void SRL(ref byte b)
-        {
-            fC = (b & 1) != 0;
-            b = (byte)(b / 2);
-            fS = (b & mS) != 0;
-            fZ = b == 0;
-            f5 = (b & m5) != 0;
-            fH = false;
-            f3 = (b & m3) != 0;
-            fV = Parity(b);
-            fN = false;
-
         }
 
         #endregion

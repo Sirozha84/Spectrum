@@ -19,6 +19,7 @@ namespace Spectrum
 
         /*int FPS = 0;
         DateTime lastTime;*/
+        const int tps = 224;    //Тактов на строку (224)
 
         public Main()
         {
@@ -195,14 +196,14 @@ namespace Spectrum
                             return;
                         }
                         takt += Z80.Run();
-                    } while (takt < 224);
+                    } while (takt < tps);
                 } while (!NextString());
                 if (Spectrum.Mode == Spectrum.Modes.Frame) Spectrum.Mode = Spectrum.Modes.Stop;
             }
             if (Spectrum.Mode == Spectrum.Modes.Step)
             {
                 takt += Z80.Run();
-                if (takt >= 224) NextString();
+                if (takt >= tps) NextString();
                 Spectrum.Mode = Spectrum.Modes.Stop;
             }
             base.Update(gameTime);
