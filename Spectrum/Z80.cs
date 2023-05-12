@@ -13,13 +13,14 @@ namespace Spectrum
         const byte mF = 15;
         const int mFF = 255;
         const int mFFF = 4095;
+        const ushort mFF00 = 65280;
         const int mFFFF = 65535;
 
         public static byte[] RAM = new byte[65536];
         //public static bool[] Be = new bool[65536];
         public static byte A, B, C, D, E, H, L;
         public static byte Aa, Fa, Ba, Ca, Da, Ea, Ha, La;
-        public static UInt16 PC, SP, IX, IY;
+        public static ushort PC, SP, IX, IY;
         public static bool fS, fZ, f5, fH, f3, fV, fN, fC;
         public static byte I, R, IM, iCount;
         public static bool IFF1, IFF2;
@@ -88,48 +89,48 @@ namespace Spectrum
                 case 0: return 4;                                               //NOP
                 case 1: C = RAM[PC++]; B = RAM[PC++]; return 10;                //LD BC,nn
                 case 2: RAM[BC] = A; return 7;                                  //LD (BC),A
-                case 3: INC(ref B, ref C); return 6;                            //INC BC
-                case 4: INC(ref B); return 4;                                   //INC B
+                case 3: BC++; return 6;                                         //INC BC
+                case 4: B = INC(B); return 4;                                   //INC B
                 case 5: DEC(ref B); return 4;                                   //DEC B
                 case 6: B = RAM[PC++]; return 7;                                //LD B,n
                 case 7: RLCA(); return 4;                                       //RLCA
                 case 8: EXAF(); return 4;                                       //EX AF,AF'
                 case 9: HL = ADD(HL, BC); return 11;                            //ADD HL,BC
                 case 10: A = RAM[BC]; return 7;                                 //LD A,(BC);
-                case 11: DEC(ref B, ref C); return 6;                           //DEC BC
-                case 12: INC(ref C); return 4;                                  //INC C
+                case 11: BC--; return 6;                                        //DEC BC
+                case 12: C = INC(C); return 4;                                  //INC C
                 case 13: DEC(ref C); return 4;                                  //DEC C
                 case 14: C = RAM[PC++]; return 7;                               //LD C,n
                 case 15: RRCA(); return 4;                                      //RRCA
                 case 16: B--; return JR(B != 0) + 1;                            //DJNZ s
                 case 17: E = RAM[PC++]; D = RAM[PC++]; return 10;               //LD DE,nn
                 case 18: RAM[DE] = A; return 7;                                 //LD (DE),A
-                case 19: INC(ref D, ref E); return 6;                           //INC DE
-                case 20: INC(ref D); return 4;                                  //INC D
+                case 19: DE++; return 6;                                        //INC DE
+                case 20: D = INC(D); return 4;                                  //INC D
                 case 21: DEC(ref D); return 4;                                  //DEC D
                 case 22: D = RAM[PC++]; return 7;                               //LD D,n
                 case 23: RLA(); return 4;                                       //RLA
                 case 24: JR(true); return 4;                                    //JR s
                 case 25: HL = ADD(HL, DE); return 11;                           //ADD HL,DE
                 case 26: A = RAM[DE]; return 7;                                 //LD A,(DE)
-                case 27: DEC(ref D, ref E); return 6;                           //DEC DE
-                case 28: INC(ref E); return 4;                                  //INC E
+                case 27: DE--; return 6;                                        //DEC DE
+                case 28: E = INC(E); return 4;                                  //INC E
                 case 29: DEC(ref E); return 4;                                  //DEC E
                 case 30: E = RAM[PC++]; return 7;                               //LD E,n
                 case 31: RRA(); return 4;                                       //RRA
                 case 32: return JR(!fZ);                                        //JR NZ,s
                 case 33: L = RAM[PC++]; H = RAM[PC++]; return 10;               //LD HL,nn
                 case 34: POKE(HL); return 20;                                   //LD (nn),HL
-                case 35: INC(ref H, ref L); return 6;                           //INC HL
-                case 36: INC(ref H); return 4;                                  //INC H
+                case 35: HL++; return 6;                                        //INC HL
+                case 36: H = INC(H); return 4;                                  //INC H
                 case 37: DEC(ref H); return 4;                                  //DEC H
                 case 38: H = RAM[PC++]; return 7;                               //LD H,n
                 case 39: DAA(); return 4;                                       //DAA
                 case 40: return JR(fZ);                                         //JR Z,s
                 case 41: HL = ADD(HL, HL); return 11;                           //ADD HL,HL
                 case 42: HL = PEEK(); return 16;                                //LD HL,(nn)
-                case 43: DEC(ref H, ref L); return 6;                           //DEC HL
-                case 44: INC(ref L); return 4;                                  //INC L
+                case 43: HL--; return 6;                                        //DEC HL
+                case 44: L = INC(L); return 4;                                  //INC L
                 case 45: DEC(ref L); return 4;                                  //DEC L
                 case 46: L = RAM[PC++]; return 7;                               //LD L,n
                 case 47: CPL(); return 4;                                       //CPL
@@ -137,7 +138,7 @@ namespace Spectrum
                 case 49: SP = (ushort)(RAM[PC++] + RAM[PC++] * 256); return 10; //LD SP,nn
                 case 50: RAM[RAM[PC++] + RAM[PC++] * 256] = A; return 13;       //LD (nn),A
                 case 51: SP++; return 6;                                        //INC SP
-                case 52: INC(ref RAM[HL]); return 11;                           //INC (HL)
+                case 52: RAM[HL] = INC(RAM[HL]); return 11;                     //INC (HL)
                 case 53: DEC(ref RAM[HL]); return 11;                           //DEC (HL)
                 case 54: RAM[HL] = RAM[PC++]; return 10;                        //LD (HL),n
                 case 55: SCF(); return 4;                                       //SCF
@@ -145,7 +146,7 @@ namespace Spectrum
                 case 57: HL = ADD(HL, SP); return 11;                           //ADD HL,SP
                 case 58: A = RAM[RAM[PC++] + RAM[PC++] * 256]; return 13;       //LD A,(nn)
                 case 59: SP--; return 6;                                        //DEC SP
-                case 60: INC(ref A); return 4;                                  //INC A
+                case 60: A = INC(A); return 4;                                  //INC A
                 case 61: DEC(ref A); return 4;                                  //DEC A
                 case 62: A = RAM[PC++]; return 7;                               //LD A,n
                 case 63: CCF(); return 4;                                       //CCF
@@ -696,13 +697,17 @@ namespace Spectrum
             {
                 case 9: II = ADD(II, BC); return 15;                            //ADD II,BC
                 case 25: II = ADD(II, DE); return 15;                           //ADD II,DE
-                case 33:                                                        //LD IY,nn
-                    II = (ushort)(RAM[PC++] + RAM[PC++] * 256);
-                    return 14;
+                case 33: II = (ushort)(RAM[PC++] + RAM[PC++] * 256); return 14; //LD II,nn
                 case 34: POKE(II); return 20;                                   //LD (nn),II
                 case 35: II++; return 10;                                       //INC II
+                //case 36: II = (ushort)(INC((byte)(II / 256)) * 256 + (byte)II); return 8;   //INC IIH
+                //case 36: II += 256; return 8;                                   //INC IIH
+                case 36: INC((byte)(II / 256)); II += 256; return 8;            //INC IIH
+                //case 36: DEC((byte)(II / 256)); II -= 256; return 8;            //DEC IIH
                 case 42: II = RAM[RAM[PC++] + RAM[PC++] * 256]; return 20;      //LD II,(nn)
-                case 52: INC(ref RAM[IplusS(II)]); return 23;                   //INC (II+S)
+                case 44: II = (ushort)((II & mFF00) + INC((byte)II)); return 8; //INC IIL
+                //case 45: II = (ushort)((II & mFF00) + DEC((byte)II)); return 8; //DEC IIL
+                case 52: RAM[IplusS(II)] = INC(RAM[IplusS(II)]); return 23;     //INC (II+S)
                 case 53: DEC(ref RAM[IplusS(II)]); return 23;                   //DEC (II+S)
                 case 54: RAM[IplusS(II)] = RAM[PC++]; return 19;                //LD (II+S),N
                 case 70: B = RAM[IplusS(II)]; return 19;                        //LD B,(II+S)
@@ -898,22 +903,19 @@ namespace Spectrum
         #endregion
         #region Сложение и вычитание
         //INC
-        static void INC(ref byte Reg)
+        static byte INC(byte reg)
         {
-            Reg++;
-            fS = Reg > 127;
-            fZ = Reg == 0;
-            f5 = (Reg & 32) != 0;
-            fH = (Reg & 15) == 0;
-            f3 = (Reg & 8) != 0;
-            fV = Reg == 128;
+            reg++;
+            fS = reg > 127;
+            fZ = reg == 0;
+            f5 = (reg & 32) != 0;
+            fH = (reg & 15) == 0;
+            f3 = (reg & 8) != 0;
+            fV = reg == 128;
             fN = false;
+            return reg;
         }
-        static void INC(ref byte r1, ref byte r2)
-        {
-            r2++;
-            if (r2 == 0) r1++;
-        }
+
         //DEC
         static void DEC(ref byte Reg)
         {
@@ -925,11 +927,6 @@ namespace Spectrum
             f3 = (Reg & 8) != 0;
             fV = Reg == 127;
             fN = true;
-        }
-        static void DEC(ref byte r1, ref byte r2)
-        {
-            r2--;
-            if (r2 == 255) r1--;
         }
 
         //ADD 8

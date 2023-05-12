@@ -19,18 +19,20 @@ namespace Spectrum
             Z80.Reset();
             Mode = Modes.Normal;
 
-            return;
+            //return;
             //BreakPoint = 11916;
             //BreakPoint = 11924;
             //BreakPoint = 11962;
-            //View = 23722;
+            View = 33583;
             //LoadSNA(@"..\..\..\..\..\Files\TEST.asm.sna");  BreakPoint = 30000;
-            LoadSNA(@"..\..\..\..\..\Files\19.sna"); //BreakPoint = 33525;
+            //LoadSNA(@"..\..\..\..\..\Files\TEST.sna"); //BreakPoint = 33525;
+            LoadSNA(@"..\..\..\..\..\Files\41.sna"); //BreakPoint = 33525;
+
             //BreakPoint = Z80.PC;
 
         }
 
-    public static void LoadSNA(string FileName)
+        public static void LoadSNA(string FileName)
         {
             byte[] Bytes = File.ReadAllBytes(FileName);
             Z80.I = Bytes[0];

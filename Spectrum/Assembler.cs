@@ -609,9 +609,13 @@
                         case 33: C = "LD " + I + ", " + Bytes(++adr, ++adr); break;
                         case 34: C = "LD (" + Bytes(++adr, ++adr) + ")," + I; break;
                         case 35: C = "INC " + I; break;
+                        case 36: C = "INC " + I + "H"; break;
+                        case 37: C = "DEC " + I + "H"; break;
                         case 41: C = "ADD " + I + ", " + I; break;
                         case 42: C = "LD " + I + ", (" + Bytes(++adr, ++adr) + ")"; break;
                         case 43: C = "DEC " + I; break;
+                        case 44: C = "INC " + I + "L"; break;
+                        case 45: C = "DEC " + I + "L"; break;
                         case 52: C = "INC (" + I + SByte(++adr) + ")"; break;
                         case 53: C = "DEC (" + I + SByte(++adr) + ")"; break;
                         case 54: C = "LD (" + I + SByte(++adr) + "), " + Bytes(++adr); break;
